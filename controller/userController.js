@@ -2,17 +2,6 @@ const Lodge = require('../models/lodge');
 const Agent = require('../models/Agents');
 const Review = require('../models/Review');
 
-const ChatSession = require("../models/ChatSession");
-const nodemailer = require("nodemailer");
-
-
-const {sendMail} = require("../utilities/mailer");
-const crypto = require("crypto");
-const bcrypt = require("bcrypt");
-
-const { generateOtpEmail } = require("../utilities/emailTemplates");
-
-
 exports.homePage = async (req, res) => {
   try {
     // get only lodges with status = available
