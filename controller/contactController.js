@@ -1,7 +1,7 @@
 const Lodge = require('../models/lodge');
 
 
-const ChatSession = require("../models/ChatSession");
+const ChatSession = require("../models/Chatsession");
 
 
 const { sendMail, transporter } = require("../utilities/mailer");
@@ -90,70 +90,6 @@ exports.getWaLink = async (req, res) => {
     return res.status(500).json({ success: false, message: "Server error fetching WhatsApp link." });
   }
 };
-
-// exports.getWaLink = async (req, res) => {
-//   try {
-//     // 🔹 Use cache if available
-//     if (req.session.lastWaLink && req.session.lastLodgeId && req.session.lastAgentEmail) {
-//       return res.json({
-//         success: true,
-//         waLink: req.session.lastWaLink,
-//         lodgeId: req.session.lastLodgeId,
-//         agentEmail: req.session.lastAgentEmail,
-//         cached: true,
-//       });
-//     }
-
-//     // 🔹 If no cache but cookie says verified, fallback to DB
-//     const verifiedCookie = req.cookies.wa_verified_user;
-//     const verifiedEmail = req.session.verifiedEmail;
-
-//     if (!verifiedCookie || !verifiedEmail) {
-//       return res.status(401).json({ success: false, message: "Not verified" });
-//     }
-
-//     // Find most recent chat session
-//     const lastChat = await ChatSession.findOne({ userEmail: verifiedEmail })
-//       .sort({ lastStartedAt: -1 });
-
-//     if (!lastChat) {
-//       return res.status(404).json({ success: false, message: "No previous chats found" });
-//     }
-
-//     const lodge = await Lodge.findById(lastChat.lodgeId);
-//     if (!lodge) {
-//       return res.status(404).json({ success: false, message: "Lodge not found" });
-//     }
-
-//     const whatsappNumber = lodge.whatsappNumber || lodge.phone;
-//     let formattedPhone = whatsappNumber;
-//     if (formattedPhone.startsWith("0")) {
-//       formattedPhone = "234" + formattedPhone.slice(1);
-//     }
-
-//     const waLink = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(
-//       `Hello, I found your lodge listing on Logifi and would like to inquire about its availability (Lodge ID: ${lastChat.lodgeId}).`
-//     )}`;
-
-//     // ✅ Re-cache into session (auto-refresh)
-//     req.session.lastWaLink = waLink;
-//     req.session.lastLodgeId = lastChat.lodgeId;
-//     req.session.lastAgentEmail = lastChat.agentEmail;
-
-//     return res.json({
-//       success: true,
-//       waLink,
-//       lodgeId: lastChat.lodgeId,
-//       agentEmail: lastChat.agentEmail,
-//       cached: false, // means came from DB this time
-//     });
-
-//   } catch (err) {
-//     console.error("getWaLink error:", err);
-//     res.status(500).json({ success: false, message: "Server error" });
-//   }
-// };
-
 
 
 exports.sendContactMessage = async (req, res) => {
