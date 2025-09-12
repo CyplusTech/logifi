@@ -1,5 +1,4 @@
 const controller = require("../controller/contactController");
-const ChatSession = require("../models/ChatSession");
 const { chatVerify } = require("../middlewares/chatVerify");
 
 const express = require("express");
