@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head")%>
+ <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+ .post-hero {
+  background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c');
+  background-size: cover;
+  background-position: center;
+  height: 20vh;
+  position: relative;
+}
+
+.post-hero-overlay {
+  background-color: rgba(17, 24, 39, 0.5);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  padding: 20px 20px 20px 80px;
+}
+
+.post-hero-text {
+  color: var(--text-light);
+}
+
+.post-hero-text h1 {
+  font-size: 36px;
+  margin: 0;
+  font-weight: 700;
+}
+
+.post-hero-text span {
+  color: #b1b5b6;
+}
+
+.post-hero-text p {
+  font-size: 14px;
+  margin-top: 5px;
+  color: var(--primary);
+}
+
+@media screen and (max-width: 768px) {
+  .post-hero {
+    height: 180px;
+  }
+
+  .post-hero-text h1 {
+    font-size: 24px;
+  }
+
+  .post-hero-text p {
+    font-size: 12px;
+  }
+}
+
+    .post-manage-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      margin-top: 20px;
+    }
+
+    .post-manage-header h1 {
+      font-size: 2rem;
+      color: #222;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+
+    .post-manage-header p {
+      font-size: 1rem;
+      color: #555;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+  :root{
+    --plx-primary:#2563eb;
+    --plx-primary-dark:#1e40af;
+    --plx-bg:#f6f7fb;
+    --plx-card:#ffffff;
+    --plx-text:#1f2937;
+    --plx-muted:#6b7280;
+    --plx-danger:#e11d48;
+    --plx-warning:#f59e0b;
+    --plx-success:#16a34a;
+    --plx-shadow:0 10px 25px rgba(2,6,23,0.08);
+    --plx-radius:14px;
+  }
+
+  /* Base */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--plx-bg);color:var(--plx-text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+
+  /* Header */
+  .plx-header{
+    position:sticky;top:0;z-index:5;
+    /* background:linear-gradient(135deg,var(--plx-primary) 0%, #60a5fa 100%); */
+    background: #8f8f8f;
+    color:#fff;padding:18px 16px;box-shadow:var(--plx-shadow);
+
+  }
+  .plx-header__row{max-width:1200px;margin:0 auto;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .plx-brand{font-weight:800;letter-spacing:.4px; font-size: 20px;}
+  .plx-search{
+    display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.18);
+    padding:8px 12px;border-radius:999px;backdrop-filter:blur(6px);width:min(520px,100%)
+  }
+  .plx-search input{
+    flex:1;border:none;outline:none;background:transparent;color:#fff;font-size:14px
+  }
+  .plx-btn{
+    border:none;border-radius:999px;padding:10px 14px;font-weight:600;cursor:pointer;
+    background:#fff;color:var(--plx-primary);box-shadow:var(--plx-shadow);transition:.2s transform,.2s box-shadow
+  }
+  .plx-btn:hover{transform:translateY(-1px)}
+  .plx-btn--primary{
+    background:var(--plx-text);
+    color:#fff; 
+  }
+  .plx-btn--accent{background:#fff;color:var(--plx-primary)}
+  .plx-btn--danger{background:var(--plx-danger);color:#fff;border-radius:10px;}
+  .plx-btn--muted{background:#e5e7eb;color:#111827;border-radius:10px}
+
+
+
+.plx-edit-btn, .plx-delete-btn {
+  flex: 1;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+  /* Actions container */
+.plx-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* User section */
+    /* User pill */
+    .plx-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.15);
+      padding: 6px 14px;
+      border-radius: 999px;
+      backdrop-filter: blur(6px);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .plx-user:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .plx-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      object-fit: cover;
+    }
+
+    .plx-username {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Verified Badge */
+    .plx-badge {
+      background: #10b981;
+      color: #fff;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 2px 6px rgba(16,185,129,0.4);
+    }
+
+    .plx-badge::before {
+      content: "✔";
+      font-size: 12px;
+    }
+
+    /* Verify button */
+    .plx-verify-btn {
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      color: #fff;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.25s ease, transform 0.2s ease;
+    }
+
+    .plx-verify-btn:hover {
+      background: linear-gradient(135deg, #1e3a8a, #1e40af);
+      transform: translateY(-2px);
+    }
+
+
+     /* Container & grid */
+  .plx-container{
+    max-width:1200px;
+    margin:22px auto;
+    padding:0 16px; 
+  }
+  
+  .plx-grid{
+    display:grid;gap:18px;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr))
+  }
+  
+  /* Card */
+ .plx-card {
+  background: var(--plx-card);
+  border-radius: var(--plx-radius);
+  overflow: hidden;
+  box-shadow: var(--plx-shadow);
+  display: flex;
+  flex-direction: column;
+  height: 100%;             /* ✅ Make all cards same height */
+}
+
+.plx-card__body {
+  flex: 1;                   /* ✅ Body grows to take leftover space */
+  padding: 14px 14px 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+.plx-card__actions {
+  /* border: 1px solid red; */
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: auto;           /* ✅ Pushes actions to bottom */
+}
+
+/* Lodge media (image/video) wrapper */
+.plx-card__media {
+  position: relative;
+  height: 180px;
+  background: #f1f5f9;
+  overflow: hidden;
+  border-radius: 12px;
+  margin: 8px;               /* small margin inside card to see shadow */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* subtle shadow */
+}
+
+/* Media content inside the wrapper */
+.plx-card__media img,
+.plx-card__media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 12px;      /* match wrapper rounding */
+}
+  .plx-card__thumbs{
+    display:flex;gap:6px;padding:10px;border-top:1px solid #f1f5f9;overflow:auto
+  }
+  .plx-card__thumb{
+    width:56px;height:56px;border-radius:8px;overflow:hidden;flex:0 0 auto;border:2px solid transparent;cursor:pointer
+  }
+  .plx-card__thumb img,.plx-card__thumb video{width:100%;height:100%;object-fit:cover;display:block}
+  .plx-card__thumb--active{border-color:#163b8b}
+  .plx-card__body{padding:14px 14px 6px}
+  .plx-title{font-size:16px;font-weight:800;margin:0 0 4px}
+  .plx-meta{font-size:13px;color:var(--plx-muted);margin-bottom:8px}
+  .plx-desc{font-size:13px;color:#374151;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .plx-badges{display:flex;align-items:center;gap:8px;margin-top:10px}
+  .plx-badge{font-size:12px;padding:4px 8px;border-radius:999px;background:#eef2ff;color:#3730a3}
+  .plx-badge--success{background:#dcfce7;color:#166534}
+  .plx-badge--warn{background:#fef3c7;color:#92400e}
+  .plx-card__actions{
+    display:flex;gap:8px;padding:12px;justify-content:space-between;flex-wrap:wrap
+  }
+  .plx-card__actions .plx-btn{border-radius:10px;padding:8px 10px;font-size:13px}
+
+  /* Modal (Post/Edit) */
+  .plx-modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(2,6,23,.55);z-index:50}
+  .plx-modal--show{display:grid}
+  .plx-modal__panel{
+    width:min(760px,92vw);
+    max-height:88vh;
+    margin-top: 70px;
+    overflow:auto;
+    background:#fff;
+    border-radius:16px;
+    box-shadow:var(--plx-shadow);
+    animation:plx-pop .18s ease-out
+  }
+  @keyframes plx-pop{from{transform:translateY(6px);opacity:.6}to{transform:translateY(0);opacity:1}}
+  .plx-form{padding:18px}
+  .plx-form__row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .plx-form label{font-size:13px;font-weight:700;color:#111827;margin-bottom:6px;display:block}
+  .plx-input,.plx-textarea,.plx-select{
+    width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px;font-size:14px;
+    outline:none
+  }
+  .plx-textarea{min-height:100px;resize:vertical}
+  .plx-form__actions{display:flex;gap:10px;justify-content:flex-end;margin-top:10px}
+
+  /* Uploader */
+  .plx-uploader{
+    margin-top:10px;border:2px dashed #cbd5e1;border-radius:14px;padding:14px;background:#f8fafc
+  }
+  .plx-uploader--drag{background:#eef2ff;border-color:#93c5fd}
+  .plx-up__bar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+  .plx-up__hint{font-size:12px;color:var(--plx-muted)}
+  .plx-up__btn{border-radius:10px;padding:8px 12px}
+  .plx-up__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+  .plx-up__item{position:relative;border-radius:10px;overflow:hidden;background:#fff;box-shadow:var(--plx-shadow)}
+  .plx-up__item img,.plx-up__item video{width:100%;height:110px;object-fit:cover;display:block}
+  .plx-up__remove{
+    position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:8px;padding:4px 8px;cursor:pointer
+  }
+
+  /* Lightbox */
+  .plx-lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;z-index:6000}
+  .plx-lightbox--show{display:flex}
+  .plx-lb__stage{margin:auto;max-width:min(92vw,1100px);max-height:86vh;display:flex;align-items:center;justify-content:center;position:relative}
+  
+  .plx-lb__media{max-width:100%;max-height:86vh;border-radius:12px;box-shadow:var(--plx-shadow)}
+  .plx-lb__video{max-width:100%;max-height:86vh;border-radius:12px;background:#000}
+  .plx-lb__close{
+    position:fixed;top:18px;right:18px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+    color:#fff;border-radius:999px;padding:10px 12px;cursor:pointer
+  }
+  .plx-lb__arrow{
+    position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:999px;padding:12px 14px;cursor:pointer;opacity:0;transition:.2s;
+    user-select:none
+  }
+  .plx-lb__arrow--left{left:-12px}
+  .plx-lb__arrow--right{right:-12px}
+  .plx-lightbox:hover .plx-lb__arrow{opacity:1} /* arrows visible on hover per your preference */
+
+  /* Helpers */
+  .plx-visually-hidden{position:absolute!important;width:1px;height:1px;margin:-1px;border:0;padding:0;clip:rect(0 0 0 0);overflow:hidden}
+
+
+    /* Modal Background */
+    .post-warning-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+    .psot-warning-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Modal Background */
+    .lodgify-warning-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+    .lodgify-warning-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Modal Box */
+    .lodgify-warning-box {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      transform: translateY(-30px);
+      transition: transform 0.3s ease;
+      animation: lodgify-fadeUp 0.4s ease forwards;
+    }
+    @keyframes lodgify-fadeUp {
+      to { transform: translateY(0); }
+    }
+
+    /* Icon */
+    .lodgify-warning-icon {
+      font-size: 3rem;
+      color: #dc2626;
+      margin-bottom: 1rem;
+    }
+
+    .lodgify-warning-title {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #111827;
+      margin-bottom: 0.8rem;
+    }
+    .lodgify-warning-text {
+      color: #6b7280;
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    /* Buttons */
+    .lodgify-btn-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .lodgify-warning-cancel-btn, .lodgify-warning-continue-btn {
+      flex: 1;
+      min-width: 120px;
+      padding: 12px;
+      font-size: 0.95rem;
+      border-radius: 10px;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.2s ease;
+    }
+    .lodgify-warning-cancel-btn {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    .lodgify-warning-continue-btn {
+      background: #dc2626;
+      color: white;
+    }
+    .lodgify-warning-cancel-btn:hover,
+    .lodgify-continue-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Mobile */
+    @media (max-width: 480px) {
+      .lodgify-warning-box {
+        padding: 1.5rem;
+      }
+      .lodgify-warning-title {
+        font-size: 1.2rem;
+      }
+      .lodgify-warning-text {
+        font-size: 0.9rem;
+      }
+    }
+
+    .plx-flash-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+    }
+    .plx-flash {
+      padding: 10px 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      color: #fff;
+      opacity: 0.95;
+      font-weight: 500;
+    }
+    .plx-flash-success { background-color: #4ade80; color: #065f46; }
+    .plx-flash-error { background-color: #f87171; color: #7f1d1d; }
+
+
+#plx-save {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px; /* space between text & spinner */
+}
+
+/* spinner hidden by default */
+#plx-save .btn-spinner {
+  display: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #fff;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* when saving */
+#plx-save.saving .btn-text {
+  opacity: 0.7;
+}
+#plx-save.saving .btn-spinner {
+  display: inline-block;
+}
+
+.plx-status-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.plx-toggle {
+  position: relative;
+  display: inline-block;
+  width: 38px;
+  height: 20px;
+}
+
+.plx-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.plx-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .3s;
+  border-radius: 20px;
+}
+
+.plx-slider:before {
+  position: absolute;
+  content: "";
+  height: 14px; width: 14px;
+  left: 3px; bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+}
+
+.plx-toggle input:checked + .plx-slider {
+  background-color: #22c55e; /* green */
+}
+
+.plx-toggle input:checked + .plx-slider:before {
+  transform: translateX(18px);
+}
+
+.plx-price {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #16a34a; /* green for money */
+  margin: 6px 0;
+}
+
+
+
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+     <%- include("partials/navBar")%>
+
+<section class="post-hero">
+  <div class="post-hero-overlay">
+    <div class="post-hero-text">
+    </div>
+  </div>
+</section>
+
+<div id="plx-flash-container" class="plx-flash-container"></div>
+
+
+<!-- Header -->
+<section class="plx-header" aria-label="Top bar">
+  <div class="plx-header__row">
+    <!-- Brand -->
+    <!-- <div class="plx-brand">🏠 Lodge Management</div> -->
+       <!-- User -->
+      
+    <% if(agent && agent.kycCompleted) { %>
+      <!-- Example: User Verified -->
+      <div class="plx-user">
+        <img src="https://i.pravatar.cc/40?u=lodgifi2" alt="User Avatar" class="plx-avatar" />
+        <span class="plx-username">
+          <%= agent.name %>
+          <span class="plx-badge" title="Verified agent">Verified</span>
+        </span>
+      </div>
+    <% } else { %>
+      <!-- Example: User NOT verified -->
+      <div class="plx-user">
+        <img src="https://i.pravatar.cc/40?u=lodgifi2" alt="User Avatar" class="plx-avatar" />
+        <span class="plx-username"><%= agent.name %></span>
+        <button class="plx-verify-btn" title="Unverified agent">Get Verified</button>
+      </div>
+    <% } %>
+
+
+    <!-- Search -->
+    <div class="plx-search" role="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"
+              stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <input id="plx-search-input" type="search"
+             placeholder="Search your lodges by title or location…" aria-label="Search lodges" />
+    </div>
+
+    <!-- Actions -->
+    <!-- <button id="plx-open-post" class="plx-btn plx-btn--accent">+ Post New Lodge</button> -->
+    <div class="plx-actions">
+    <button id="plx-open-post" class="plx-btn plx-btn--accent">+ Post New Lodge</button>
+   
+    </div>
+  </div>
+</section>
+
+  <div class="post-manage-header">
+    <h1>Find Your Ideal Lodge</h1>
+    <p>Browse through our latest available lodges around your campus and book your next stay with ease.</p>
+  </div>
+
+
+<!-- //////main form /// -->
+<!-- Main -->
+<main class="plx-container">
+  <section id="plx-grid" class="plx-grid" aria-label="Lodge cards"></section>
+</main>
+
+<!-- Post/Edit Modal -->
+<div id="plx-modal" class="plx-modal" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="plx-modal__panel" role="document">
+    <form id="plx-form" class="plx-form" onsubmit="return false;">
+      <div style="display:flex;align-items:center; justify-content:space-between;gap:10px;margin-bottom:8px">
+        <h2 id="plx-form-title" style="margin:0;"></h2>
+        <button type="button" id="plx-close-modal" class="plx-btn plx-btn--muted" aria-label="Close">Close</button>
+      </div>
+
+      <div class="plx-form__row">
+        <div>
+          <label for="plx-title">Title</label>
+          <input id="plx-title" class="plx-input" type="text" placeholder="e.g. Cozy 2-Bedroom Apartment" required />
+        </div>
+        <div>
+          <label for="plx-location">Location</label>
+          <input id="plx-location" class="plx-input" type="text" placeholder="e.g. Lagos, Nigeria" required />
+        </div>
+        <div>
+          <label for="plx-phone">Phone Number</label>
+            <input id="plx-phone" name="phone" type="tel" placeholder="e.g. 08012345678"required class="plx-input"style="background:#fff;" />
+        </div>
+          <div>
+          <label for="plx-price">Price (₦)</label>
+          <input id="plx-price" class="plx-select" type="number" placeholder="Enter price e.g 250000" required />
+        </div>
+      </div>
+
+      <div class="plx-form__row">
+        <div>
+          <label for="plx-type">Type</label>
+          <select id="plx-type" class="plx-select">
+            <option value="Single Room">Single Room</option>
+            <option value="Self-Contain">Self-Contain</option>
+            <option value="1-Bedroom Flat">1-Bedroom Flat</option>
+            <option value="2-Bedroom Flat">2-Bedroom Flat</option>
+            <option value="3-Bedroom Flat">3-Bedroom Flat</option>
+          </select>
+        </div>
+
+       <div>
+          <label for="plx-status">Status</label>
+           <input id="plx-status" class="plx-select" type="text" required readonly/>
+        </div>
+      </div>
+
+      <div>
+        <label for="plx-desc">Description</label>
+        <textarea id="plx-desc" class="plx-textarea" placeholder="Short description…"></textarea>
+      </div>
+
+      <!-- Drag & Drop Uploader -->
+      <div id="plx-uploader" class="plx-uploader" aria-label="Media uploader">
+        <div class="plx-up__bar">
+          <div class="plx-up__hint">Add up to 5 files (images or videos). Click or drag & drop.</div>
+          <button type="button" id="plx-choose-files" class="plx-btn plx-up__btn">Choose Files</button>
+          <input id="plx-file-input" class="plx-visually-hidden" type="file" accept="image/*,video/*" multiple />
+        </div>
+        <div id="plx-up-grid" class="plx-up__grid"></div>
+      </div>
+
+      <div class="plx-form__actions">
+        <button type="button" id="plx-save" class="plx-btn plx-btn--primary">
+          <span class="btn-text">Save</span>
+          <span class="btn-spinner"></span>
+        </button>
+        <button type="button" id="plx-cancel" class="plx-btn plx-btn--muted">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div id="plx-lightbox" class="plx-lightbox" role="dialog" aria-hidden="true">
+  <button id="plx-lb-close" class="plx-lb__close" aria-label="Close viewer">✕</button>
+  <div class="plx-lb__stage">
+    <button id="plx-lb-prev" class="plx-lb__arrow plx-lb__arrow--left" aria-label="Previous">‹</button>
+    <div id="plx-lb-slot"></div>
+    <button id="plx-lb-next" class="plx-lb__arrow plx-lb__arrow--right" aria-label="Next">›</button>
+  </div>
+</div>
+
+  <!-- ✅ WhatsApp Modal -->
+<div id="uniqueWAModal" class="unique-wa-modal-overlay">
+  <div class="unique-wa-modal-content">
+    <span class="unique-wa-close-btn" onclick="closeUniqueWAModal()">×</span>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width: 60px; margin-bottom: 20px;">
+    <h2 style="margin-bottom: 10px;">Chat on WhatsApp</h2>
+    <p style="margin-bottom: 20px; color: #475569;">
+      Contact your potential roommate or lodge provider directly on WhatsApp. Make sure to verify their identity and ask all important questions.
+    </p>
+    <a href="https://wa.me/2348012345678" target="_blank" class="unique-wa-button">Chat on Whatsapp</a>
+  </div>
+</div>
+
+  <!-- Warning Modal -->
+  <!-- Warning Modal -->
+  <div class="lodgify-warning-overlay" id="lodgifyWarningModal">
+    <div class="lodgify-warning-box">
+      <div class="lodgify-warning-icon">⚠️</div>
+      <div class="lodgify-warning-title">Important Posting Notice</div>
+      <div class="lodgify-warning-text">
+        Please make sure your listing follows <b>Lodgify community rules</b>.<br>
+        False or misleading information may result in account suspension.
+      </div>
+      <div class="lodgify-btn-row">
+        <button class="lodgify-warning-cancel-btn" onclick="lodgifyCloseWarning()">Cancel</button>
+        <button class="lodgify-warning-continue-btn" onclick="lodgifyProceedPost()">I Understand</button>
+      </div>
+    </div>
+  </div>
+
+<!-- ////// Footer ////// -->
+    <%- include("partials/footer")%>
+
+<script>
+   document.addEventListener("DOMContentLoaded", renderGrid);
+/////main container////
+  /* ===== Unique, self-contained state ===== */
+  const plxState = {
+    lodges: <%- JSON.stringify(lodges) %>,  // Lodges from MongoDB
+    editingId: null,
+    lightbox: { lodgeId:null, index:0 },
+    uploader: { files: [] }
+  };
+
+/* ===== Utilities ===== */
+function cryptoRandomId(){
+  // Short, unique id
+  return 'plx_' + Math.random().toString(36).slice(2,8) + Date.now().toString(36).slice(-4);
+}
+function el(q){ return document.querySelector(q); }
+function els(q){ return Array.from(document.querySelectorAll(q)); }
+function create(tag, props={}, children=[]){
+  const node = document.createElement(tag);
+  Object.assign(node, props);
+  children.forEach(c => node.appendChild(typeof c === 'string' ? document.createTextNode(c) : c));
+  return node;
+}
+
+/* ===== Render Lodges ===== */
+function renderGrid(){
+  const grid = el('#plx-grid');
+  const q = el('#plx-search-input') ? el('#plx-search-input').value.trim().toLowerCase() : "";
+  grid.innerHTML = '';
+
+  const lodges = plxState.lodges.filter(l =>
+    (l.title || '').toLowerCase().includes(q) ||
+    (l.location || '').toLowerCase().includes(q)
+  );
+
+  if(lodges.length === 0){
+    grid.innerHTML = `
+      <div class="plx-empty">
+        <p>You haven't posted any lodges yet.</p>
+      </div>
+    `;
+    return;
+  }
+
+  lodges.forEach(lodge => grid.appendChild(renderCard(lodge)));
+}
+
+function showFlash(message, type='success', duration=4000){
+  const container = el('#plx-flash-container');
+  if(!container) return;
+
+  const flash = create('div',{className: `plx-flash plx-flash-${type}`}, [message]);
+  container.appendChild(flash);
+
+  setTimeout(() => {
+    flash.remove();
+  }, duration);
+}
+
+// Format price (₦ with commas)
+function formatPrice(amount) {
+  if (!amount) return "₦0";
+  return "₦" + Number(amount).toLocaleString("en-NG");
+}
+
+
+function renderCard(lodge){
+  const mainMedia = lodge.media[0];
+  const card = create('article',{className:'plx-card', 'data-id':lodge._id});
+
+  // Main media
+  const mediaBox = create('div',{className:'plx-card__media'});
+  if(mainMedia){
+    mediaBox.appendChild(makeMediaNode(mainMedia, true));
+    mediaBox.addEventListener('click', ()=> openLightbox(lodge._id,0));
+  }else{
+    mediaBox.appendChild(create('div',{style:'display:grid;place-items:center;height:100%;color:#94a3b8;font-size:13px'},["No media"]));
+  }
+
+  // Thumbs
+  const thumbs = create('div',{className:'plx-card__thumbs'});
+  lodge.media.forEach((m,i)=>{
+    const t = create('div',{className:'plx-card__thumb'+(i===0?' plx-card__thumb--active':'')});
+    const node = makeMediaNode(m,false,true);
+    t.appendChild(node);
+    t.addEventListener('click',(e)=>{
+      e.stopPropagation();
+      // swap main media
+      mediaBox.innerHTML='';
+      mediaBox.appendChild(makeMediaNode(m,true));
+      lodge.media.forEach((_,j)=>thumbs.children[j].classList.toggle('plx-card__thumb--active', j===i));
+      mediaBox.onclick = ()=> openLightbox(lodge._id,i);
+    });
+    thumbs.appendChild(t);
+  });
+
+  // Body
+  const body = create('div',{className:'plx-card__body'});
+  body.appendChild(create('h3',{className:'plx-title'},[sanitize(lodge.title)]));
+  body.appendChild(create('div',{className:'plx-meta'},[`📍 ${sanitize(lodge.location)} • ${sanitize(lodge.type)}`]));
+  body.appendChild(create('div',{className:'plx-price'},[`💰 ₦${lodge.price.toLocaleString()}`]));
+  body.appendChild(create('p',{className:'plx-desc'},[sanitize(lodge.desc || '')]));
+
+  const badges = create('div',{className:'plx-badges'});
+
+  // Status badge
+const statusWrapper = create('div',{className:'plx-status-wrapper'});
+
+const statusBadge = create('span',{
+  className:'plx-badge '+(lodge.status==='available'?'plx-badge--success':'plx-badge--warn')
+},[
+  lodge.status==='available'?'Available':'rented'
+]);
+
+// Toggle switch
+const toggle = create('label',{className:'plx-toggle'});
+const toggleInput = create('input',{type:'checkbox', checked: lodge.status==='available'});
+const toggleSpan = create('span',{className:'plx-slider'});
+
+toggle.appendChild(toggleInput);
+toggle.appendChild(toggleSpan);
+
+toggleInput.addEventListener('change', async () => {
+  const newStatus = toggleInput.checked ? 'available' : 'rented';
+  try {
+    const res = await fetch(`/api/lodges/status/${lodge._id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ status: newStatus }),
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (!res.ok) throw new Error("Failed to update status");
+
+    lodge.status = newStatus;
+    statusBadge.textContent = newStatus === 'available' ? 'Available' : 'rented';
+    statusBadge.className = 'plx-badge ' + (newStatus === 'available' ? 'plx-badge--success' : 'plx-badge--warn');
+
+    showFlash("Status updated", "success");
+
+  } catch (err) {
+    console.error(err);
+    showFlash("Error updating status", "error");
+    toggleInput.checked = !toggleInput.checked; // rollback
+  }
+});
+
+statusWrapper.append(statusBadge, toggle);
+badges.appendChild(statusWrapper);
+
+  // badges.appendChild(statusBadge);
+  body.appendChild(badges);
+
+  // Actions
+  const actions = create('div',{className:'plx-card__actions'});
+
+  const btnEdit = create('button',{className:'plx-btn plx-btn--primary plx-edit-btn ',innerText:'Edit'},[]);
+  btnEdit.addEventListener('click',()=> openEdit(lodge._id));
+  
+  const btnDelete = create('button',{className:'plx-btn plx-btn--danger plx-delete-btn',innerText:'Delete'},[]);
+
+  btnDelete.addEventListener('click', async ()=>{
+  if (confirm('Delete this lodge?')) {
+    
+    try {
+      const res = await fetch(`/post-lodge/${lodge._id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (!res.ok) throw new Error("Failed to delete");
+
+      // Remove from local state
+      window.location.reload();
+
+      showFlash("Lodge deleted successfully", "success");
+    } catch (err) {
+      console.error(err);
+      showFlash("Error deleting lodge", "error");
+    }
+  }
+});
+
+  actions.append(btnEdit, btnDelete);
+
+  // Assemble
+  card.append(mediaBox, thumbs, body, actions);
+  return card;
+}
+
+function makeMediaNode(media, big=false, thumb=false){
+  const url = media.url || media.src || media.path;
+  if(media.type==='video' || media.kind==='video'){
+    const v = create('video',{src:url, controls:false, muted:true, playsInline:true});
+    v.addEventListener('mouseenter',()=>{ try{v.play()}catch{} });
+    v.addEventListener('mouseleave',()=>{ v.pause(); v.currentTime=0; });
+    if(big){ v.className='plx-card__video'; v.setAttribute('aria-label','Video'); }
+    if(thumb){ v.setAttribute('aria-label','Video thumbnail'); }
+    return v;
+  } else {
+    return create('img',{src:url, alt:'Lodge media'});
+  }
+}
+
+
+/* ===== Modal (Post/Edit) ===== */
+const plxModal = el('#plx-modal');
+const plxFormTitle = el('#plx-form-title');
+const plxFileInput = el('#plx-file-input');
+const plxUpGrid = el('#plx-up-grid');
+
+el('#plx-open-post').addEventListener('click', ()=> {
+  lodgifyOpenWarning();
+});
+
+const lodgifyModal = document.getElementById("lodgifyWarningModal");
+function lodgifyOpenWarning() {
+      lodgifyModal.classList.add("active");
+    }
+        function lodgifyCloseWarning() {
+      lodgifyModal.classList.remove('active');
+    }
+
+    function lodgifyProceedPost() {
+      lodgifyModal.classList.remove("active");
+      // redirect or show form logic here
+      openPost()
+    }
+
+el('#plx-close-modal').addEventListener('click', closeModal);
+el('#plx-cancel').addEventListener('click', closeModal);
+el('#plx-choose-files').addEventListener('click', ()=> plxFileInput.click());
+plxFileInput.addEventListener('change', handleFiles);
+
+const plxUploader = el('#plx-uploader');
+['dragenter','dragover'].forEach(evt=>{
+  plxUploader.addEventListener(evt,(e)=>{e.preventDefault();e.stopPropagation();plxUploader.classList.add('plx-uploader--drag')});
+});
+['dragleave','drop'].forEach(evt=>{
+  plxUploader.addEventListener(evt,(e)=>{e.preventDefault();e.stopPropagation();plxUploader.classList.remove('plx-uploader--drag')});
+});
+plxUploader.addEventListener('drop', (e)=>{
+  const files = [...e.dataTransfer.files];
+  addFiles(files);
+});
+
+el('#plx-save').addEventListener('click', saveForm);
+
+
+function openPost() {
+  plxState.editingId = null;
+  plxFormTitle.textContent = 'Post New Lodge';
+  el('#plx-form').reset();
+
+  // ✅ set default status once
+  const statusInput = el('#plx-status');
+  if (statusInput) statusInput.value = 'available';
+
+  // ✅ reset phone only if input exists
+  const phoneInput = el('#plx-phone');
+  if (phoneInput) phoneInput.value = '';
+
+  plxState.uploader.files = [];
+  renderUpPreviews();
+  showModal();
+}
+
+
+
+/* Open Edit */
+function openEdit(id){
+
+  const l = plxState.lodges.find(x => x._id === id);
+  if (!l) return;
+
+  plxState.editingId = id;
+  plxFormTitle.textContent = 'Edit Lodge';
+  el('#plx-title').value = l.title || '';
+  el('#plx-location').value = l.location || '';
+  el('#plx-price').value = l.price || ''; // ✅ fix price
+  el('#plx-phone').value = l.phone || '';   // ✅ populate phone
+
+  const typeMap = {
+    "single room": "Single Room",
+    "self-contain": "Self-Contain",
+    "1-bedroom flat": "1-Bedroom Flat",
+    "2-bedroom flat": "2-Bedroom Flat",
+    "3-bedroom flat": "3-Bedroom Flat"
+  };
+  el('#plx-type').value = typeMap[l.type?.toLowerCase()] || "Single Room";
+
+  const statusMap = {
+    "available": "available",
+    "rented": "rented",
+    "rented": "rented"
+  };
+  el('#plx-status').value = statusMap[l.status?.toLowerCase()] || "available";
+
+  // Optional: sync modal toggle with select
+  const toggleInput = el('#plx-status-toggle'); 
+  if(toggleInput){
+    toggleInput.checked = l.status === 'available';
+    toggleInput.addEventListener('change', ()=>{
+      el('#plx-status').value = toggleInput.checked ? 'available' : 'rented';
+    });
+  }
+
+  el('#plx-desc').value = l.desc || '';
+
+  plxState.uploader.files = (l.media || []).map(m => ({
+  kind: m.kind || 'image',
+  src: m.url || m.src || m.path,   // ✅ use url OR src OR path
+  _existing: true
+}));
+
+  renderUpPreviews();
+
+  showModal();
+}
+
+/* Show/Hide Modal */
+function showModal() {
+  plxModal.classList.add('plx-modal--show');
+  plxModal.removeAttribute('aria-hidden');
+  document.body.querySelectorAll('main, header, footer').forEach(el => el.inert = true); 
+}
+
+function closeModal() {
+  plxModal.classList.remove('plx-modal--show');
+  plxModal.setAttribute('aria-hidden', 'true'); 
+  document.body.querySelectorAll('main, header, footer').forEach(el => el.inert = false);
+}
+
+/* Uploader logic */
+function handleFiles(e){ addFiles([...e.target.files]); e.target.value=''; }
+
+function addFiles(files){
+  for(const file of files){
+    if(plxState.uploader.files.length>=5){ alert('Maximum 5 files.'); break; }
+    const kind = file.type.startsWith('video') ? 'video' : (file.type.startsWith('image') ? 'image' : null);
+    if(!kind){ continue; }
+    const url = URL.createObjectURL(file);
+    plxState.uploader.files.push({ kind, src:url, _blob:file });
+  }
+  renderUpPreviews();
+}
+
+function renderUpPreviews(){
+  plxUpGrid.innerHTML='';
+  plxState.uploader.files.forEach((m,idx)=>{
+    const item = create('div',{className:'plx-up__item'});
+    const node = m.kind==='video' ? create('video',{src:m.src,controls:false,muted:true,playsInline:true}) : create('img',{src:m.src,alt:'preview'});
+    item.appendChild(node);
+    const del = create('button',{className:'plx-up__remove',type:'button',innerText:'Remove'});
+    del.addEventListener('click',()=>{
+      const toDel = plxState.uploader.files[idx];
+      if(toDel && toDel._blob) URL.revokeObjectURL(toDel.src);
+      plxState.uploader.files.splice(idx,1);
+      renderUpPreviews();
+    });
+    item.appendChild(del);
+    plxUpGrid.appendChild(item);
+  });
+}
+
+/* Save (Create/Update) */
+function validateForm() {
+  const title = el('#plx-title').value.trim();
+  const location = el('#plx-location').value.trim();
+  const type = el('#plx-type')?.value || '';
+  const status = el('#plx-status')?.value || '';
+  const desc = el('#plx-desc').value.trim();
+  const priceRaw = el('#plx-price').value.trim();
+  const phone = el('#plx-phone').value.trim();
+
+  let errors = [];
+
+  if (!title) errors.push("Title is required.");
+  else if (title.length > 100) errors.push("Title must be under 100 characters.");
+
+  if (!location) errors.push("Location is required.");
+  else if (location.length > 100) errors.push("Location must be under 100 characters.");
+
+  if (!phone) {
+  errors.push("Phone number is required.");
+} else if (!/^(\+?234\d{10}|0\d{10})$/.test(phone)) {
+  errors.push("Enter a valid Nigerian phone number (e.g. 08012345678 or +2348012345678).");
+}
+
+  const validTypes = [
+    "Single Room",
+    "Self-Contain",
+    "1-Bedroom Flat",
+    "2-Bedroom Flat",
+    "3-Bedroom Flat"
+  ];
+  if (!validTypes.includes(type)) errors.push("Invalid type selected.");
+
+  // ✅ Price validation
+  const price = Number(priceRaw);
+  if (!priceRaw || isNaN(price) || price <= 0) {
+    errors.push("Please enter a valid price greater than 0.");
+  }
+
+  // ✅ Status validation (normalize to consistent values)
+  const validStatus = ["available", "rented"];
+  const normalizedStatus = validStatus.includes(status) ? status : "available";
+
+  if (desc.length > 500) errors.push("Description must be under 500 characters.");
+  if (plxState.uploader.files.length === 0) errors.push("At least 1 media file is required.");
+  if (plxState.uploader.files.length > 5) errors.push("Maximum 5 media files allowed.");
+
+  return { errors, type, status: normalizedStatus, price, phone };
+}
+
+// finally
+let activeRequest = null;
+
+async function saveForm() {
+  if (activeRequest) return; // prevent double-submit
+
+  const saveBtn = el('#plx-save');
+  const btnText = saveBtn.querySelector('.btn-text');
+
+  function resetButton() {
+    saveBtn.classList.remove('saving');
+    btnText.textContent = "Save";
+    saveBtn.disabled = false;
+    activeRequest = null;
+  }
+
+  // validate first (before locking button or creating request)
+  const { errors, type, status, price, phone } = validateForm();
+  if (errors.length > 0) {
+    showFlash("Please fix the following:\n" + errors.join("\n"), "error");
+    return; // ✅ don’t touch activeRequest, user can try again
+  }
+
+  // only now we start the "saving" state
+  saveBtn.classList.add('saving');
+  btnText.textContent = "Saving...";
+  saveBtn.disabled = true;
+
+  activeRequest = (async () => {
+
+    let formData = new FormData();
+    formData.append("title", el('#plx-title').value.trim());
+    formData.append("location", el('#plx-location').value.trim());
+    formData.append("type", type);
+    formData.append("status", status);   // ✅ fixed
+    formData.append("price", price);     // ✅ fixed
+    formData.append("phone", phone);     // ✅ fixed
+    formData.append("desc", el('#plx-desc').value.trim());
+
+    // add idempotency key
+    const requestId = plxState.editingId || cryptoRandomId();
+    formData.append("requestId", requestId);
+
+    // append uploaded files
+    plxState.uploader.files.forEach((fileObj, idx) => {
+      if (fileObj._blob) {
+        formData.append(
+          "media",
+          fileObj._blob,
+          `upload_${idx}.${fileObj._blob.name.split('.').pop()}`
+        );
+      }
+    });
+
+    try {
+      const url = plxState.editingId
+        ? `/api/lodges/${plxState.editingId}`
+        : "/api/lodges";
+      const method = plxState.editingId ? "PUT" : "POST";
+
+      // const controller = new AbortController();
+      // const timeout = setTimeout(() => controller.abort(), 30000);
+
+      // const res = await fetch(url, { method, body: formData, signal: controller.signal });
+      // clearTimeout(timeout);
+
+      const res = await fetch(url, { method, body: formData });
+
+      if (!res.ok) throw new Error("Failed to save lodge");
+
+      const result = await res.json();
+      
+      showFlash(result.message || "Saved successfully!", "success");
+
+      renderGrid();
+      closeModal();
+      window.location.reload()
+    } catch (err) {
+      console.error(err);
+      if (err.name === "AbortError") {
+        showFlash("Request timed out. Please check your connection.", "error");
+      } else {
+        showFlash("Error saving lodge", "error");
+      }
+    } finally {
+      resetButton();
+    }
+  })();
+}
+
+function sanitize(str) {
+  return str.replace(/[&<>"']/g, match => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[match]));
+}
+
+
+
+/* ===== Lightbox viewer (images + videos) ===== */
+const plxLb = el('#plx-lightbox');
+const plxLbSlot = el('#plx-lb-slot');
+
+function openLightbox(lodgeId, startIndex) {
+  plxState.lightbox.lodgeId = lodgeId;
+  plxState.lightbox.index = startIndex || 0;
+  drawLightbox();
+
+  const lb = document.getElementById('plx-lightbox');
+  lb.classList.add('plx-lightbox--show');
+
+  // disable background modal for focus
+  document.querySelectorAll('.lodge-modal-container').forEach(el => el.setAttribute('inert', ''));
+}
+
+function closeLightbox() {
+  const lb = document.getElementById('plx-lightbox');
+  lb.classList.remove('plx-lightbox--show');
+  document.querySelectorAll('.lodge-modal-container').forEach(el => el.removeAttribute('inert'));
+}
+
+function trapFocus(e) {
+  const lb = document.getElementById('plx-lightbox');
+  const focusable = lb.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+
+  if (e.key === 'Tab') {
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+}
+
+document.getElementById('plx-lb-close').addEventListener('click', closeLightbox);
+document.addEventListener('keydown', trapFocus);
+
+
+function drawLightbox(){
+  const l = plxState.lodges.find(x => x._id === plxState.lightbox.lodgeId);
+  if (!l) return;
+
+  const m = l.media[plxState.lightbox.index];
+  const url = m.url || m.src || m.path;
+
+  const slot = el('#plx-lb-slot');
+  slot.innerHTML = '';
+
+  if (m.type === 'video') {
+    const v = create('video', {
+      src: url,
+      controls: true,
+      autoplay: true,
+      playsInline: true,
+      className: 'plx-lb__video'
+    });
+    slot.appendChild(v);
+  } else {
+    const i = create('img', {
+      src: url,
+      alt: 'Media',
+      className: 'plx-lb__media'
+    });
+    slot.appendChild(i);
+  }
+}
+
+function nextMedia(step){
+  const l = plxState.lodges.find(x=>x._id===plxState.lightbox.lodgeId);
+  if(!l) return;
+  const len = l.media.length;
+  plxState.lightbox.index = (plxState.lightbox.index + step + len) % len;
+  drawLightbox();
+}
+
+/* Lightbox Controls */
+el('#plx-lb-close').addEventListener('click', closeLightbox);
+el('#plx-lb-prev').addEventListener('click', ()=> nextMedia(-1));
+el('#plx-lb-next').addEventListener('click', ()=> nextMedia(1));
+el('#plx-lightbox').addEventListener('click',(e)=>{ if(e.target.id==='plx-lightbox') closeLightbox(); });
+
+/* Keyboard navigation */
+document.addEventListener('keydown', (e)=>{
+  if(!plxLb.classList.contains('plx-lightbox--show')) return;
+  if(e.key==='Escape') closeLightbox();
+  if(e.key==='ArrowRight') nextMedia(1);
+  if(e.key==='ArrowLeft') nextMedia(-1);
+});
+
+/* ===== Search ===== */
+el('#plx-search-input').addEventListener('input', renderGrid);
+
+/* Init */
+renderGrid();
+
+
+</script>
+</body>
+</html>

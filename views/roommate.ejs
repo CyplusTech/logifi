@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head")%>
+  <style>
+    :root {
+      --primary: #fbbf24;
+      --primary-dark: #f59e0b;
+      --text-dark: #111827;
+      --text-light: #ffffff;
+      --gray: #ccc;
+      --nav-height: 70px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      background-color: #f4f6f9;
+      color: var(--text-dark);
+      scroll-behavior: smooth;
+    }
+
+
+ /* .search-filter {
+  width: 100%;
+  padding: 30px 100px;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.search-bar {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  min-width: 250px;
+  max-width: 600px;
+  width: 100%;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 10px 0 0 10px;
+  outline: none;
+  font-size: 1rem;
+}
+
+.search-bar .search {
+  background-color: var(--primary-dark);
+  color: var(--text-light);
+  border: none;
+  outline: none;
+  padding: 0.75rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 0 10px 10px 0;
+}
+
+.search-bar .search:hover {
+  background-color: var(--primary);
+}
+
+.clear-btn {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #888;
+  cursor: pointer;
+  display: none;
+}
+
+.filter-btn {
+  background-color: var(--primary);
+  color: white;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.filter-btn:hover {
+  background-color: var(--primary-dark);
+}
+
+/* Filter Modal */
+.filter-modal {
+  display: none;
+  position: fixed;
+  z-index: 10000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(17, 24, 39, 0.6);
+}
+
+.filter-content {
+  background-color: white;
+  margin: 10% auto;
+  padding: 30px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  border: 1px solid green;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.filter-content h3 {
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.filter-group {
+  margin-bottom: 20px;
+}
+
+.filter-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.filter-group input,
+.filter-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.apply-btn {
+  background-color: var(--primary-dark);
+  color: white;
+  padding: 12px;
+  width: 100%;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.apply-btn:hover {
+  background-color: #d97706;
+}
+
+/* RESPONSIVE CHANGES */
+@media (max-width: 768px) {
+  .search-filter {
+    flex-direction: column;
+    padding: 20px;
+    align-items: stretch;
+  }
+
+  .search-bar {
+    flex-direction: row;
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .clear-btn {
+    right: 60px;
+  }
+
+  .filter-btn {
+    width: 100%;
+    justify-content: center;
+  }
+} */
+
+
+
+
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+     <%- include("partials/navBar")%>
+
+  <!-- Hero -->
+     <%- include("partials/banner")%>
+
+  <!-- Search & Filter -->
+  <div class="search-filter">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search by name, price, or location..." oninput="toggleClearBtn()" />
+      <button class="clear-btn clear" id="clearBtn" onclick="clearSearch()">&times;</button>
+      <button onclick="searchNow()"><i class="fas fa-search search"></i></button>
+    </div>
+    <!-- <div class="filter"> -->
+    <button class="filter-btn" onclick="toggleFilterModal()">
+      <i class="fas fa-sliders-h"></i> Filter
+    <!-- </button> -->
+    </div>
+</div>
+
+  <div class="header-section">
+    <h1>Find Your Ideal Roommate</h1>
+    <p>Find a Roommate You Can Trust — Split the Rent, Share the Space, Live Better.</p>
+  </div>
+
+  <!-- ///////warning alert//// -->
+       <div class="warning-box" id="warningBox">
+      <strong>⚠️ Important:</strong> Only pay after you're expectations are satisfied.. 
+      Always inspect before payment to avoid scam. Stay safe!
+      <button onclick="document.getElementById('warningBox').style.display='none'">×</button>
+    </div>
+
+<!-- /////Roommate listing//// -->
+    <div class="roommate-grid">
+      <div class="roommate-card lodge-card" >
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Jane" />
+        <h3>Jane Doe</h3>
+        <p>Female, ₦60k Budget, Christian</p>
+        <button class="roommate-contact-btn" onclick="openUniqueWAModal()">Contact</button>
+      </div>
+
+            <div class="roommate-card lodge-card" >
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Jane" />
+        <h3>Jane Doe</h3>
+        <p>Female, ₦60k Budget, Christian</p>
+        <button class="roommate-contact-btn" onclick="openUniqueWAModal()">Contact</button>
+      </div>
+            <div class="roommate-card lodge-card" >
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Jane" />
+        <h3>Jane Doe</h3>
+        <p>Female, ₦60k Budget, Christian</p>
+        <button class="roommate-contact-btn" onclick="openUniqueWAModal()">Contact</button>
+      </div>
+            <div class="roommate-card lodge-card" >
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Jane" />
+        <h3>Jane Doe</h3>
+        <p>Female, ₦60k Budget, Christian</p>
+        <button class="roommate-contact-btn" onclick="openUniqueWAModal()">Contact</button>
+      </div>
+            <div class="roommate-card lodge-card" >
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Jane" />
+        <h3>Jane Doe</h3>
+        <p>Female, ₦60k Budget, Christian</p>
+        <button class="roommate-contact-btn" onclick="openUniqueWAModal()">Contact</button>
+      </div>
+            <div class="roommate-card lodge-card" >
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Jane" />
+        <h3>Jane Doe</h3>
+        <p>Female, ₦60k Budget, Christian</p>
+        <button class="roommate-contact-btn" onclick="openUniqueWAModal()">Contact</button>
+      </div>
+            <div class="roommate-card lodge-card" >
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Jane" />
+        <h3>Jane Doe</h3>
+        <p>Female, ₦60k Budget, Christian</p>
+        <button class="roommate-contact-btn" onclick="openUniqueWAModal()">Contact</button>
+      </div>
+            <div class="roommate-card lodge-card" >
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Jane" />
+        <h3>Jane Doe</h3>
+        <p>Female, ₦60k Budget, Christian</p>
+        <button class="roommate-contact-btn" onclick="openUniqueWAModal()">Contact</button>
+      </div>
+            <div class="roommate-card lodge-card" >
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Jane" />
+        <h3>Jane Doe</h3>
+        <p>Female, ₦60k Budget, Christian</p>
+        <button class="roommate-contact-btn" onclick="openUniqueWAModal()">Contact</button>
+      </div>
+            <div class="roommate-card lodge-card" >
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Jane" />
+        <h3>Jane Doe</h3>
+        <p>Female, ₦60k Budget, Christian</p>
+        <button class="roommate-contact-btn" onclick="openUniqueWAModal()">Contact</button>
+      </div>
+            <div class="roommate-card lodge-card" >
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Jane" />
+        <h3>Jane Doe</h3>
+        <p>Female, ₦60k Budget, Christian</p>
+        <button class="roommate-contact-btn" onclick="openUniqueWAModal()">Contact</button>
+      </div>
+            <div class="roommate-card lodge-card" >
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Jane" />
+        <h3>Jane Doe</h3>
+        <p>Female, ₦60k Budget, Christian</p>
+        <button class="roommate-contact-btn" onclick="openUniqueWAModal()">Contact</button>
+      </div>
+            <div class="roommate-card lodge-card" >
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Jane" />
+        <h3>Jane Doe</h3>
+        <p>Female, ₦60k Budget, Christian</p>
+        <button class="roommate-contact-btn" onclick="openUniqueWAModal()">Contact</button>
+      </div>
+            <div class="roommate-card lodge-card" >
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Jane" />
+        <h3>Jane Doe</h3>
+        <p>Female, ₦60k Budget, Christian</p>
+        <button class="roommate-contact-btn" onclick="openUniqueWAModal()">Contact</button>
+      </div>
+            <div class="roommate-card lodge-card" >
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Jane" />
+        <h3>Jane Doe</h3>
+        <p>Female, ₦60k Budget, Christian</p>
+        <button class="roommate-contact-btn" onclick="openUniqueWAModal()">Contact</button>
+      </div>
+
+    </div>
+    <div class="pagination" id="pagination"></div>
+
+  </div>
+
+  <!-- Filter Modal -->
+  <div id="filterModal" class="filter-modal">
+    <div class="filter-content">
+      <span class="close-btn" onclick="toggleFilterModal()">&times;</span>
+      <h3>Filter Options</h3>
+
+      <div class="filter-group">
+        <label for="price"><i class="fas fa-money-bill-wave"></i> Max Price</label>
+        <input type="number" id="price" placeholder="₦50,000" />
+      </div>
+
+      <div class="filter-group">
+        <label for="location"><i class="fas fa-map-marker-alt"></i> Location</label>
+        <select id="location">
+          <option value="">Any</option>
+          <option>Federal Polio Code</option>
+          <option>Victoria Point</option>
+          <option>Extension Axis</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="type"><i class="fas fa-home"></i> Lodge Type</label>
+        <select id="type">
+          <option value="">All Types</option>
+          <option>Self-Contain</option>
+          <option>Single Room</option>
+          <option>Shared</option>
+        </select>
+      </div>
+
+      <button class="apply-btn">Apply Filter</button>
+    </div>
+  </div>
+
+  <!-- ✅ WhatsApp Modal -->
+<div id="uniqueWAModal" class="unique-wa-modal-overlay">
+  <div class="unique-wa-modal-content">
+    <span class="unique-wa-close-btn" onclick="closeUniqueWAModal()">×</span>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width: 60px; margin-bottom: 20px;">
+    <h2 style="margin-bottom: 10px;">Chat on WhatsApp</h2>
+    <p style="margin-bottom: 20px; color: #475569;">
+      Contact your potential roommate or lodge provider directly on WhatsApp. Make sure to verify their identity and ask all important questions.
+    </p>
+    <a href="https://wa.me/2348012345678" target="_blank" class="unique-wa-button">Chat on Whatsapp</a>
+  </div>
+</div>
+
+<!-- ////// Footer ////// -->
+    <%- include("partials/footer")%>
+
+  <script>
+
+    function toggleFilterModal() {
+      const modal = document.getElementById('filterModal');
+      modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+    }
+
+    window.onclick = function (event) {
+      const modal = document.getElementById('filterModal');
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    function toggleClearBtn() {
+      const input = document.getElementById('searchInput');
+      const clearBtn = document.getElementById('clearBtn');
+      clearBtn.style.display = input.value ? 'block' : 'none';
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('searchInput');
+      input.value = '';
+      toggleClearBtn();
+      input.focus();
+    }
+
+    function searchNow() {
+      alert("Search function triggered!");
+    }
+
+  //////pagination/////
+    const cardsPerPage = 8;
+    const cards = document.querySelectorAll('.lodge-card');
+    const pagination = document.getElementById('pagination');
+    let currentPage = 1;
+    const totalPages = Math.ceil(cards.length / cardsPerPage);
+
+    function showPage(page) {
+      cards.forEach((card, index) => {
+        card.style.display = (index >= (page - 1) * cardsPerPage && index < page * cardsPerPage) ? 'block' : 'none';
+      });
+    }
+
+    function updatePagination() {
+      pagination.innerHTML = '';
+
+      const prevBtn = document.createElement('button');
+      prevBtn.textContent = 'Prev';
+      prevBtn.disabled = currentPage === 1;
+      prevBtn.onclick = () => {
+        if (currentPage > 1) {
+          currentPage--;
+          showPage(currentPage);
+          updatePagination();
+        }
+      };
+      pagination.appendChild(prevBtn);
+
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i;
+        if (i === currentPage) btn.classList.add('active');
+        btn.onclick = () => {
+          currentPage = i;
+          showPage(currentPage);
+          updatePagination();
+        };
+        pagination.appendChild(btn);
+      }
+
+      const nextBtn = document.createElement('button');
+      nextBtn.textContent = 'Next';
+      nextBtn.disabled = currentPage === totalPages;
+      nextBtn.onclick = () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          showPage(currentPage);
+          updatePagination();
+        }
+      };
+      pagination.appendChild(nextBtn);
+    }
+
+    showPage(currentPage);
+    updatePagination();
+
+
+    ////chat model script///
+function openUniqueWAModal() {
+    const modal = document.getElementById('uniqueWAModal');
+    modal.style.display = 'flex';
+    modal.style.animation = 'uniqueFadeIn 0.5s ease forwards';
+  }
+
+  function closeUniqueWAModal() {
+    const modal = document.getElementById('uniqueWAModal');
+    modal.style.animation = 'uniqueFadeOut 0.4s ease forwards';
+    setTimeout(() => {
+      modal.style.display = 'none';
+    }, 400);
+  }
+  </script>
+</body>
+</html>

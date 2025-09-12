@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("../partials/head")%>
+ <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+ .post-hero {
+  background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c');
+  background-size: cover;
+  background-position: center;
+  height: 20vh;
+  position: relative;
+}
+
+.post-hero-overlay {
+  background-color: rgba(17, 24, 39, 0.5);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  padding: 20px 20px 20px 80px;
+}
+
+.post-hero-text {
+  color: var(--text-light);
+}
+
+.post-hero-text h1 {
+  font-size: 36px;
+  margin: 0;
+  font-weight: 700;
+}
+
+.post-hero-text span {
+  color: #b1b5b6;
+}
+
+.post-hero-text p {
+  font-size: 14px;
+  margin-top: 5px;
+  color: var(--primary);
+}
+
+@media screen and (max-width: 768px) {
+  .post-hero {
+    height: 180px;
+  }
+
+  .post-hero-text h1 {
+    font-size: 24px;
+  }
+
+  .post-hero-text p {
+    font-size: 12px;
+  }
+}
+
+
+    .lgfy-register-container {
+      background: #f4f6f8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .lgfy-register-wrapper {
+      display: flex;
+      background: #fff;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      border-radius: 14px;
+      overflow: hidden;
+      max-width: 1000px;
+      width: 100%;
+    }
+
+    .lgfy-register-img {
+      flex: 1;
+      background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c') no-repeat center center/cover;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      color: white;
+      text-align: center;
+    }
+
+    .lgfy-register-img::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .lgfy-img-text {
+      position: relative;
+      z-index: 1;
+    }
+
+    .lgfy-img-text h2 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .lgfy-img-text p {
+      font-size: 1rem;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+    .lgfy-register-form {
+      flex: 1;
+      padding: 50px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .lgfy-register-form h2 {
+      font-size: 1.8rem;
+      margin-bottom: 25px;
+      color: #2c3e50;
+    }
+
+    .lgfy-form-group {
+      margin-bottom: 18px;
+    }
+
+    .lgfy-form-group label {
+      font-size: 0.95rem;
+      color: #333;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .lgfy-form-group input,
+    .lgfy-form-group select {
+      width: 100%;
+      padding: 13px 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.3s ease;
+    }
+
+    .lgfy-form-group input:focus,
+    .lgfy-form-group select:focus {
+      border-color: #0077ff;
+      box-shadow: 0 0 0 2px rgba(0, 119, 255, 0.2);
+    }
+
+    .lgfy-email-otp {
+      display: flex;
+      gap: 10px;
+    }
+
+    .lgfy-email-otp input[type="email"] {
+      flex: 1;
+    }
+
+    .lgfy-email-otp button {
+      padding: 13px 15px;
+      background-color: #FBBF24;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .lgfy-email-otp button:hover {
+      background-color: #da9e09;
+    }
+
+    #lgfy-submit-btn {
+      width: 100%;
+      padding: 14px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 10px;
+    }
+
+    #lgfy-submit-btn:disabled {
+      background-color: #6c757d;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 768px) {
+      .lgfy-register-wrapper {
+        flex-direction: column;
+      }
+
+      .lgfy-register-img {
+        height: 200px;
+        padding: 20px;
+      }
+
+      .lgfy-img-text h2 {
+        font-size: 1.5rem;
+      }
+
+      .lgfy-register-form {
+        padding: 30px 20px;
+      }
+
+      .lgfy-email-otp {
+        flex-direction: column;
+      }
+    }
+  .lodge-warning-box {
+  background: #fff3cd;
+  border: 1px solid #ffeeba;
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 8px;
+  color: #856404;
+  font-size: 14px;
+}
+.lodge-warning-box h3 {
+  margin-top: 0;
+  color: #d39e00;
+}
+.lodge-warning-box ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+.lodge-warning-box ul li {
+  margin-bottom: 8px;
+}
+.lodge-warning-box a {
+  color: #d39e00;
+  font-weight: bold;
+}
+
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+     <%- include("../partials/navBar")%>
+
+<section class="post-hero">
+  <div class="post-hero-overlay">
+    <div class="post-hero-text">
+    </div>
+  </div>
+</section>
+
+
+<!-- ////verify//// -->
+<section class="lgfy-register-container">
+    <div class="lgfy-register-wrapper">
+    <div class="lgfy-register-img">
+        <div class="lgfy-img-text">
+        <h2>Logifi Verification</h2>
+        <p>Verify your identity before accessing the lodge posting form.</p>
+        <div class="lodge-warning-box">
+      <h3>⚠️ Posting Guidelines</h3>
+      <ul>
+        <li>Only upload <strong>real images/videos</strong> of your property.</li>
+        <li>Ensure your <strong>contact details are correct</strong>.</li>
+        <li>No duplicate listings — one property should only be posted once.</li>
+        <li>Fake or misleading content may lead to <strong>removal or suspension</strong>.</li>
+        <li>Upload high-quality images (max 5 files, JPG/PNG/MP4).</li>
+        <li>No illegal, offensive, or irrelevant content.</li>
+      </ul>
+      <p>✅ By posting, you agree to our <a href="#">Terms & Conditions</a>.</p>
+    </div>
+      </div>
+
+
+    </div>
+    <div class="lgfy-register-form">
+        <h2>Verify to Continue</h2>
+<form id="lgfy-verify-form" onsubmit="lgfyHandleSubmit(event)">
+        <div class="lgfy-form-group">
+            <label>Full Name</label>
+            <input type="text" id="lgfy-fullname" required placeholder="e.g. John Doe">
+        </div>
+
+        <div class="lgfy-form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="lgfy-phone" required placeholder="e.g. +2348012345678">
+        </div>
+
+        <div class="lgfy-form-group">
+            <label>Email Address</label>
+            <div class="lgfy-email-otp">
+            <input type="email" id="lgfy-email" required placeholder="you@example.com">
+              <button type="button" id="lgfy-send-btn" onclick="lgfySendOTP()">Send OTP</button>
+            </div>
+        </div>
+
+        <div class="lgfy-form-group">
+            <label>Enter OTP</label>
+            <input type="number" id="lgfy-otp" placeholder="Enter the OTP sent to your email">
+        </div>
+
+        <button type="submit" id="lgfy-submit-btn">Proceed to Post</button>
+        </form>
+    </div>
+    </div>
+</section>
+
+
+<!-- Header -->
+<section class="plx-header" style="display: none;" aria-label="Top bar">
+  <div class="plx-header__row">
+    <div class="plx-brand">🏠Lodge Management</div>
+    <div class="plx-search" role="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="plx-search-input" type="search" placeholder="Search your lodges by title or location…" aria-label="Search lodges" />
+    </div>
+    <button id="plx-open-post" class="plx-btn plx-btn--accent">+ Post New Lodge</button>
+  </div>
+</section>
+
+<div id="toast"></div>
+
+<!-- ////// Footer ////// -->
+    <!-- <%- include("../partials/footer")%> -->
+
+<script>
+
+async function lgfySendOTP() {
+  const name = document.getElementById("lgfy-fullname").value.trim();
+  const email = document.getElementById("lgfy-email").value.trim();
+  const phone = document.getElementById("lgfy-phone").value.trim();
+
+   if (!validateForm()) return;
+
+  try {
+    // Send OTP
+    const res = await fetch("/chat/otp/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, phone }),
+      credentials: "same-origin"
+    });
+
+    const data = await res.json(); // now always JSON
+    if (!res.ok) throw new Error(data.message || "Failed to send OTP");
+
+    startCountdown();
+    showToast("OTP sent to your email!");
+  } catch (err) {
+    showToast(err.message);
+  }
+}
+
+
+  function startCountdown() {
+    const btn = document.getElementById("lgfy-send-btn");
+    let seconds = 30;
+    btn.disabled = true;
+    btn.textContent = `Resend OTP ${seconds}s`;
+    btn.style.backgroundColor = "#ccc";
+
+    const timer = setInterval(() => {
+      seconds--;
+      btn.textContent = `Resend OTP ${seconds}s`;
+      if (seconds <= 0) {
+        clearInterval(timer);
+        btn.disabled = false;
+        btn.textContent = "Resend OTP";
+        btn.style.backgroundColor = "";
+      }
+    }, 1000);
+  }
+
+// OTP Submit Handler
+async function lgfyHandleSubmit(event) {
+  event.preventDefault();
+
+  const email = document.getElementById("lgfy-email").value.trim();
+  const otp = document.getElementById("lgfy-otp").value.trim();
+  const submitBtn = document.getElementById("lgfy-submit-btn");
+
+  if (!otp) return showToast("Please enter OTP");
+
+  try {
+    // 1️⃣ Verify OTP
+    const res = await fetch("/chat/otp/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, otp }),
+      credentials: "same-origin"
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.message);
+
+    // 2️⃣ Open WhatsApp in NEW tab (from session cache)
+    const cacheRes = await fetch("/lodges/get-wa-link");
+    const cacheData = await cacheRes.json();
+    if (cacheData.success && cacheData.waLink) {
+      window.open(cacheData.waLink, "_blank"); // ✅ New tab
+    }
+
+    // 3️⃣ Redirect main tab to /lodges
+    window.location.href = "/lodges";
+
+    // 4️⃣ Lock inputs to prevent re-submission
+    document.getElementById("lgfy-fullname").readOnly = true;
+    document.getElementById("lgfy-email").readOnly = true;
+    document.getElementById("lgfy-otp").disabled = true;
+    submitBtn.removeAttribute("disabled");
+    submitBtn.textContent = "Proceed ✅";
+
+  } catch (err) {
+    console.error("OTP error:", err);
+    alert(err.message || "Something went wrong during verification");
+  }
+}
+//////toast massage////
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.className = "show";
+      setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+      }, 5000); // hide after 3s
+    }
+
+    function highlightError(inputId, message) {
+      const field = document.getElementById(inputId);
+
+      // show toast
+      showToast(message);
+
+      // focus on the field
+      field.focus();
+
+      // highlight with red + shake
+      field.classList.add("error-input");
+
+      // remove highlight after 1s
+      setTimeout(() => {
+        field.classList.remove("error-input");
+      }, 1000);
+    }
+
+    function validateForm() {
+       const name = document.getElementById("lgfy-fullname").value.trim();
+      const email = document.getElementById("lgfy-email").value.trim();
+      const phone = document.getElementById("lgfy-phone").value.trim();
+
+      // Name check
+      if (!name) {
+        highlightError("name", "⚠️ Please enter your Full Name.");
+        return false;
+      }
+      
+       // Phone check
+      if (!phone) {
+        highlightError("phone", "⚠️ Please enter your Phone number.");
+        return false;
+      }
+      const phonePattern = /^[0-9]{11}$/; // 11 digits (Nigeria)
+      if (!phonePattern.test(phone)) {
+        highlightError("phone", "⚠️ Phone must be 11 digits (e.g., 08012345678).");
+        return false;
+      }
+
+      // Email check
+      if (!email) {
+        highlightError("email", "⚠️ Please enter your Email.");
+        return false;
+      }
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        highlightError("email", "⚠️ Please enter a valid Email address.");
+        return false;
+      }
+
+      return true;
+    }
+
+</script>
+</body>
+</html>

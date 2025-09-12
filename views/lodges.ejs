@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head")%>
+<style>
+
+  :root{
+    --plx-primary:#2563eb;
+    --primary: #fbbf24;
+    --plx-primary-dark:#1e40af;
+    --plx-bg:#f6f7fb;
+    --plx-card:#ffffff;
+    --plx-text:#1f2937;
+    --plx-muted:#6b7280;
+    --plx-danger:#e11d48;
+    --plx-warning:#f59e0b;
+    --plx-success:#16a34a;
+    --plx-shadow:0 10px 25px rgba(2,6,23,0.08);
+    --plx-radius:14px;
+  }
+
+  /* Base */
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--plx-bg);color:var(--plx-text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+
+
+    /* search */
+  .plx-header{
+    position:sticky;
+    top:500px;
+    z-index:5;
+    color:#fff;
+    padding:18px 16px;
+    box-shadow:var(--plx-shadow);
+  }
+  .plx-header__row{
+    max-width:1200px;
+    margin:0 auto;
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap; 
+  }
+  .plx-brand{font-weight:800;letter-spacing:.2px;}
+  .plx-search{
+    display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.68);
+    padding:8px 12px;border-radius:999px;backdrop-filter:blur(6px);width:min(520px,100%)
+  }
+  .plx-search input{
+    flex:1;border:none;outline:none;background:transparent;color:#fff;font-size:14px
+  }
+  .plx-btn{
+    border:none;border-radius:999px;padding:10px 14px;font-weight:600;cursor:pointer;
+    background:#fff;color:var(--plx-primary);box-shadow:var(--plx-shadow);transition:.2s transform,.2s box-shadow
+  }
+  .plx-btn:hover{transform:translateY(-1px)}
+  .plx-btn--primary{background:var(--plx-text);color:#fff}
+  .plx-btn--accent{background:#fff;color:var(--plx-primary)}
+  .plx-btn--danger{background:var(--plx-danger);color:#fff;border-radius:10px}
+  .plx-btn--muted{background:#e5e7eb;color:#111827;border-radius:10px}
+
+  @media (max-width: 768px) {
+
+  }
+
+  /* /////lodges /// */
+    /* Container & grid */
+  .plx-container{
+    max-width:1200px;
+    /* margin:22px auto; */
+    padding:0 16px; 
+     margin: 40px auto; 
+  }
+  
+  .plx-grid{
+    display:grid;gap:30px;
+    grid-template-columns:repeat(auto-fit,minmax(350px,1fr));
+     margin-bottom: 80px; 
+  }
+  
+  /* Card */
+.plx-card {
+  background: var(--plx-card);
+  border-radius: var(--plx-radius);
+  overflow: hidden;
+  box-shadow: var(--plx-shadow);
+  display: flex;
+  flex-direction: column;
+  height: 100%;              /* ✅ Make all cards same height */
+}
+
+.plx-card__body {
+  flex: 1;                   /* ✅ Body grows to take leftover space */
+  padding: 14px 14px 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+.plx-card__actions {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: auto;           /* ✅ Pushes actions to bottom */
+}
+
+
+/* Lodge media (image/video) wrapper */
+.plx-card__media {
+  position: relative;
+  height: 180px;
+  background: #f1f5f9;
+  overflow: hidden;
+  border-radius: 12px;
+  margin: 8px;               /* small margin inside card to see shadow */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* subtle shadow */
+}
+
+/* Media content inside the wrapper */
+.plx-card__media img,
+.plx-card__media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 12px;      /* match wrapper rounding */
+}
+
+  .plx-card__thumbs{
+    display:flex;gap:6px;padding:10px;border-top:1px solid #f1f5f9;overflow:auto
+  }
+  .plx-card__thumb{
+    width:56px;
+    height:56px;
+    border-radius:8px;
+    overflow:hidden;
+    flex:0 0 auto;
+    border:2px solid transparent;
+    cursor:pointer;
+  }
+  .plx-card__thumb img,.plx-card__thumb video{width:100%;height:100%;object-fit:cover;display:block}
+  .plx-card__thumb--active{border-color: #fac02d}
+  .plx-card__body{padding:14px 14px 6px}
+  .plx-title{font-size:16px;font-weight:800;margin:0 0 4px}
+  .plx-meta{font-size:13px;color:var(--plx-muted);margin-bottom:8px}
+  .plx-price {
+  font-weight: bold;
+  color: #2563eb; /* blue */
+  margin: 4px 0;
+  display: block;
+  }
+
+  .plx-desc{
+    font-size:13px;color:#374151;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  /* .plx-badges{display:flex;align-items:center;gap:8px;margin-top:10px}; */
+
+/* Badge container inside image */
+.plx-badges {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+
+.plx-badge {
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  background: #eef2ff;
+  color: #3730a3;
+  box-shadow: var(--plx-shadow);
+}
+
+.plx-badge--success { background: #166534; color: #fff; }
+.plx-badge--warn { background: #92400e; color: #fff; }
+
+  .plx-card__actions{
+    display:flex;gap:8px;padding:12px;justify-content:space-between;flex-wrap:wrap 
+  }
+  .plx-card__actions .plx-btn{border-radius:10px;padding:8px 10px;font-size:13px}
+
+  /* Modal (Post/Edit) */
+  .plx-modal{
+    position:fixed;
+    inset:0;
+    display:none;
+    place-items:center;
+    background:rgba(2,6,23,.55);
+    z-index:50;
+  }
+  .plx-modal--show{display:grid}
+  .plx-modal__panel{
+    width:min(760px,92vw);max-height:88vh;overflow:auto;background:#fff;border-radius:16px;
+    box-shadow:var(--plx-shadow);animation:plx-pop .18s ease-out
+  }
+  @keyframes plx-pop{from{transform:translateY(6px);opacity:.6}to{transform:translateY(0);opacity:1}}
+  .plx-form{padding:18px}
+  .plx-form__row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .plx-form label{font-size:13px;font-weight:700;color:#111827;margin-bottom:6px;display:block}
+  .plx-input,.plx-textarea,.plx-select{
+    width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px;font-size:14px;
+    outline:none
+  }
+  .plx-textarea{min-height:100px;resize:vertical}
+  .plx-form__actions{display:flex;gap:10px;justify-content:flex-end;margin-top:10px}
+
+  /* Uploader */
+  .plx-uploader{
+    margin-top:10px;border:2px dashed #cbd5e1;border-radius:14px;padding:14px;background:#f8fafc
+  }
+  .plx-uploader--drag{background:#eef2ff;border-color:#93c5fd}
+  .plx-up__bar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+  .plx-up__hint{font-size:12px;color:var(--plx-muted)}
+  .plx-up__btn{border-radius:10px;padding:8px 12px}
+  .plx-up__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+  .plx-up__item{position:relative;border-radius:10px;overflow:hidden;background:#fff;box-shadow:var(--plx-shadow)}
+  .plx-up__item img,.plx-up__item video{width:100%;height:110px;object-fit:cover;display:block}
+  .plx-up__remove{
+    position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:8px;padding:4px 8px;cursor:pointer
+  }
+
+    /* Lightbox */
+  .plx-lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;z-index:6000}
+  .plx-lightbox--show{display:flex}
+  .plx-lb__stage{margin:auto;max-width:min(92vw,1100px);max-height:86vh;display:flex;align-items:center;justify-content:center;position:relative}
+  .plx-lb__media{max-width:100%;max-height:86vh;border-radius:12px;box-shadow:var(--plx-shadow)}
+  .plx-lb__video{max-width:100%;max-height:86vh;border-radius:12px;background:#000}
+  .plx-lb__close{
+    position:fixed;top:18px;right:18px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+    color:#fff;border-radius:999px;padding:10px 12px;cursor:pointer
+  }
+  .plx-lb__arrow{
+    position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:999px;padding:12px 14px;cursor:pointer;opacity:0;transition:.2s;
+    user-select:none
+  }
+  .plx-lb__arrow--left{left:-12px}
+  .plx-lb__arrow--right{right:-12px}
+  .plx-lightbox:hover .plx-lb__arrow{opacity:1} /* arrows visible on hover per your preference */
+
+  /* Helpers */
+  .plx-visually-hidden{position:absolute!important;width:1px;height:1px;margin:-1px;border:0;padding:0;clip:rect(0 0 0 0);overflow:hidden}
+
+  .banner-house-icon{
+    font-size: 40px;
+  }
+
+
+       /* /////pagination//// */
+  .pagination {
+      margin: 30px;
+      text-align: center;
+    }
+    .pagination button {
+      padding: 10px 15px;
+      margin: 0 5px;
+      border: none;
+      border-radius: 5px;
+      /* background-color: #25d366; */
+      background-color: var(--primary);
+      color: white;
+      cursor: pointer;
+    }
+    .pagination button.active {
+      /* background-color: #1f8646; */
+      background-color: var(--primary-dark);
+    }
+    .pagination button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+</style>
+
+</head>
+<body>
+
+  <!-- Navbar -->
+     <%- include("partials/navBar")%>
+
+  <!-- Hero -->
+     <%- include("partials/banner")%>
+
+<!-- ///warning alert///// -->
+<div style="background-color: #f8d7da; color: #856404; border: 1px solid #ffeeba; padding: 16px; border-radius: 8px; margin: 20px auto; font-size: 15px; max-width: 95%; box-sizing: border-box; text-align: left;">
+  ⚠️ <strong>Important:</strong> Please do <strong>not make any payment</strong> until you have physically inspected the lodge and you're fully satisfied with the location, condition, and agreement.
+  <br><br>
+  Logifi will never ask you to pay on behalf of a lodge owner. Be vigilant and avoid scammers.
+</div>
+
+<main class="plx-container">
+
+  <!-- Available Lodges -->
+  <div class="header-section">
+    <h1>Available Lodges</h1>
+    <p>Explore lodges that are currently available for booking.</p>
+  </div>
+
+<div id="plx-empty" style="display:none;text-align:center; padding:16px;color:var(--plx-muted)">
+  No lodges match your search. Try another keyword.
+</div>
+
+  <section class="plx-grid" aria-label="Available Lodge cards">
+    <!-- Cards for available lodges will be injected here -->
+  </section>
+<div class="pagination" id="pagination-available"></div>
+
+  <!-- Rented / Not Available Lodges -->
+  <div class="header-section">
+    <h1>Rented Lodges</h1>
+    <p>These lodges are currently occupied. Check available listings to plan your next stay.</p>
+  </div>
+  <section class="plx-grid" aria-label="Rented Lodge cards">
+    <!-- Cards for rented/not available lodges will be injected here -->
+  </section>
+
+</main>
+<div class="pagination" id="pagination-rented"></div>
+
+<!-- Lightbox -->
+<div id="plx-lightbox" class="plx-lightbox" role="dialog" aria-modal="true">
+  <button id="plx-lb-close" class="plx-lb__close" aria-label="Close viewer">✕</button>
+  <div class="plx-lb__stage">
+    <button id="plx-lb-prev" class="plx-lb__arrow plx-lb__arrow--left" aria-label="Previous">‹</button>
+    <div id="plx-lb-slot"></div>
+    <button id="plx-lb-next" class="plx-lb__arrow plx-lb__arrow--right" aria-label="Next">›</button>
+  </div>
+</div>
+
+  <!-- Lodge View Modal from lodge page -->
+<% if (lodges && lodges.length > 0) { %>
+  <% lodges.forEach(function(lodge) { %>
+    <div id="lodgeModal-<%= lodge._id %>" class="lodge-modal-overlay">
+      <div class="lodge-modal-container">
+        <span class="lodge-close-btn" onclick="closeLodgeModal('<%= lodge._id %>')">&times;</span>
+
+        <div class="lodge-modal-content">
+          <div class="lodge-img-gallery">
+
+
+<!-- Main Preview -->
+<% if (lodge.media && lodge.media.length > 0) { %>
+  <% if (lodge.media[0].type === "video") { %>
+    <video id="mainLodgeVideo-<%= lodge._id %>" 
+           class="lodge-main-video" 
+           controls 
+           onclick="openLightbox('<%= lodge._id %>', 0)">
+      <source src="<%= lodge.media[0].url %>" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  <% } else { %>
+    <img id="mainLodgeImg-<%= lodge._id %>" 
+         src="<%= lodge.media[0].url || lodge.media[0].src || lodge.media[0].path %>" 
+         alt="Lodge Preview" 
+         class="lodge-main-img" 
+         onclick="openLightbox('<%= lodge._id %>', 0)"/>
+  <% } %>
+<% } else { %>
+  <img id="mainLodgeImg-<%= lodge._id %>" 
+       src="/images/about_image.webp" 
+       alt="Fallback Preview" 
+       class="lodge-main-img"/>
+<% } %>
+
+
+<!-- Thumbnails -->
+<div class="lodge-thumbnails">
+  <% if (lodge.media && lodge.media.length > 0) { %>
+    <% lodge.media.forEach(function(m){ %>
+      <% if (m.type === "video") { %>
+        <video class="lodge-thumb" onclick="updateMainImg('<%= lodge._id %>', this)">
+          <source src="<%= m.url %>" type="video/mp4">
+        </video>
+      <% } else { %>
+        <img src="<%= m.url || m.src || m.path %>" 
+             alt="Thumb" 
+             class="lodge-thumb" 
+             onclick="updateMainImg('<%= lodge._id %>', this)">
+      <% } %>
+    <% }) %>
+  <% } %>
+</div>
+
+    </div>
+          <div class="lodge-details-section">
+            <div class="plx-agent-box">
+                <span class="plx-agent-name"><%= lodge.agent?.name %></span>
+  
+                <% if (lodge.agent && lodge.agent.kycCompleted) { %>
+                  <span class="shield-verified" title="Verified agent">
+                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <path fill="#0b8a55" d="M12 1 3 4v6c0 5 3.7 9.7 9 11 5.3-1.3 9-6 9-11V4l-9-3z"/>
+                      <path fill="#fff" d="M10 13.5l-1.6-1.6 1-1 1.6 1.6L15.6 8l1 1-6.6 4.5z"/>
+                    </svg>
+                  </span>
+                <% } %>
+              </div>
+            <h2 class="lodge-title" id="modalTitle-<%= lodge._id %>"><%= lodge.title %></h2>
+            <div class="location" id="modalLocation-<%= lodge._id %>">
+              <i class="fas fa-map-marker-alt"></i> <%= lodge.location %>
+            </div>
+            <p class="lodge-price">
+              💰₦<span id="modalPrice-<%= lodge._id %>"><%= lodge.price %></span> | 
+              <span id="modalRoomType-<%= lodge._id %>"><%= lodge.roomType %></span>
+            </p>
+            <!-- ✅ Status -->
+          <p class="model-lodge-status">
+            <span class="<%= lodge.status === 'available' ? 'status-available' : 'status-unavailable' %>">
+              <%= lodge.status === 'available' ? 'Available' : 'Rented' %>
+            </span>
+          </p>
+          
+            <p class="lodge-description" id="modalDescription-<%= lodge._id %>"><%= lodge.description %></p>
+
+             <!-- <div class="lodge-actions"> -->
+            <div class="warning-box">
+              <strong>⚠️ Important:</strong> Don’t pay until you’ve seen the place and met your roommate. Stay safe!
+            </div>
+
+            <!-- <div class="lodge-review-summary">
+              <div class="avg-rating-stars">★★★★<span style="color: #ccc;">★</span></div>
+              <div class="total-review-count">(12 reviews)</div>
+            </div> -->
+
+            <div class="lodge-review-summary">
+              <div class="avg-rating-stars">
+                <% for(let i = 1; i <= 5; i++) { %>
+                  <span style="color: <%= i <= lodge.avgRating ? '#FFD700' : '#ccc' %>">★</span>
+                <% } %>
+              </div>
+              <div class="total-review-count">(<%= lodge.reviewCount %> reviews)</div>
+            </div>
+
+
+            <button onclick="openReviewModal('<%= lodge.postedBy %>')" class="btn-write-review">Write a Review</button>
+
+            <!-- WhatsApp Contact Button -->
+           <button class="contact-whatsapp-btn"
+          onclick="trackClick('contact_via_whatsapp', '<%= lodge._id %>',); openUniqueWAModal('<%= lodge._id %>', '<%= lodge.phone %>');">
+          Contact via WhatsApp
+        </button>
+
+          <!-- </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  <% }) %>
+<% } else { %>
+  <p style="padding-left: 30px;">No lodges available</p>
+<% } %>
+
+
+
+<!-- Lodge View Modal from home page -->
+<% if (selectedLodge) { %>
+<div id="selected-lodgeModal" class="lodge-modal-overlay" style="display:flex;">
+  <div class="lodge-modal-container">
+    <span class="lodge-close-btn" onclick="closeLodgeModal()">&times;</span>
+
+    <div class="lodge-modal-content">
+
+
+      <div class="lodge-img-gallery">
+  
+<!-- Main Preview -->
+<% if (selectedLodge.media && selectedLodge.media.length > 0) { %>
+  <% if (selectedLodge.media[0].type === "video") { %>
+    <video id="mainLodgeVideo-<%= selectedLodge._id %>" 
+           class="lodge-main-video" 
+           controls 
+           onclick="openLightbox('<%= lodge._id %>', 0)">
+      <source src="<%= selectedLodge.media[0].url %>" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  <% } else { %>
+    <img id="mainLodgeImg-<%= selectedLodge._id %>" 
+         src="<%= selectedLodge.media[0].url || selectedLodge.media[0].src || selectedLodge.media[0].path %>" 
+         alt="Lodge Preview" 
+         class="lodge-main-img" 
+         onclick="openLightbox('<%= selectedLodge._id %>', 0)"/>
+  <% } %>
+<% } else { %>
+  <img id="mainLodgeImg-<%= selectedLodge._id %>" 
+       src="/images/about_image.webp" 
+       alt="Fallback Preview" 
+       class="lodge-main-img"/>
+<% } %>
+
+
+<!-- Thumbnails -->
+<div class="lodge-thumbnails">
+  <% if (selectedLodge.media && selectedLodge.media.length > 0) { %>
+    <% selectedLodge.media.forEach(function(m){ %>
+      <% if (m.type === "video") { %>
+        <video class="lodge-thumb" onclick="updateHomeImg('<%= selectedLodge._id %>', this)">
+          <source src="<%= m.url %>" type="video/mp4">
+        </video>
+      <% } else { %>
+        <img src="<%= m.url || m.src || m.path %>" 
+             alt="Thumb" 
+             class="lodge-thumb" 
+             onclick="updateHomeImg('<%= selectedLodge._id %>', this)">
+      <% } %>
+    <% }) %>
+  <% } %>
+</div>
+
+      </div>
+
+
+      <div class="lodge-details-section">
+      <div class="plx-agent-box">
+        <span class="plx-agent-name"><%= selectedLodge.agent?.name %></span>
+
+            <% if (selectedLodge.agent && selectedLodge.agent.kycCompleted) { %>
+            <span class="shield-verified" title="Verified agent">
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#0b8a55" d="M12 1 3 4v6c0 5 3.7 9.7 9 11 5.3-1.3 9-6 9-11V4l-9-3z"/>
+            <path fill="#fff" d="M10 13.5l-1.6-1.6 1-1 1.6 1.6L15.6 8l1 1-6.6 4.5z"/>
+            </svg>
+      </span>
+      <% } %>
+      </div>
+        <h2 id="selectedModalTitle"><%= selectedLodge.title %></h2>
+        <div class="location" id="selectedModalLocation">
+          <i class="fas fa-map-marker-alt"></i> <%= selectedLodge.location %>
+        </div>
+          <p class="lodge-price">
+           💰 ₦<span id="selectedModalPrice"> <%= Number(selectedLodge.price).toLocaleString() %></span> | 
+            <span id="selectedModalRoomType"><%= selectedLodge.roomType || selectedLodge.type %></span>
+          </p>
+
+          <!-- ✅ Status -->
+          <p class="model-lodge-status">
+            <span class="<%= selectedLodge.status === 'available' ? 'status-available' : 'status-unavailable' %>">
+              <%= selectedLodge.status === 'available' ? 'Available' : 'Rented' %>
+            </span>
+          </p>
+          
+          <p id="selectedModalDescription"><%= selectedLodge.description || selectedLodge.desc %></p>
+
+        <div class="warning-box">
+          <strong>⚠️ Important:</strong> Don’t pay until you’ve seen the place and met your roommate. Stay safe!
+        </div>
+      
+             <!-- <div class="lodge-review-summary">
+              <div class="avg-rating-stars">★★★★<span style="color: #ccc;">★</span></div>
+              <div class="total-review-count">(12 reviews)</div>
+            </div> -->
+
+         <div class="lodge-review-summary">
+            <div class="avg-rating-stars">
+              <% for(let i = 1; i <= 5; i++) { %>
+                <span style="color: <%= i <= selectedLodge.avgRating ? '#FFD700' : '#ccc' %>">★</span>
+              <% } %>
+            </div>
+            <div class="total-review-count">(<%= selectedLodge.reviewCount %> reviews)</div>
+          </div>
+
+            <button onclick="openReviewModal('<%= selectedLodge.postedBy %>')" class="btn-write-review">Write a Review</button>
+
+            <button class="contact-whatsapp-btn" 
+            onclick="trackClick('contact_via_whatsapp', '<%= selectedLodge._id %>',); openUniqueWAModal('<%= selectedLodge._id %>', '<%= selectedLodge.phone %>');">
+            Contact via WhatsApp
+          </button>
+
+      </div>
+    </div>
+  </div>
+</div>
+<% } %>
+ 
+<!-- Review Modal -->
+<div id="smartReviewModal">
+  <div class="smartReviewContent">
+    <button class="smartReviewClose" onclick="closeSmartReviewModal()">×</button>
+    <h2>Rate Your Chat Experience</h2>
+    
+    <!-- Star rating -->
+    <div id="smartStarRating" class="smartStarRating">
+      <span data-value="1">★</span>
+      <span data-value="2">★</span>
+      <span data-value="3">★</span>
+      <span data-value="4">★</span>
+      <span data-value="5">★</span>
+    </div>
+
+    <!-- Fake textarea -->
+    <div id="fakeTextareaContainer">
+      <div class="placeholder">Select your review...</div>
+    </div>
+
+    <!-- Suggestions -->
+    <div id="smartSuggestions"></div>
+
+    <!-- Sentiment -->
+    <div id="smartSentimentIndicator">Sentiment: Neutral</div>
+
+    <!-- Submit -->
+    <button id="smartReviewSubmit">Submit Review</button>
+  </div>
+</div>
+
+
+  <!-- ✅ WhatsApp Modal -->
+<!-- ✅ WhatsApp Modal -->
+<div id="uniqueWAModal" class="unique-wa-modal-overlay">
+  <div class="unique-wa-modal-content">
+    <span class="unique-wa-close-btn" onclick="closeUniqueWAModal()">×</span>
+
+    <!-- WhatsApp Icon -->
+    <div class="unique-wa-icon">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+    </div>
+
+    <!-- Title -->
+    <h2>Chat on WhatsApp</h2>
+
+    <!-- Friendly Intro Text -->
+    <p class="unique-wa-text">
+      Connect directly with the lodge provider on WhatsApp.  
+      Take your time to ask questions and <strong>verify all details</strong> before making any decisions.
+    </p>
+
+    <!-- ⚠️ Disclaimer -->
+    <div class="unique-wa-disclaimer">
+      <div class="unique-wa-disclaimer-icon">⚠️</div>
+      <div class="unique-wa-disclaimer-text">
+        <strong>Disclaimer:</strong> Logifi only connects you with lodge providers.  
+        We are not part of any agreement and cannot be held responsible for any issues.  
+        Always meet in safe, public places before making commitments.
+      </div>
+    </div>
+    
+    <!-- Agreement Checkbox -->
+    <label class="unique-wa-agree">
+      <input type="checkbox" id="agreeCheckbox"> I understand and agree to the disclaimer
+    </label>
+
+    <!-- CTA Button -->
+    <a id="waChatBtn" class="unique-wa-button" href="#">
+      Start Chat
+    </a>
+  </div>
+</div>
+
+<!-- toast message///// -->
+ <div id="toast"></div>
+
+<!-- ////// Footer ////// -->
+    <%- include("partials/footer")%>
+    
+
+
+  <script>
+
+  //   //////lodge listing/////
+
+  // //////pagination/////
+    const cardsPerPage = 6;
+    const cards = document.querySelectorAll('.lodge-card');
+    const pagination = document.getElementById('pagination');
+   // Generic paginate function
+function paginateGrid(gridSelector, paginationSelector, cardsPerPage = 6) {
+  const grid = document.querySelector(gridSelector);
+  const pagination = document.querySelector(paginationSelector);
+  if (!grid || !pagination) return;
+
+  const cards = Array.from(grid.children);
+  let currentPage = 1;
+  const totalPages = Math.ceil(cards.length / cardsPerPage);
+
+  function showPage(page) {
+    cards.forEach((card, idx) => {
+      card.style.display = (idx >= (page - 1) * cardsPerPage && idx < page * cardsPerPage) ? 'block' : 'none';
+    });
+  }
+
+  function updatePagination() {
+    pagination.innerHTML = '';
+
+    const prevBtn = document.createElement('button');
+    prevBtn.textContent = 'Prev';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = () => { if(currentPage > 1){ currentPage--; showPage(currentPage); updatePagination(); } };
+    pagination.appendChild(prevBtn);
+
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement('button');
+      btn.textContent = i;
+      if(i === currentPage) btn.classList.add('active');
+      btn.onclick = () => { currentPage = i; showPage(currentPage); updatePagination(); };
+      pagination.appendChild(btn);
+    }
+
+    const nextBtn = document.createElement('button');
+    nextBtn.textContent = 'Next';
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.onclick = () => { if(currentPage < totalPages){ currentPage++; showPage(currentPage); updatePagination(); } };
+    pagination.appendChild(nextBtn);
+  }
+
+  showPage(currentPage);
+  updatePagination();
+}
+
+  //////lodge view more script///
+/* ===== Unique, self-contained state ===== */
+const initialSearch = <%- JSON.stringify(typeof search !== 'undefined' ? search : '') %>;
+
+
+const plxState = {
+  lodges: <%- JSON.stringify(lodges) %>.map(l => ({ ...l, _id: l._id || l.id })),  
+  editingId: null,
+  lightbox: { lodgeId: null, index: 0 },
+  uploader: { files: [] }
+};
+
+
+/* ===== Utilities ===== */
+function cryptoRandomId(){
+  // Short, unique id
+  return 'plx_' + Math.random().toString(36).slice(2,8) + Date.now().toString(36).slice(-4);
+}
+function el(q){ return document.querySelector(q); }
+function els(q){ return Array.from(document.querySelectorAll(q)); }
+function create(tag, props={}, children=[]){
+  const node = document.createElement(tag);
+  Object.assign(node, props);
+  children.forEach(c => node.appendChild(typeof c === 'string' ? document.createTextNode(c) : c));
+  return node;
+}
+
+function renderGrid() {
+  const inputEl = el('#plx-search-input');
+  const loader  = el('#plx-loading');
+  const empty   = el('#plx-empty');
+
+  const grids = els('.plx-grid');
+  const availableGrid    = grids[0];
+  const nonAvailableGrid = grids[1];
+  if (!availableGrid || !nonAvailableGrid) return;
+
+  // Use input value if present, else server-provided initialSearch
+  const raw = ((inputEl && inputEl.value != null) ? inputEl.value : initialSearch) || '';
+  const q   = raw.trim().toLowerCase();
+
+  // Optional numeric search for price
+  const qNum = Number(q.replace(/,/g, ''));
+  const isNum = q !== '' && !Number.isNaN(qNum);
+
+  // UI reset + spinner
+  if (loader) loader.style.display = 'block';
+  if (empty)  empty.style.display  = 'none';
+  availableGrid.innerHTML = '';
+  nonAvailableGrid.innerHTML = '';
+
+  const matches = plxState.lodges
+    .filter(l => {
+      const title = (l.title || '').toLowerCase();
+      const location = (l.location || '').toLowerCase();
+      const type = (l.type || l.roomType || '').toLowerCase();
+      const priceStr = String(l.price ?? '').toLowerCase();
+      const textHit = title.includes(q) || location.includes(q) || type.includes(q) || priceStr.includes(q);
+      const numHit  = isNum ? Number(l.price) === qNum : false;
+      return q ? (textHit || numHit) : true;
+    });
+
+  matches.forEach(lodge => {
+    const card = renderCard(lodge);
+    (lodge.status === 'available' ? availableGrid : nonAvailableGrid).appendChild(card);
+  });
+
+  // Spinner off + empty state
+  if (loader) loader.style.display = 'none';
+  if (empty)  empty.style.display  = (availableGrid.children.length + nonAvailableGrid.children.length) === 0 ? 'block' : 'none';
+
+  // ✅ Apply pagination separately
+paginateGrid('.plx-grid:nth-of-type(1)', '#pagination-available', 6);
+paginateGrid('.plx-grid:nth-of-type(2)', '#pagination-rented', 6);
+}
+
+function renderCard(lodge){ 
+  
+  const mainMedia = lodge.media[0];
+  
+  const card = create('article',{className:'plx-card lodge-card', 'data-id':lodge._id});
+
+  // Main media
+  const mediaBox = create('div',{className:'plx-card__media'});
+  if(mainMedia){
+    mediaBox.appendChild(makeMediaNode(mainMedia, true));
+    mediaBox.addEventListener('click', ()=> openLightbox(lodge._id,0));
+  }else{
+    mediaBox.appendChild(create('div',{style:'display:grid;place-items:center;height:100%;color:#94a3b8;font-size:13px'},["No media"]));
+  }
+
+  // Thumbs
+  const thumbs = create('div',{className:'plx-card__thumbs'});
+  lodge.media.forEach((m,i)=>{
+    const t = create('div',{className:'plx-card__thumb'+(i===0?' plx-card__thumb--active':'')});
+    const node = makeMediaNode(m,false,true);
+    t.appendChild(node);
+    t.addEventListener('click',(e)=>{
+      e.stopPropagation();
+      // swap main media
+      mediaBox.innerHTML='';
+      mediaBox.appendChild(makeMediaNode(m,true));
+      lodge.media.forEach((_,j)=>thumbs.children[j].classList.toggle('plx-card__thumb--active', j===i));
+      mediaBox.onclick = ()=> openLightbox(lodge._id,i);
+    });
+    thumbs.appendChild(t);
+  });
+
+
+    // Body
+  const body = create('div',{className:'plx-card__body'});
+
+  // Agent info box
+  const agentBox = create('div', { className: 'plx-agent-box' });
+  if (lodge.agent) {
+
+    const nameSpan = create('span', { className: 'plx-agent-name' }, [lodge.agent.name]);
+
+    agentBox.appendChild(nameSpan);
+
+      // Append badge only if verified
+  if (lodge.agent.kycCompleted) {
+    const badge = create('span', {
+      className: 'shield-verified',
+      title: 'Verified agent',
+      innerHTML:  `
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="#0b8a55" d="M12 1 3 4v6c0 5 3.7 9.7 9 11 5.3-1.3 9-6 9-11V4l-9-3z"/>
+          <path fill="#fff" d="M10 13.5l-1.6-1.6 1-1 1.6 1.6L15.6 8l1 1-6.6 4.5z"/>
+        </svg>`
+   
+    });
+    agentBox.appendChild(badge);
+      }
+
+  }
+  
+  body.appendChild(agentBox);
+
+    // Title
+    body.appendChild(create('h3',{className:'plx-title'},[lodge.title]));
+
+    // Meta (location + type)
+    body.appendChild(create('div',{className:'plx-meta'},[`📍 ${lodge.location} • ${lodge.type}`]));
+
+    // Price
+    if(lodge.price){  
+      body.appendChild(create('div',{className:'plx-price'},[`💰 ₦${lodge.price.toLocaleString()}`]));
+    }
+
+    // Description
+    body.appendChild(create('p',{className:'plx-desc'},[lodge.desc || '']));
+
+    // Badges
+    const badges = create('div',{className:'plx-badges'});
+    const statusBadge = create('span',
+      {className:'plx-badge '+(lodge.status==='available'?'plx-badge--success':'plx-badge--warn')},
+      [lodge.status==='available'?'Available':'Rented']
+    );
+    badges.appendChild(statusBadge);
+
+    // Attach to media (so it floats on top of the image)
+    mediaBox.appendChild(badges);
+
+  // Actions
+  const actions = create('div',{className:'plx-card__actions'});
+
+  const viewBtn = create('button',{className:'view-btn',innerText:'View Lodge'},[]);
+  viewBtn.addEventListener('click',()=> openLodgeModal(lodge));
+
+  const contactBtn = create('button',{className:'contact-btn',innerText:'Show Contact'},[]);
+  contactBtn.addEventListener('click',()=>{
+    openUniqueWAModal(lodge._id, lodge.phone);
+    renderGrid();
+  });
+  
+  
+
+  actions.append( viewBtn, contactBtn);
+
+  // Assemble
+  card.append(mediaBox, thumbs, body, actions);
+  return card;
+}
+
+// Example function to change status dynamically
+function updateLodgeStatus(lodgeId, newStatus) {
+  const lodge = plxState.lodges.find(l => l._id === lodgeId);
+  if(!lodge) return;
+
+  lodge.status = newStatus;
+
+  // Move card to the correct section
+  renderGrid();
+}
+
+function makeMediaNode(media, big=false, thumb=false){
+  const url = media.url || media.src || media.path;
+  if(media.type==='video' || media.kind==='video'){
+    const v = create('video',{src:url, controls:false, muted:true, playsInline:true});
+    v.addEventListener('mouseenter',()=>{ try{v.play()}catch{} });
+    v.addEventListener('mouseleave',()=>{ v.pause(); v.currentTime=0; });
+    if(big){ v.className='plx-card__video'; v.setAttribute('aria-label','Video'); }
+    if(thumb){ v.setAttribute('aria-label','Video thumbnail'); }
+    return v;
+  } else {
+    return create('img',{src:url, alt:'Lodge media'});
+  }
+}
+
+
+/* ===== Modal (Post/Edit) ===== */
+
+
+/* ===== Lightbox viewer (images + videos) ===== */
+const plxLb = el('#plx-lightbox');
+const plxLbSlot = el('#plx-lb-slot');
+
+
+function openLightbox(lodgeId, startIndex) {
+  plxState.lightbox.lodgeId = lodgeId;
+  plxState.lightbox.index = startIndex || 0;
+  drawLightbox();
+
+  const lb = document.getElementById('plx-lightbox');
+  lb.classList.add('plx-lightbox--show');
+
+  // disable background modal for focus
+  document.querySelectorAll('.lodge-modal-container').forEach(el => el.setAttribute('inert', ''));
+}
+
+function closeLightbox() {
+  const lb = document.getElementById('plx-lightbox');
+  lb.classList.remove('plx-lightbox--show');
+  document.querySelectorAll('.lodge-modal-container').forEach(el => el.removeAttribute('inert'));
+}
+
+function trapFocus(e) {
+  const lb = document.getElementById('plx-lightbox');
+  const focusable = lb.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+
+  if (e.key === 'Tab') {
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+}
+
+document.getElementById('plx-lb-close').addEventListener('click', closeLightbox);
+document.addEventListener('keydown', trapFocus);
+
+function drawLightbox(){
+  const l = plxState.lodges.find(x => x._id === plxState.lightbox.lodgeId);
+  if (!l) return;
+
+  const m = l.media[plxState.lightbox.index];
+  const url = m.url || m.src || m.path;
+
+  const slot = el('#plx-lb-slot');
+  slot.innerHTML = '';
+
+  if (m.type === 'video') {
+    const v = create('video', {
+      src: url,
+      controls: true,
+      autoplay: true,
+      playsInline: true,
+      className: 'plx-lb__video'
+    });
+    slot.appendChild(v);
+  } else {
+    const i = create('img', {
+      src: url,
+      alt: 'Media',
+      className: 'plx-lb__media'
+    });
+    slot.appendChild(i);
+  }
+}
+
+function nextMedia(step){
+  const l = plxState.lodges.find(x => x._id === plxState.lightbox.lodgeId);
+  if (!l) return;
+  const len = l.media.length;
+  plxState.lightbox.index = (plxState.lightbox.index + step + len) % len;
+  drawLightbox();
+}
+
+/* Lightbox Controls */
+el('#plx-lb-close').addEventListener('click', closeLightbox);
+el('#plx-lb-prev').addEventListener('click', ()=> nextMedia(-1));
+el('#plx-lb-next').addEventListener('click', ()=> nextMedia(1));
+el('#plx-lightbox').addEventListener('click',(e)=>{ if(e.target.id==='plx-lightbox') closeLightbox(); });
+
+/* Keyboard navigation */
+document.addEventListener('keydown', (e)=>{
+  if(!plxLb.classList.contains('plx-lightbox--show')) return;
+  if(e.key==='Escape') closeLightbox();
+  if(e.key==='ArrowRight') nextMedia(1);
+  if(e.key==='ArrowLeft') nextMedia(-1);
+});
+
+/* ===== Search ===== */
+document.addEventListener('DOMContentLoaded', () => {
+  const s = el('#plx-search-input');
+  if (s && initialSearch) s.value = initialSearch;
+
+  // Live filtering + URL sync
+  if (s) {
+    s.addEventListener('input', (e) => {
+      const v = e.target.value.trim();
+      const newQs = v ? `?search=${encodeURIComponent(v)}` : location.pathname;
+      history.replaceState(null, '', newQs);
+      renderGrid();
+    });
+  }
+
+  const clearBtn = el('#plx-search-clear');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      if (s) s.value = '';
+      history.replaceState(null, '', location.pathname);
+      renderGrid();
+    });
+  }
+
+  renderGrid();
+});
+
+/* Init */
+renderGrid();
+
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.innerText = value;
+}
+
+function setSrc(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.src = value;
+}
+
+
+function openLodgeModal(lodge) {
+  console.log(lodge);
+  
+  const modalId = `lodgeModal-${lodge._id}`;
+  const price = lodge.price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  setText(`modalTitle-${lodge._id}`, lodge.title || 'No Title');
+  setText(`modalLocation-${lodge._id}`, lodge.location || '');
+  setText(`modalDescription-${lodge._id}`, lodge.description || lodge.desc || '');
+  setText(`modalRoomType-${lodge._id}`, lodge.roomType || lodge.type || '');
+  setText(`modalPrice-${lodge._id}`, price || '');
+
+  setSrc(
+    `mainLodgeImg-${lodge._id}`,
+    lodge.media?.[0]?.url || lodge.media?.[0]?.src || lodge.media?.[0]?.path || '/images/about_image.webp'
+  );
+
+  const modal = document.getElementById(modalId);
+  if (modal) modal.style.display = 'flex';
+  else console.warn(`Modal with id ${modalId} not found in DOM`);
+}
+
+
+function openSelectedLodgeModal(lodge) {
+  // This handles the single lodge modal (home or /lodges/:id)
+  const price = lodge.price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  document.getElementById('selectedModalTitle').innerText = lodge.title;
+  document.getElementById('selectedModalLocation').innerText = lodge.location;
+  document.getElementById('selectedModalDescription').innerText = lodge.description || lodge.desc || '';
+  document.getElementById('selectedModalRoomType').innerText = lodge.roomType || lodge.type;
+  document.getElementById('selectedModalPrice').innerText = price;
+
+   // ✅ use url || src || path
+  document.getElementById('selectedMainLodgeImg').src = lodge.media?.[0]?.url || lodge.media?.[0]?.src || lodge.media?.[0]?.path || '/images/about_image.webp';
+
+
+  document.getElementById('selected-lodgeModal').style.display = 'flex'; 
+}
+
+function closeLodgeModal(id) {
+  // if id provided -> close that specific lodge modal
+  if (id) {
+    document.getElementById(`lodgeModal-${id}`).style.display = 'none';
+  } else {
+    // otherwise close the single lodge modal
+    document.getElementById('selected-lodgeModal').style.display = 'none';
+  }
+}
+
+function updateMainImg(lodgeId, thumb) {
+  const mainContainer = document.getElementById(`mainLodgeImg-${lodgeId}`).parentNode;
+  const mainId = `mainLodgeImg-${lodgeId}`;
+
+  // Remove old element (img or video)
+  const oldEl = document.getElementById(mainId);
+  if (oldEl) oldEl.remove();
+
+  // Create new element depending on type
+  let newEl;
+  if (thumb.dataset.type === "video") {
+    newEl = document.createElement("video");
+    newEl.src = thumb.src;
+    newEl.id = mainId;
+    newEl.className = "lodge-main-img";
+    newEl.controls = true;
+    newEl.autoplay = true;
+  } else {
+    newEl = document.createElement("img");
+    newEl.src = thumb.src;
+    newEl.id = mainId;
+    newEl.className = "lodge-main-img";
+    newEl.alt = "Lodge Preview";
+  }
+
+  // Append into same container
+  mainContainer.insertBefore(newEl, mainContainer.querySelector(".lodge-thumbnails"));
+}
+
+function updateHomeImg(thumb) {
+  const mainContainer = document.getElementById('selectedMainLodgeImg').parentNode;
+  const mainId = 'selectedMainLodgeImg';
+
+  // Remove old element (img or video)
+  const oldEl = document.getElementById(mainId);
+  if (oldEl) oldEl.remove();
+
+  // Create new element depending on type
+  let newEl;
+  if (thumb.dataset.type === "video") {
+    newEl = document.createElement("video");
+    newEl.src = thumb.src;
+    newEl.id = mainId;
+    newEl.className = "lodge-main-img";
+    newEl.controls = true;
+    newEl.autoplay = true;
+  } else {
+    newEl = document.createElement("img");
+    newEl.src = thumb.src;
+    newEl.id = mainId;
+    newEl.className = "lodge-main-img";
+    newEl.alt = "Lodge Preview";
+  }
+
+  // Append into the same container, before thumbnails
+  mainContainer.insertBefore(newEl, mainContainer.querySelector(".lodge-thumbnails"));
+}
+
+function contactOnWhatsApp(lodgeId, phone) {
+  // fallback if phone is missing
+  const number = phone  
+  const message = encodeURIComponent(
+    `Hello, I found your lodge listing on Logifi and would like to inquire about its current availability. Lodge ID: ${lodgeId}`
+  );
+  window.open(`https://wa.me/${number}?text=${message}`, '_blank');
+}
+
+// Modal open/close
+
+function closeSmartReviewModal() { document.getElementById('smartReviewModal').style.display = 'none'; }
+
+// Star rating
+const smartStars = document.querySelectorAll('#smartStarRating span');
+let smartSelectedRating = 0;
+smartStars.forEach(star => {
+  star.addEventListener('mouseover', () => highlightSmartStars(star.getAttribute('data-value')));
+  star.addEventListener('mouseout', () => highlightSmartStars(smartSelectedRating));
+  star.addEventListener('click', () => { smartSelectedRating = star.getAttribute('data-value'); highlightSmartStars(smartSelectedRating); });
+});
+function highlightSmartStars(rating){
+  smartStars.forEach(star => { star.classList.remove('filled'); if(star.getAttribute('data-value') <= rating) star.classList.add('filled'); });
+}
+
+// Suggestions & chips
+const suggestions = ['Good service','Agent was helpful','Quick response','Friendly agent','Problem solved','Very bad experience','Agent scammed me','Slow response','Unhelpful'];
+const fakeContainer = document.getElementById('fakeTextareaContainer');
+const suggestionBox = document.getElementById('smartSuggestions');
+const sentimentIndicator = document.getElementById('smartSentimentIndicator');
+let selectedReviews = [];
+
+// Render suggestions
+function renderSuggestions(){
+  suggestionBox.innerHTML = '';
+  suggestions.forEach(s => {
+    const span = document.createElement('span');
+    span.classList.add('smartSuggestion');
+    span.textContent = s;
+    if(selectedReviews.includes(s)) span.classList.add('selected');
+    span.addEventListener('click', () => {
+      if(selectedReviews.includes(s)){
+        selectedReviews = selectedReviews.filter(item => item !== s);
+      } else {
+        selectedReviews.push(s);
+      }
+      renderChips();
+      renderSuggestions();
+      updateSentiment();
+    });
+    suggestionBox.appendChild(span);
+  });
+}
+
+// Render chips with animation
+function renderChips(){
+  fakeContainer.innerHTML = '';
+  if(selectedReviews.length === 0){
+    const placeholder = document.createElement('div');
+    placeholder.classList.add('placeholder');
+    placeholder.textContent = 'Select your review...';
+    fakeContainer.appendChild(placeholder);
+  } else {
+    selectedReviews.forEach(r => {
+      const chip = document.createElement('div');
+      chip.classList.add('chip');
+      chip.textContent = r;
+      chip.title = 'Click to remove';
+      fakeContainer.appendChild(chip);
+      setTimeout(() => chip.classList.add('show'), 10);
+
+      chip.addEventListener('click', () => {
+        chip.classList.remove('show');
+        setTimeout(() => {
+          selectedReviews = selectedReviews.filter(item => item !== r);
+          renderChips();
+          renderSuggestions();
+          updateSentiment();
+        }, 200);
+      });
+    });
+  }
+}
+
+// Sentiment analysis
+const positiveWords = ['good','great','excellent','happy','love','awesome','nice','fantastic','helpful','friendly','quick'];
+const negativeWords = ['bad','terrible','awful','hate','poor','disappointed','angry','frustrated','slow','scam','fraud','cheated'];
+function updateSentiment(){
+  const text = selectedReviews.join(' ').toLowerCase();
+  let sentiment = 'Neutral';
+  let posCount = positiveWords.filter(word => text.includes(word)).length;
+  let negCount = negativeWords.filter(word => text.includes(word)).length;
+  if(negCount > posCount && negCount > 0) sentiment = 'Negative';
+  else if(posCount > negCount && posCount > 0) sentiment = 'Positive';
+  sentimentIndicator.textContent = `Sentiment: ${sentiment}`;
+  sentimentIndicator.style.color = sentiment === 'Positive' ? 'green' : sentiment === 'Negative' ? 'red' : 'gray';
+}
+
+// Submit review to server
+
+// Modal open/close
+let CURRENT_AGENT_EMAIL = null;
+
+function openReviewModal(agentEmail) {
+  CURRENT_AGENT_EMAIL = agentEmail;
+  document.getElementById('smartReviewModal').style.display = 'flex';
+  console.log(agentEmail, CURRENT_AGENT_EMAIL);
+  
+}
+
+
+document.getElementById('smartReviewSubmit').addEventListener('click', async () => {
+  if(smartSelectedRating === 0){ showToast('Please select a rating.'); return; }
+  if(selectedReviews.length === 0){ showToast('Please select at least one review.'); return; }
+
+  const payload = {
+  rating: smartSelectedRating,
+  reviews: selectedReviews,
+  agentEmail: CURRENT_AGENT_EMAIL, // only send agentId
+};
+
+  try {
+    const res = await fetch('/submit-review', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if(data.success){
+      closeSmartReviewModal();
+      alert('Thank you! Your review was saved.');
+      selectedReviews = [];
+      smartSelectedRating = 0;
+      highlightSmartStars(0);
+      renderChips();
+      renderSuggestions();
+      updateSentiment();
+
+      // ✅ Reload the page
+      window.location.reload();
+    } else {
+      alert('Failed to submit review. Try again.');
+    }
+  } catch(err){
+    console.error(err);
+    alert('An error occurred. Please try again.');
+  }
+});
+
+// Initialize
+renderChips();
+renderSuggestions();
+updateSentiment();
+
+
+//////toast massage////
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.className = "show";
+      setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+      }, 2000); // hide after 3s
+    }
+  
+// Chat Modal Script
+//  // ✅ Make server session available to JS
+//     window.verifiedEmail = "<%= session.verifiedEmail || '' %>";
+    const waModal = document.getElementById("uniqueWAModal");
+    const agreeCheckbox = document.getElementById("agreeCheckbox");
+    const waChatBtn = document.getElementById("waChatBtn");
+
+    async function openUniqueWAModal(lodgeId) {
+      console.log("Opening WhatsApp modal for lodge:", lodgeId);
+
+      // Show modal
+      waModal.style.display = "flex";
+      waModal.classList.add("active");
+
+      // Reset old href
+      waChatBtn.setAttribute("href", "#");
+
+      waChatBtn.onclick = async (e) => {
+        e.preventDefault();
+        if (!agreeCheckbox.checked) return;
+
+        // ✅ Use session only, no need to check httpOnly cookie
+        const alreadyVerified = !!window.verifiedEmail;
+
+        if (alreadyVerified) {
+          try {
+            const res = await fetch(`/lodges/get-wa-link`, { credentials: "include" });
+            const data = await res.json();
+
+            if (data.success && data.waLink) {
+              closeUniqueWAModal();
+              window.open(data.waLink, "_blank"); // open WA in new tab
+              return;
+            } else {
+              // fallback to OTP page if something went wrong
+              const redirectUrl = `/lodges/start-chat/${lodgeId}`;
+              window.location.href = `/lodges/chat-auth?redirect=${encodeURIComponent(redirectUrl)}`;
+              return;
+            }
+          } catch (err) {
+            console.error("Error fetching cached waLink:", err);
+            const redirectUrl = `/lodges/start-chat/${lodgeId}`;
+            window.location.href = `/lodges/chat-auth?redirect=${encodeURIComponent(redirectUrl)}`;
+            return;
+          }
+        }
+
+        // 🔹 Not verified → go to OTP page
+        const redirectUrl = `/lodges/start-chat/${lodgeId}`;
+        window.location.href = `/lodges/chat-auth?redirect=${encodeURIComponent(redirectUrl)}`;
+      };
+    }
+
+    // Enable button only when checkbox ticked
+    agreeCheckbox.addEventListener("change", () => {
+      if (agreeCheckbox.checked) {
+        waChatBtn.classList.add("enabled");
+      } else {
+        waChatBtn.classList.remove("enabled");
+      }
+    });
+
+    // Close modal
+    function closeUniqueWAModal() {
+      waModal.classList.remove("active");
+      setTimeout(() => {
+        waModal.style.display = "none";
+      }, 350);
+    }
+
+    // Set WhatsApp link (first-time fetch if needed)
+    function setWhatsAppLink(btn, lodgeId, phone) {
+      let formattedPhone = phone.trim();
+      if (formattedPhone.startsWith("0")) {
+        formattedPhone = "234" + formattedPhone.slice(1);
+      }
+
+      const message = encodeURIComponent(
+        `Hello, I found your lodge listing on Logifi and would like to inquire about its current availability (Lodge ID: ${lodgeId})`
+      );
+
+      btn.setAttribute("href", `https://wa.me/${formattedPhone}?text=${message}`);
+      btn.setAttribute("target", "_blank");
+    }
+
+   </script>
+
+</body>
+</html>
