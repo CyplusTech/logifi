@@ -391,7 +391,7 @@
     </div>
           <div class="lodge-details-section">
             <div class="plx-agent-box">
-                <span class="plx-agent-name"><%= lodge.agent?.name %></span>
+                <span class="plx-agent-name"><%= lodge.agent?.email %></span>
   
                 <% if (lodge.agent && lodge.agent.kycCompleted) { %>
                   <span class="shield-verified" title="Verified agent">
@@ -476,7 +476,7 @@
     <video id="mainLodgeVideo-<%= selectedLodge._id %>" 
            class="lodge-main-video" 
            controls 
-           onclick="openLightbox('<%= lodge._id %>', 0)">
+           onclick="openLightbox('<%= selectedLodge._id %>', 0)">
       <source src="<%= selectedLodge.media[0].url %>" type="video/mp4">
       Your browser does not support the video tag.
     </video>
@@ -498,27 +498,31 @@
 <!-- Thumbnails -->
 <div class="lodge-thumbnails">
   <% if (selectedLodge.media && selectedLodge.media.length > 0) { %>
-    <% selectedLodge.media.forEach(function(m){ %>
+    <% selectedLodge.media.forEach(function(m, i){ %>
       <% if (m.type === "video") { %>
-        <video class="lodge-thumb" onclick="updateHomeImg('<%= selectedLodge._id %>', this)">
+        <video class="lodge-thumb" 
+               data-index="<%= i %>" 
+               onclick="updateHomeImg('<%= selectedLodge._id %>', this)">
           <source src="<%= m.url %>" type="video/mp4">
         </video>
       <% } else { %>
         <img src="<%= m.url || m.src || m.path %>" 
              alt="Thumb" 
              class="lodge-thumb" 
+             data-index="<%= i %>" 
              onclick="updateHomeImg('<%= selectedLodge._id %>', this)">
       <% } %>
     <% }) %>
   <% } %>
 </div>
 
+
       </div>
 
 
       <div class="lodge-details-section">
       <div class="plx-agent-box">
-        <span class="plx-agent-name"><%= selectedLodge.agent?.name %></span>
+        <span class="plx-agent-name"><%= selectedLodge.agent?.email%></span>
 
             <% if (selectedLodge.agent && selectedLodge.agent.kycCompleted) { %>
             <span class="shield-verified" title="Verified agent">
@@ -828,7 +832,7 @@ function renderCard(lodge){
   const agentBox = create('div', { className: 'plx-agent-box' });
   if (lodge.agent) {
 
-    const nameSpan = create('span', { className: 'plx-agent-name' }, [lodge.agent.name]);
+    const nameSpan = create('span', { className: 'plx-agent-name' }, [lodge.agent.email]);
 
     agentBox.appendChild(nameSpan);
 
@@ -1112,62 +1116,139 @@ function closeLodgeModal(id) {
 }
 
 function updateMainImg(lodgeId, thumb) {
-  const mainContainer = document.getElementById(`mainLodgeImg-${lodgeId}`).parentNode;
-  const mainId = `mainLodgeImg-${lodgeId}`;
+  console.log("lodge");
+  
+  const mainContainer = document.getElementById(`mainLodgeImg-${lodgeId}`)?.parentNode 
+                     || document.getElementById(`mainLodgeVideo-${lodgeId}`)?.parentNode;
+  if (!mainContainer) return;
 
-  // Remove old element (img or video)
-  const oldEl = document.getElementById(mainId);
+  const mainIdImg = `mainLodgeImg-${lodgeId}`;
+  const mainIdVideo = `mainLodgeVideo-${lodgeId}`;
+
+  // Remove old main element
+  const oldEl = document.getElementById(mainIdImg) || document.getElementById(mainIdVideo);
   if (oldEl) oldEl.remove();
 
-  // Create new element depending on type
+  // Create new element based on clicked thumb
   let newEl;
-  if (thumb.dataset.type === "video") {
+  if (thumb.tagName.toLowerCase() === "video") {
     newEl = document.createElement("video");
-    newEl.src = thumb.src;
-    newEl.id = mainId;
-    newEl.className = "lodge-main-img";
+    newEl.id = mainIdVideo;
+    newEl.className = "lodge-main-video";
     newEl.controls = true;
     newEl.autoplay = true;
+
+    const src = thumb.querySelector("source")?.src || thumb.src;
+    if (src) {
+      const source = document.createElement("source");
+      source.src = src;
+      source.type = "video/mp4";
+      newEl.appendChild(source);
+    }
   } else {
     newEl = document.createElement("img");
-    newEl.src = thumb.src;
-    newEl.id = mainId;
+    newEl.id = mainIdImg;
     newEl.className = "lodge-main-img";
+    newEl.src = thumb.src;
     newEl.alt = "Lodge Preview";
   }
 
-  // Append into same container
+  // ✅ Add lightbox open immediately (first click works now)
+  const index = Array.from(mainContainer.querySelectorAll(".lodge-thumb")).indexOf(thumb);
+  newEl.onclick = () => openLightbox(lodgeId, index);
+
+  // Insert new main element before thumbnails
   mainContainer.insertBefore(newEl, mainContainer.querySelector(".lodge-thumbnails"));
 }
 
-function updateHomeImg(thumb) {
-  const mainContainer = document.getElementById('selectedMainLodgeImg').parentNode;
-  const mainId = 'selectedMainLodgeImg';
+function updateHomeImg(lodgeId, thumb) {
+  console.log("Clicked thumbnail for lodge:", lodgeId);
 
-  // Remove old element (img or video)
-  const oldEl = document.getElementById(mainId);
-  if (oldEl) oldEl.remove();
+  // Find gallery wrapper
+  const gallery = document.querySelector(`#selected-lodgeModal .lodge-img-gallery`);
+  if (!gallery) return;
 
-  // Create new element depending on type
+  // Remove ANY existing main preview (video or image)
+  gallery.querySelectorAll(".lodge-main-img, .lodge-main-video").forEach(el => el.remove());
+
+  // Create new element
   let newEl;
-  if (thumb.dataset.type === "video") {
+  if (thumb.tagName.toLowerCase() === "video") {
     newEl = document.createElement("video");
-    newEl.src = thumb.src;
-    newEl.id = mainId;
-    newEl.className = "lodge-main-img";
+    newEl.id = `mainLodgeVideo-${lodgeId}`;
+    newEl.className = "lodge-main-video";
     newEl.controls = true;
     newEl.autoplay = true;
+
+    const src = thumb.querySelector("source")?.src || thumb.src;
+    if (src) {
+      const source = document.createElement("source");
+      source.src = src;
+      source.type = "video/mp4";
+      newEl.appendChild(source);
+    }
   } else {
     newEl = document.createElement("img");
-    newEl.src = thumb.src;
-    newEl.id = mainId;
+    newEl.id = `mainLodgeImg-${lodgeId}`;
     newEl.className = "lodge-main-img";
+    newEl.src = thumb.src;
     newEl.alt = "Lodge Preview";
   }
 
-  // Append into the same container, before thumbnails
-  mainContainer.insertBefore(newEl, mainContainer.querySelector(".lodge-thumbnails"));
+  // Find index of clicked thumb for lightbox
+  const thumbs = Array.from(gallery.querySelectorAll(".lodge-thumb"));
+  const index = thumbs.indexOf(thumb);
+  newEl.onclick = () => openLightbox(lodgeId, index);
+
+  // Insert new preview before thumbnails
+  gallery.insertBefore(newEl, gallery.querySelector(".lodge-thumbnails"));
 }
+
+// function updateHomeImg(lodgeId, thumb) {
+//   console.log("home");
+  
+//   const mainContainer = document.getElementById(`homeMain-${lodgeId}`)?.parentNode;
+//   if (!mainContainer) return;
+
+//   const mainIdImg = `homeMainImg-${lodgeId}`;
+//   const mainIdVideo = `homeMainVideo-${lodgeId}`;
+
+//   // Remove old main element
+//   const oldEl = document.getElementById(mainIdImg) || document.getElementById(mainIdVideo);
+//   if (oldEl) oldEl.remove();
+
+//   // Create new element
+//   let newEl;
+//   if (thumb.tagName.toLowerCase() === "video") {
+//     newEl = document.createElement("video");
+//     newEl.id = mainIdVideo;
+//     newEl.className = "home-main-video";
+//     newEl.controls = true;
+//     newEl.autoplay = true;
+
+//     const src = thumb.querySelector("source")?.src || thumb.src;
+//     if (src) {
+//       const source = document.createElement("source");
+//       source.src = src;
+//       source.type = "video/mp4";
+//       newEl.appendChild(source);
+//     }
+//   } else {
+//     newEl = document.createElement("img");
+//     newEl.id = mainIdImg;
+//     newEl.className = "home-main-img";
+//     newEl.src = thumb.src;
+//     newEl.alt = "Lodge Preview";
+//   }
+
+//   // ✅ Get index from dataset (works on first click)
+//   const index = parseInt(thumb.dataset.index, 10);
+//   newEl.onclick = () => openLightbox(lodgeId, index);
+
+//   // Insert before thumbnails
+//   mainContainer.insertBefore(newEl, mainContainer.querySelector(".lodge-thumbnails"));
+// }
+
 
 function contactOnWhatsApp(lodgeId, phone) {
   // fallback if phone is missing

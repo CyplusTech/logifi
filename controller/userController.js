@@ -1,6 +1,7 @@
 const Lodge = require('../models/lodge');
 const Agent = require('../models/Agents');
 const Review = require('../models/Review');
+const maskEmail = require("../utilities/maskEmail");
 
 exports.homePage = async (req, res) => {
   try {
@@ -14,16 +15,13 @@ exports.homePage = async (req, res) => {
           ...lodge,
           agent: agent ? {
             name: agent.name,
-            email: agent.email,
+            email: maskEmail(agent.email),
             isVerified: agent.isVerified,
             kycCompleted: agent.kycCompleted,
           } : null
         };
       })
     );
-
-    console.log(lodges);
-    
     res.render("home", { lodges: lodgesWithAgents });
   } catch (err) {
     console.error(err);
@@ -61,7 +59,7 @@ exports.singlePage = async (req, res) => {
       agent: agent
         ? {
             name: agent.name,
-            email: agent.email,
+             email: maskEmail(agent.email),
             isVerified: agent.isVerified,
             kycCompleted: agent.kycCompleted,
           }
@@ -120,12 +118,15 @@ exports.lodgePage = async (req, res) => {
           reviewCount: lodgeReviews.length,
           agent: agent ? {
             name: agent.name,
-            email: agent.email,
+            email: maskEmail(agent.email),
             isVerified: agent.isVerified,
             kycCompleted: agent.kycCompleted,
           } : null
         };
       }));
+
+      console.log(lodgesWithReviews);
+      
 
     res.render("lodges", { lodges: lodgesWithReviews, search, selectedLodge: null , session: req.session});
   } catch (err) {

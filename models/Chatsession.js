@@ -10,4 +10,5 @@ const chatSessionSchema = new mongoose.Schema({
 // 🔑 prevent duplicates — one record per (lodgeId + agentEmail + userEmail)
 chatSessionSchema.index({ lodgeId: 1, agentEmail: 1, userEmail: 1 }, { unique: true });
 
-module.exports = mongoose.model("ChatSession", chatSessionSchema);
+// ✅ Prevent OverwriteModelError
+module.exports = mongoose.models.ChatSession || mongoose.model("ChatSession", chatSessionSchema);
