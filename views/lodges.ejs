@@ -1116,8 +1116,6 @@ function closeLodgeModal(id) {
 }
 
 function updateMainImg(lodgeId, thumb) {
-  console.log("lodge");
-  
   const mainContainer = document.getElementById(`mainLodgeImg-${lodgeId}`)?.parentNode 
                      || document.getElementById(`mainLodgeVideo-${lodgeId}`)?.parentNode;
   if (!mainContainer) return;
@@ -1162,8 +1160,6 @@ function updateMainImg(lodgeId, thumb) {
 }
 
 function updateHomeImg(lodgeId, thumb) {
-  console.log("Clicked thumbnail for lodge:", lodgeId);
-
   // Find gallery wrapper
   const gallery = document.querySelector(`#selected-lodgeModal .lodge-img-gallery`);
   if (!gallery) return;
@@ -1356,7 +1352,6 @@ let CURRENT_AGENT_EMAIL = null;
 function openReviewModal(agentEmail) {
   CURRENT_AGENT_EMAIL = agentEmail;
   document.getElementById('smartReviewModal').style.display = 'flex';
-  console.log(agentEmail, CURRENT_AGENT_EMAIL);
   
 }
 
@@ -1423,7 +1418,6 @@ updateSentiment();
     const waChatBtn = document.getElementById("waChatBtn");
 
     async function openUniqueWAModal(lodgeId) {
-      console.log("Opening WhatsApp modal for lodge:", lodgeId);
 
       // Show modal
       waModal.style.display = "flex";

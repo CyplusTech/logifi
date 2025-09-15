@@ -44,7 +44,7 @@ exports.chatAgentSendOtp = async (req, res) => {
 
     // Generate 6-digit OTP
     const otp = String(Math.floor(100000 + Math.random() * 900000));
-    console.log("Generated OTP:", otp);
+    // console.log("Generated OTP:", otp);
 
     // Save OTP + redirect in session
     req.session.otpData = {
@@ -169,7 +169,7 @@ exports.sendOtp = async (req, res) => {
     // Generate OTP
     const otp = String(Math.floor(100000 + Math.random() * 900000));
     const expiresAt = Date.now() + 5 * 60 * 1000;
-    console.log("Generated OTP:", otp);
+    // console.log("Generated OTP:", otp);
 
     // Hash OTP before saving
     const hashedOtp = await bcrypt.hash(otp, 10);

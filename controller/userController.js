@@ -125,9 +125,6 @@ exports.lodgePage = async (req, res) => {
         };
       }));
 
-      console.log(lodgesWithReviews);
-      
-
     res.render("lodges", { lodges: lodgesWithReviews, search, selectedLodge: null , session: req.session});
   } catch (err) {
     console.error(err);
@@ -138,7 +135,6 @@ exports.lodgePage = async (req, res) => {
 exports.postLodgePage = async (req, res) => {
   try {
     if (!req.Agent) {
-      console.log("No logged in Agent");
       return res.redirect("/post-lodge/auth");
     }
 
@@ -225,8 +221,6 @@ exports.updateLodge = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, location, type, status, desc, price, phone, requestId } = req.body;
-    console.log(id, title);
-
     // prepare update object
     let updateData = { title, location, type, status, price, phone, desc };
 
@@ -253,7 +247,6 @@ exports.updateLodge = async (req, res) => {
     );
 
     // const lodgesss = await Lodge.find()
-    console.log("sec2", updated);
     
     if (!updated) {
       return res.status(404).json({
