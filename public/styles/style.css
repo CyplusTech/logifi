@@ -809,12 +809,6 @@ header.menu-open .menu-toggle {
         text-align: center;
       }
     }
-    /* ////mobile phone/// */
-     @media (max-width: 468px) {
-      .hero-search-bar input{
-      font-size: 9px;
-    }
-     }
 
     /* //////lodge page hero / banner style//// */
     

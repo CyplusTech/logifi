@@ -421,7 +421,7 @@
 
              <!-- <div class="lodge-actions"> -->
             <div class="warning-box">
-              <strong>⚠️ Important:</strong> Don’t pay until you’ve seen the place and met your roommate. Stay safe!
+              <strong>⚠️ Important:</strong>Don’t make any payment until you’ve inspected the lodge in person and are sure you’re dealing directly with the rightful landlord or agent. Stay safe!
             </div>
 
             <!-- <div class="lodge-review-summary">
@@ -658,11 +658,23 @@
 
 <!-- toast message///// -->
  <div id="toast"></div>
+    
+
+  <!-- ✅ WhatsApp Modal -->
+<!-- <div id="directWAModel" class="unique-wa-modal-overlay">
+  <div class="unique-wa-modal-content">
+    <span class="unique-wa-close-btn" onclick="closedirectWAModal()">×</span>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width: 60px; margin-bottom: 20px;">
+    <h2 style="margin-bottom: 10px;">Chat on WhatsApp</h2>
+    <p style="margin-bottom: 20px; color: #475569;">
+      Contact your lodge provider directly on WhatsApp. Make sure to verify their identity and ask all important questions.
+    </p>
+    <a href="https://wa.me/2348012345678" target="_blank" class="unique-wa-button">Chat on Whatsapp</a>
+  </div>
+</div> -->
 
 <!-- ////// Footer ////// -->
     <%- include("partials/footer")%>
-    
-
 
   <script>
 
@@ -1200,52 +1212,6 @@ function updateHomeImg(lodgeId, thumb) {
   gallery.insertBefore(newEl, gallery.querySelector(".lodge-thumbnails"));
 }
 
-// function updateHomeImg(lodgeId, thumb) {
-//   console.log("home");
-  
-//   const mainContainer = document.getElementById(`homeMain-${lodgeId}`)?.parentNode;
-//   if (!mainContainer) return;
-
-//   const mainIdImg = `homeMainImg-${lodgeId}`;
-//   const mainIdVideo = `homeMainVideo-${lodgeId}`;
-
-//   // Remove old main element
-//   const oldEl = document.getElementById(mainIdImg) || document.getElementById(mainIdVideo);
-//   if (oldEl) oldEl.remove();
-
-//   // Create new element
-//   let newEl;
-//   if (thumb.tagName.toLowerCase() === "video") {
-//     newEl = document.createElement("video");
-//     newEl.id = mainIdVideo;
-//     newEl.className = "home-main-video";
-//     newEl.controls = true;
-//     newEl.autoplay = true;
-
-//     const src = thumb.querySelector("source")?.src || thumb.src;
-//     if (src) {
-//       const source = document.createElement("source");
-//       source.src = src;
-//       source.type = "video/mp4";
-//       newEl.appendChild(source);
-//     }
-//   } else {
-//     newEl = document.createElement("img");
-//     newEl.id = mainIdImg;
-//     newEl.className = "home-main-img";
-//     newEl.src = thumb.src;
-//     newEl.alt = "Lodge Preview";
-//   }
-
-//   // ✅ Get index from dataset (works on first click)
-//   const index = parseInt(thumb.dataset.index, 10);
-//   newEl.onclick = () => openLightbox(lodgeId, index);
-
-//   // Insert before thumbnails
-//   mainContainer.insertBefore(newEl, mainContainer.querySelector(".lodge-thumbnails"));
-// }
-
-
 function contactOnWhatsApp(lodgeId, phone) {
   // fallback if phone is missing
   const number = phone  
@@ -1433,6 +1399,9 @@ updateSentiment();
         // ✅ Use session only, no need to check httpOnly cookie
         const alreadyVerified = !!window.verifiedEmail;
 
+        console.log(alreadyVerified);
+        
+
         if (alreadyVerified) {
           try {
             const res = await fetch(`/lodges/get-wa-link`, { credentials: "include" });
@@ -1493,6 +1462,22 @@ updateSentiment();
       btn.setAttribute("href", `https://wa.me/${formattedPhone}?text=${message}`);
       btn.setAttribute("target", "_blank");
     }
+
+
+//         ////chat model script///
+// function openDirectWAModal() {
+//     const modal = document.getElementById('directWAModal');
+//     modal.style.display = 'flex';
+//     modal.style.animation = 'uniqueFadeIn 0.5s ease forwards';
+//   }
+
+//   function closeDirectWAModal() {
+//     const modal = document.getElementById('directWAModal');
+//     modal.style.animation = 'uniqueFadeOut 0.4s ease forwards';
+//     setTimeout(() => {
+//       modal.style.display = 'none';
+//     }, 400);
+//   }
 
    </script>
 
