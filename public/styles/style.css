@@ -1313,7 +1313,7 @@ header.menu-open .menu-toggle {
   display: flex;
   justify-content: center;
   gap: 10px;
-  flex-wrap: wrap;  
+  flex-wrap: wrap;
 
 }
 
@@ -1650,6 +1650,11 @@ header.menu-open .menu-toggle {
     object-fit: cover;
 
   }
+
+   .lodge-thumbnails {
+    margin: 20px;
+  }
+
   .lodge-thumb {
     width: 60px;
     height: 60px;
@@ -1692,6 +1697,7 @@ header.menu-open .menu-toggle {
   .lodge-thumbnails {
     justify-content: center;
     gap: 8px;
+    margin: 20px;
   }
 }
 
@@ -1713,6 +1719,9 @@ header.menu-open .menu-toggle {
     max-height: 180px;   /* shrink media on small phones */
   }
 
+  .lodge-thumbnails {
+    margin: 20px;  
+  }
 
   .lodge-thumb {
     width: 40px;

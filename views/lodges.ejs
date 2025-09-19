@@ -251,31 +251,56 @@
   .banner-house-icon{
     font-size: 40px;
   }
+/* /////pagination//// */
+.pagination {
+  margin: 30px;
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;        /* ✅ allow wrapping */
+  justify-content: center; /* ✅ center buttons nicely */
+  gap: 8px;               /* ✅ spacing between buttons */
+}
 
+.pagination button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--primary);
+  color: white;
+  cursor: pointer;
+  flex-shrink: 0; /* ✅ prevent buttons from shrinking */
+}
 
-       /* /////pagination//// */
-  .pagination {
-      margin: 30px;
-      text-align: center;
-    }
-    .pagination button {
-      padding: 10px 15px;
-      margin: 0 5px;
-      border: none;
-      border-radius: 5px;
-      /* background-color: #25d366; */
-      background-color: var(--primary);
-      color: white;
-      cursor: pointer;
-    }
-    .pagination button.active {
-      /* background-color: #1f8646; */
-      background-color: var(--primary-dark);
-    }
-    .pagination button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
+.pagination button.active {
+  background-color: var(--primary-dark);
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* ✅ New style for dots */
+.pagination .dots {
+  display: inline-block;
+  padding: 10px 15px;
+  color: #666;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: default;
+  flex-shrink: 0;
+}
+
+/* ✅ Extra: make buttons smaller on mobile */
+@media (max-width: 480px) {
+  .pagination button,
+  .pagination .dots {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+}
+
 
 </style>
 
@@ -443,7 +468,7 @@
 
             <!-- WhatsApp Contact Button -->
            <button class="contact-whatsapp-btn"
-          onclick="trackClick('contact_via_whatsapp', '<%= lodge._id %>',); openUniqueWAModal('<%= lodge._id %>', '<%= lodge.phone %>');">
+          onclick="trackClick('contact_via_whatsapp', '<%= lodge._id %>',); openUniqueWAModal('<%= lodge._id %>', '<%= lodge.phone %>', '<%= lodge.title %>');">
           Contact via WhatsApp
         </button>
 
@@ -572,7 +597,7 @@
             <button onclick="openReviewModal('<%= selectedLodge.postedBy %>')" class="btn-write-review">Write a Review</button>
 
             <button class="contact-whatsapp-btn" 
-            onclick="trackClick('contact_via_whatsapp', '<%= selectedLodge._id %>',); openUniqueWAModal('<%= selectedLodge._id %>', '<%= selectedLodge.phone %>');">
+            onclick="trackClick('contact_via_whatsapp', '<%= selectedLodge._id %>',); openUniqueWAModal('<%= selectedLodge._id %>', '<%= selectedLodge.phone %>', '<%= selectedLodge.title %>');">
             Contact via WhatsApp
           </button>
 
@@ -659,20 +684,6 @@
 <!-- toast message///// -->
  <div id="toast"></div>
     
-
-  <!-- ✅ WhatsApp Modal -->
-<!-- <div id="directWAModel" class="unique-wa-modal-overlay">
-  <div class="unique-wa-modal-content">
-    <span class="unique-wa-close-btn" onclick="closedirectWAModal()">×</span>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width: 60px; margin-bottom: 20px;">
-    <h2 style="margin-bottom: 10px;">Chat on WhatsApp</h2>
-    <p style="margin-bottom: 20px; color: #475569;">
-      Contact your lodge provider directly on WhatsApp. Make sure to verify their identity and ask all important questions.
-    </p>
-    <a href="https://wa.me/2348012345678" target="_blank" class="unique-wa-button">Chat on Whatsapp</a>
-  </div>
-</div> -->
-
 <!-- ////// Footer ////// -->
     <%- include("partials/footer")%>
 
@@ -680,11 +691,12 @@
 
   //   //////lodge listing/////
 
-  // //////pagination/////
-    const cardsPerPage = 6;
-    const cards = document.querySelectorAll('.lodge-card');
-    const pagination = document.getElementById('pagination');
-   // Generic paginate function
+// //////pagination/////
+const cardsPerPage = 6;
+const cards = document.querySelectorAll('.lodge-card');
+const pagination = document.getElementById('pagination');
+
+// Generic paginate function
 function paginateGrid(gridSelector, paginationSelector, cardsPerPage = 6) {
   const grid = document.querySelector(gridSelector);
   const pagination = document.querySelector(paginationSelector);
@@ -696,8 +708,18 @@ function paginateGrid(gridSelector, paginationSelector, cardsPerPage = 6) {
 
   function showPage(page) {
     cards.forEach((card, idx) => {
-      card.style.display = (idx >= (page - 1) * cardsPerPage && idx < page * cardsPerPage) ? 'block' : 'none';
+      card.style.display =
+        idx >= (page - 1) * cardsPerPage && idx < page * cardsPerPage
+          ? 'block'
+          : 'none';
     });
+  }
+
+  function addDots() {
+    const span = document.createElement('span');
+    span.textContent = '...';
+    span.classList.add('dots'); // ✅ styled dots
+    pagination.appendChild(span);
   }
 
   function updatePagination() {
@@ -706,21 +728,66 @@ function paginateGrid(gridSelector, paginationSelector, cardsPerPage = 6) {
     const prevBtn = document.createElement('button');
     prevBtn.textContent = 'Prev';
     prevBtn.disabled = currentPage === 1;
-    prevBtn.onclick = () => { if(currentPage > 1){ currentPage--; showPage(currentPage); updatePagination(); } };
+    prevBtn.onclick = () => {
+      if (currentPage > 1) {
+        currentPage--;
+        showPage(currentPage);
+        updatePagination();
+      }
+    };
     pagination.appendChild(prevBtn);
 
-    for (let i = 1; i <= totalPages; i++) {
+    // show first page
+    if (totalPages > 5 && currentPage > 3) {
+      const firstBtn = document.createElement('button');
+      firstBtn.textContent = 1;
+      firstBtn.onclick = () => {
+        currentPage = 1;
+        showPage(currentPage);
+        updatePagination();
+      };
+      pagination.appendChild(firstBtn);
+      addDots();
+    }
+
+    // show middle pages
+    const start = Math.max(1, currentPage - 2);
+    const end = Math.min(totalPages, currentPage + 2);
+    for (let i = start; i <= end; i++) {
       const btn = document.createElement('button');
       btn.textContent = i;
-      if(i === currentPage) btn.classList.add('active');
-      btn.onclick = () => { currentPage = i; showPage(currentPage); updatePagination(); };
+      if (i === currentPage) btn.classList.add('active');
+      btn.onclick = () => {
+        currentPage = i;
+        showPage(currentPage);
+        updatePagination();
+      };
       pagination.appendChild(btn);
+    }
+
+    // show last page
+    if (totalPages > 5 && currentPage < totalPages - 2) {
+      addDots();
+      const lastBtn = document.createElement('button');
+      lastBtn.textContent = totalPages;
+      lastBtn.onclick = () => {
+        currentPage = totalPages;
+        showPage(currentPage);
+        updatePagination();
+      };
+      pagination.appendChild(lastBtn);
     }
 
     const nextBtn = document.createElement('button');
     nextBtn.textContent = 'Next';
     nextBtn.disabled = currentPage === totalPages;
-    nextBtn.onclick = () => { if(currentPage < totalPages){ currentPage++; showPage(currentPage); updatePagination(); } };
+    nextBtn.onclick = () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        showPage(currentPage);
+        updatePagination();
+      }
+    };
     pagination.appendChild(nextBtn);
   }
 
@@ -900,7 +967,7 @@ function renderCard(lodge){
 
   const contactBtn = create('button',{className:'contact-btn',innerText:'Show Contact'},[]);
   contactBtn.addEventListener('click',()=>{
-    openUniqueWAModal(lodge._id, lodge.phone);
+    openUniqueWAModal(lodge._id, lodge.phone, lodge.phone);
     renderGrid();
   });
   
@@ -1377,14 +1444,12 @@ updateSentiment();
     }
   
 // Chat Modal Script
-//  // ✅ Make server session available to JS
-//     window.verifiedEmail = "<%= session.verifiedEmail || '' %>";
+
     const waModal = document.getElementById("uniqueWAModal");
     const agreeCheckbox = document.getElementById("agreeCheckbox");
     const waChatBtn = document.getElementById("waChatBtn");
 
     async function openUniqueWAModal(lodgeId) {
-
       // Show modal
       waModal.style.display = "flex";
       waModal.classList.add("active");
@@ -1396,38 +1461,26 @@ updateSentiment();
         e.preventDefault();
         if (!agreeCheckbox.checked) return;
 
-        // ✅ Use session only, no need to check httpOnly cookie
-        const alreadyVerified = !!window.verifiedEmail;
+        // ✅ Always trust backend session instead of window.verifiedEmail
+        try {
+          const res = await fetch(`/lodges/get-wa-link`, { credentials: "include" });
+          const data = await res.json();
 
-        console.log(alreadyVerified);
-        
-
-        if (alreadyVerified) {
-          try {
-            const res = await fetch(`/lodges/get-wa-link`, { credentials: "include" });
-            const data = await res.json();
-
-            if (data.success && data.waLink) {
-              closeUniqueWAModal();
-              window.open(data.waLink, "_blank"); // open WA in new tab
-              return;
-            } else {
-              // fallback to OTP page if something went wrong
-              const redirectUrl = `/lodges/start-chat/${lodgeId}`;
-              window.location.href = `/lodges/chat-auth?redirect=${encodeURIComponent(redirectUrl)}`;
-              return;
-            }
-          } catch (err) {
-            console.error("Error fetching cached waLink:", err);
+          if (data.success && data.waLink) {
+            closeUniqueWAModal();
+            window.open(data.waLink, "_blank");
+            return;
+          } else {
             const redirectUrl = `/lodges/start-chat/${lodgeId}`;
             window.location.href = `/lodges/chat-auth?redirect=${encodeURIComponent(redirectUrl)}`;
             return;
           }
+        } catch (err) {
+          console.error("Error fetching cached waLink:", err);
+          const redirectUrl = `/lodges/start-chat/${lodgeId}`;
+          window.location.href = `/lodges/chat-auth?redirect=${encodeURIComponent(redirectUrl)}`;
+          return;
         }
-
-        // 🔹 Not verified → go to OTP page
-        const redirectUrl = `/lodges/start-chat/${lodgeId}`;
-        window.location.href = `/lodges/chat-auth?redirect=${encodeURIComponent(redirectUrl)}`;
       };
     }
 
@@ -1449,35 +1502,19 @@ updateSentiment();
     }
 
     // Set WhatsApp link (first-time fetch if needed)
-    function setWhatsAppLink(btn, lodgeId, phone) {
-      let formattedPhone = phone.trim();
-      if (formattedPhone.startsWith("0")) {
-        formattedPhone = "234" + formattedPhone.slice(1);
-      }
+    function setWhatsAppLink(btn, lodgeId, lodgeTitle, phone) {
+  let formattedPhone = phone.trim();
+  if (formattedPhone.startsWith("0")) {
+    formattedPhone = "234" + formattedPhone.slice(1);
+  }
 
-      const message = encodeURIComponent(
-        `Hello, I found your lodge listing on Logifi and would like to inquire about its current availability (Lodge ID: ${lodgeId})`
-      );
+  const message = encodeURIComponent(
+    `Hello, I found your lodge listing on Logifi.\n\nTitle: ${lodgeTitle}\nID: ${lodgeId}\n\nI would like to inquire about its current availability.`
+  );
 
-      btn.setAttribute("href", `https://wa.me/${formattedPhone}?text=${message}`);
-      btn.setAttribute("target", "_blank");
-    }
-
-
-//         ////chat model script///
-// function openDirectWAModal() {
-//     const modal = document.getElementById('directWAModal');
-//     modal.style.display = 'flex';
-//     modal.style.animation = 'uniqueFadeIn 0.5s ease forwards';
-//   }
-
-//   function closeDirectWAModal() {
-//     const modal = document.getElementById('directWAModal');
-//     modal.style.animation = 'uniqueFadeOut 0.4s ease forwards';
-//     setTimeout(() => {
-//       modal.style.display = 'none';
-//     }, 400);
-//   }
+  btn.setAttribute("href", `https://wa.me/${formattedPhone}?text=${message}`);
+  btn.setAttribute("target", "_blank");
+}
 
    </script>
 

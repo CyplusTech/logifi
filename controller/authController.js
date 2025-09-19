@@ -1,6 +1,7 @@
 const Lodge = require('../models/lodge');
 const Agent = require('../models/Agents');
 const User = require("../models/Users");
+const ChatSession = require("../models/Chatsession");
 
 
 const {sendMail} = require("../utilities/mailer");
@@ -44,7 +45,7 @@ exports.chatAgentSendOtp = async (req, res) => {
 
     // Generate 6-digit OTP
     const otp = String(Math.floor(100000 + Math.random() * 900000));
-    // console.log("Generated OTP:", otp);
+    console.log("Generated OTP:", otp);
 
     // Save OTP + redirect in session
     req.session.otpData = {
@@ -185,7 +186,7 @@ exports.chatAgentVerifyOtp = async (req, res) => {
           const agentEmail = lodge.postedBy || null;
           const whatsappNumber = lodge.whatsappNumber || lodge.phone || "";
           const formattedPhone = whatsappNumber.replace(/\D/g, "").replace(/^0/, "234");
-          const message = encodeURIComponent(`Hello, I found your lodge listing on Logifi (ID: ${lodgeId}).`);
+          const message = encodeURIComponent(`Hello, I found your lodge listing on Logifi.\n\nTitle: ${lodge.title}\nID: ${lodgeId}\n\nI would like to inquire about its current availability.`);
           const waLink = `https://wa.me/${formattedPhone}?text=${message}`;
 
           // Cache session (so subsequent requests are fast and DB-free)
@@ -209,6 +210,7 @@ exports.chatAgentVerifyOtp = async (req, res) => {
             success: true,
             message: "OTP verified successfully",
             waLink,
+            lodge,
             redirectTo: "/lodges" // main tab destination after opening WA
           });
         }
