@@ -293,6 +293,10 @@
   .plx-card__body{padding:14px 14px 6px}
   .plx-title{font-size:16px;font-weight:800;margin:0 0 4px}
   .plx-meta{font-size:13px;color:var(--plx-muted);margin-bottom:8px}
+  .lodge-location {
+    color: #2563eb;
+    font-weight: bold;
+  }
   .plx-desc{font-size:13px;color:#374151;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .plx-badges{display:flex;align-items:center;gap:8px;margin-top:10px}
   .plx-badge{font-size:12px;padding:4px 8px;border-radius:999px;background:#eef2ff;color:#3730a3}
@@ -873,7 +877,14 @@ function renderCard(lodge){
   // Body
   const body = create('div',{className:'plx-card__body'});
   body.appendChild(create('h3',{className:'plx-title'},[sanitize(lodge.title)]));
-  body.appendChild(create('div',{className:'plx-meta'},[`📍 ${sanitize(lodge.location)} • ${sanitize(lodge.type)}`]));
+  body.appendChild(
+  create('div', { className: 'plx-meta' }, [
+    '📍 ',
+    create('span', { className: 'lodge-location' }, [sanitize(lodge.location)]),
+    ` • ${sanitize(lodge.type)}`
+  ])
+);
+
   body.appendChild(create('div',{className:'plx-price'},[`💰 ₦${lodge.price.toLocaleString()}`]));
   body.appendChild(create('p',{className:'plx-desc'},[sanitize(lodge.desc || '')]));
 

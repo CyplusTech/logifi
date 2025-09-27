@@ -429,6 +429,11 @@ header.menu-open .menu-toggle {
     font-style: italic;
   }
 
+  .home-location{
+    color: #2563eb;
+    font-weight: bold;
+  }
+
   .home-lodge-viewmore {
     text-align: center;
     margin-top: 40px;

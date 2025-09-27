@@ -144,7 +144,12 @@
   .plx-card__thumb--active{border-color: #fac02d}
   .plx-card__body{padding:14px 14px 6px}
   .plx-title{font-size:16px;font-weight:800;margin:0 0 4px}
-  .plx-meta{font-size:13px;color:var(--plx-muted);margin-bottom:8px}
+  .plx-meta{font-size:13px;color:var(--plx-muted);margin-bottom:8px; font-weight: bold;}
+  .lodge-location {
+    color: #2563eb;
+    font-weight: bold;
+
+  }
   .plx-price {
   font-weight: bold;
   color: #2563eb; /* blue */
@@ -335,9 +340,10 @@
   <section class="plx-grid" aria-label="Available Lodge cards">
     <!-- Cards for available lodges will be injected here -->
   </section>
-<div class="pagination" id="pagination-available"></div>
+  <div class="pagination" id="pagination-available"></div>
 
-  <!-- Rented / Not Available Lodges -->
+<!-- Rented / Not Available Lodges -->
+<div id="rented-section">
   <div class="header-section">
     <h1>Rented Lodges</h1>
     <p>These lodges are currently occupied. Check available listings to plan your next stay.</p>
@@ -345,7 +351,7 @@
   <section class="plx-grid" aria-label="Rented Lodge cards">
     <!-- Cards for rented/not available lodges will be injected here -->
   </section>
-
+</div>
 </main>
 <div class="pagination" id="pagination-rented"></div>
 
@@ -866,6 +872,11 @@ function renderGrid() {
   if (loader) loader.style.display = 'none';
   if (empty)  empty.style.display  = (availableGrid.children.length + nonAvailableGrid.children.length) === 0 ? 'block' : 'none';
 
+    const rentedWrapper = el('#rented-section');
+    if (rentedWrapper) {
+      rentedWrapper.style.display = nonAvailableGrid.children.length === 0 ? 'none' : 'block';
+    }
+
   // ✅ Apply pagination separately
 paginateGrid('.plx-grid:nth-of-type(1)', '#pagination-available', 6);
 paginateGrid('.plx-grid:nth-of-type(2)', '#pagination-rented', 6);
@@ -938,7 +949,7 @@ function renderCard(lodge){
     body.appendChild(create('h3',{className:'plx-title'},[lodge.title]));
 
     // Meta (location + type)
-    body.appendChild(create('div',{className:'plx-meta'},[`📍 ${lodge.location} • ${lodge.type}`]));
+  body.appendChild(create('div', { className: 'plx-meta' }, [`📍 `, create('span', { className: 'lodge-location' }, [lodge.location]),` • ${lodge.type}`]));
 
     // Price
     if(lodge.price){  
