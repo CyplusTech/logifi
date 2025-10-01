@@ -62,13 +62,23 @@ exports.chatAgentSendOtp = async (req, res) => {
     }
 
     // Send OTP via email
-    await sendMail({
-        from: `"Logifi Support" <${process.env.EMAIL_USER}>`,
+
+
+        await sendMail({
       to: email,
       subject: "📬 Verify Your Contact Request",
       text: `Hi ${name},\n\nYou requested to contact an agent on Logifi.\nYour OTP is: ${otp}\nIt expires in 5 minutes.\n\n– Logifi Team`,
       html: generateContactAgentOtpEmail(name, otp),
     });
+
+
+    // await sendMail({
+    //     from: `"Logifi Support" <${process.env.EMAIL_USER}>`,
+    //   to: email,
+    //   subject: "📬 Verify Your Contact Request",
+    //   text: `Hi ${name},\n\nYou requested to contact an agent on Logifi.\nYour OTP is: ${otp}\nIt expires in 5 minutes.\n\n– Logifi Team`,
+    //   html: generateContactAgentOtpEmail(name, otp),
+    // });
 
     res.json({ success: true, message: "OTP sent to your email" });
   } catch (err) {
@@ -158,12 +168,20 @@ exports.chatAgentVerifyOtp = async (req, res) => {
 
     // Send success email (existing helper)
     await sendMail({
-      from: `"Logifi Support" <${process.env.EMAIL_USER}>`,
       to: user.email,
       subject: "✅ Contact Verification Successful",
       text: `Hi ${user.name}, your contact verification is complete.`,
       html: generateContactVerificationSuccessEmail(user.name),
     });
+
+
+    // await sendMail({
+    //   from: `"Logifi Support" <${process.env.EMAIL_USER}>`,
+    //   to: user.email,
+    //   subject: "✅ Contact Verification Successful",
+    //   text: `Hi ${user.name}, your contact verification is complete.`,
+    //   html: generateContactVerificationSuccessEmail(user.name),
+    // });
 
     // Save session & cookies
     req.session.verifiedEmail = email;
@@ -284,13 +302,21 @@ exports.sendOtp = async (req, res) => {
     await agentDoc.save();
 
     // Send mail
-    await sendMail({
-     from: `"Logifi Support" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "🔐 Verify Your Lodge Posting",
-      text: `Hi ${name},\n\nThank you for posting your lodge on Logifi.\nYour OTP is: ${otp}\nIt expires in 5 minutes.\n\n– Logifi Team`,
-      html: generatePostLodgeOtpEmail(name, otp),
-    });
+        await sendMail({
+        to: email,
+        subject: "🔐 Verify Your Lodge Posting",
+        text: `Hi ${name},\n\nThank you for posting your lodge on Logifi.\nYour OTP is: ${otp}\nIt expires in 5 minutes.\n\n– Logifi Team`,
+        html: generatePostLodgeOtpEmail(name, otp),
+      });
+
+
+    // await sendMail({
+    //  from: `"Logifi Support" <${process.env.EMAIL_USER}>`,
+    //   to: email,
+    //   subject: "🔐 Verify Your Lodge Posting",
+    //   text: `Hi ${name},\n\nThank you for posting your lodge on Logifi.\nYour OTP is: ${otp}\nIt expires in 5 minutes.\n\n– Logifi Team`,
+    //   html: generatePostLodgeOtpEmail(name, otp),
+    // });
 
     const response = { success: true, message: "OTP sent to email" };
     if (process.env.NODE_ENV !== "production") {
@@ -343,13 +369,21 @@ exports.verifyOtp = async (req, res) => {
     await agentDoc.save();
 
     // --- SEND SUCCESS EMAIL HERE ---
-    await sendMail({
-      from: `"Logifi Support" <${process.env.EMAIL_USER}>`,
-      to: agentDoc.email,          // verified user's email
-      subject: "✅ Verification Successful",
-      text: `Hi ${agentDoc.name},\n\nYour email/OTP has been successfully verified!\n\n– Logifi Team`,
-      html: generatePotLodgeVerificationSuccessEmail(agentDoc.name),
-    });
+        await sendMail({
+        to: agentDoc.email,          // verified user's email
+        subject: "✅ Verification Successful",
+        text: `Hi ${agentDoc.name},\n\nYour email/OTP has been successfully verified!\n\n– Logifi Team`,
+        html: generatePotLodgeVerificationSuccessEmail(agentDoc.name),
+      });
+
+
+    // await sendMail({
+    //   from: `"Logifi Support" <${process.env.EMAIL_USER}>`,
+    //   to: agentDoc.email,          // verified user's email
+    //   subject: "✅ Verification Successful",
+    //   text: `Hi ${agentDoc.name},\n\nYour email/OTP has been successfully verified!\n\n– Logifi Team`,
+    //   html: generatePotLodgeVerificationSuccessEmail(agentDoc.name),
+    // });
 
     // Session
     req.session.verifiedEmail = agentDoc.email;
