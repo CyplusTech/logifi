@@ -4,7 +4,7 @@ const User = require("../models/Users");
 const ChatSession = require("../models/Chatsession");
 
 
-const {sendMail} = require("../utilities/mailer");
+const {sendMail} = require("../utilities/resendMailer");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 
@@ -302,12 +302,13 @@ exports.sendOtp = async (req, res) => {
     await agentDoc.save();
 
     // Send mail
-        await sendMail({
+     const mailResponse = await sendMail({
         to: email,
         subject: "🔐 Verify Your Lodge Posting",
         text: `Hi ${name},\n\nThank you for posting your lodge on Logifi.\nYour OTP is: ${otp}\nIt expires in 5 minutes.\n\n– Logifi Team`,
         html: generatePostLodgeOtpEmail(name, otp),
       });
+      console.log("Mail API raw response:", mailResponse);
 
 
     // await sendMail({
