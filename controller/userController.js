@@ -29,55 +29,110 @@ exports.homePage = async (req, res) => {
   }
 };
 
+// exports.singlePage = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     if (!id) return res.status(400).send("Lodge ID is required");
+
+//     // Fetch the lodge
+//     const selectedLodge = await Lodge.findById(id);
+//     if (!selectedLodge) return res.status(404).send("Lodge not found");
+
+//     // Fetch reviews for this lodge
+//     const lodgeReviews = await Review.find({ agentEmail: selectedLodge.postedBy });
+
+//     // Fetch the agent by email
+//     const agent = await Agent.findOne({ email: selectedLodge.postedBy });
+
+//     // Calculate avg rating
+//     let avgRating = 0;
+//     if (lodgeReviews.length > 0) {
+//       avgRating = lodgeReviews.reduce((sum, r) => sum + r.rating, 0) / lodgeReviews.length;
+//     }
+
+//     // Prepare lodge with review + agent info
+//     const lodgeWithReviews = {
+//       ...selectedLodge.toObject(),
+//       avgRating: Math.round(avgRating), // 0-5
+//       reviewCount: lodgeReviews.length,
+//       reviews: lodgeReviews,
+//       agent: agent
+//         ? {
+//             name: agent.name,
+//              email: maskEmail(agent.email),
+//             isVerified: agent.isVerified,
+//             kycCompleted: agent.kycCompleted,
+//           }
+//         : null,
+//     };
+
+//     // Render lodge page
+//     res.render("lodges", {
+//       lodges: [lodgeWithReviews], // wrap in array for your EJS loop
+//       selectedLodge: lodgeWithReviews,
+//       search: "",
+//       session: req.session,
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Error loading lodge");
+//   }
+// };
+
 exports.singlePage = async (req, res) => {
   try {
     const { id } = req.params;
-    if (!id) return res.status(400).send("Lodge ID is required");
 
-    // Fetch the lodge
+    // ✅ Step 1: Validate the ObjectId
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      console.warn("⚠️ Invalid lodge ID:", id);
+      return res.redirect("/lodges"); // safely redirect instead of crashing
+    }
+
+    // ✅ Step 2: Fetch lodge
     const selectedLodge = await Lodge.findById(id);
     if (!selectedLodge) return res.status(404).send("Lodge not found");
 
-    // Fetch reviews for this lodge
+    // ✅ Step 3: Fetch lodge reviews and agent
     const lodgeReviews = await Review.find({ agentEmail: selectedLodge.postedBy });
-
-    // Fetch the agent by email
     const agent = await Agent.findOne({ email: selectedLodge.postedBy });
 
-    // Calculate avg rating
+    // ✅ Step 4: Calculate average rating
     let avgRating = 0;
     if (lodgeReviews.length > 0) {
-      avgRating = lodgeReviews.reduce((sum, r) => sum + r.rating, 0) / lodgeReviews.length;
+      avgRating =
+        lodgeReviews.reduce((sum, r) => sum + r.rating, 0) / lodgeReviews.length;
     }
 
-    // Prepare lodge with review + agent info
+    // ✅ Step 5: Combine lodge info
     const lodgeWithReviews = {
       ...selectedLodge.toObject(),
-      avgRating: Math.round(avgRating), // 0-5
+      avgRating: Math.round(avgRating),
       reviewCount: lodgeReviews.length,
       reviews: lodgeReviews,
       agent: agent
         ? {
             name: agent.name,
-             email: maskEmail(agent.email),
+            email: maskEmail(agent.email),
             isVerified: agent.isVerified,
             kycCompleted: agent.kycCompleted,
           }
         : null,
     };
 
-    // Render lodge page
+    // ✅ Step 6: Render view
     res.render("lodges", {
-      lodges: [lodgeWithReviews], // wrap in array for your EJS loop
+      lodges: [lodgeWithReviews],
       selectedLodge: lodgeWithReviews,
       search: "",
       session: req.session,
     });
   } catch (err) {
-    console.error(err);
+    console.error("❌ Error in singlePage:", err);
     res.status(500).send("Error loading lodge");
   }
 };
+
 
 exports.lodgePage = async (req, res) => {
   try {
