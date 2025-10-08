@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lodge Listings | Logifi</title>
+
+<style>
+  :root {
+    --green: #0b8a55;
+    --red: #e74c3c;
+    --gray: #f8f9fa;
+    --dark: #222;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Poppins", sans-serif;
+    background: var(--gray);
+    margin: 0;
+    padding: 0;
+  }
+
+  /* ==== HEADER ==== */
+  .home-lodge-header {
+    text-align: center;
+    padding: 25px 10px 10px;
+  }
+
+  .home-lodge-header h2 {
+    font-size: 24px;
+    margin-bottom: 5px;
+  }
+
+  .home-lodge-header p {
+    color: #555;
+  }
+
+  /* ==== LODGE GRID ==== */
+  .home-lodge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 15px;
+    padding: 20px;
+  }
+
+  .home-lodge-card {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    text-decoration: none;
+    color: var(--dark);
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+
+  .home-lodge-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 5px 18px rgba(0,0,0,0.15);
+  }
+
+  .home-lodge-img {
+    position: relative;
+  }
+
+  .home-lodge-img img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .lodge-status {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 13px;
+    text-transform: capitalize;
+    border: 1px solid red;
+  }
+
+  .available { background: var(--green); }
+  .occupied { background: var(--red); }
+
+  .plx-agent-box {
+    padding: 8px 15px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #666;
+  }
+
+  .home-lodge-info {
+    padding: 10px 15px 15px;
+  }
+
+  .home-lodge-info h3 {
+    margin: 5px 0;
+    font-size: 17px;
+  }
+
+  /* ==== FILTER BUTTON ==== */
+  .filter-button-wrapper {
+    text-align: center;
+    margin: 10px 0 0;
+  }
+
+  .open-filter-btn {
+    background: var(--green);
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: background 0.3s;
+  }
+
+  .open-filter-btn:hover {
+    background: #097946;
+  }
+
+  /* ==== MODAL ==== */
+  .filter-modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s;
+  }
+
+  @keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+
+  .filter-modal-content {
+    background: #fff;
+    width: 92%;
+    max-width: 450px;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    position: relative;
+    animation: slideUp 0.4s;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(60px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    font-size: 22px;
+    cursor: pointer;
+    color: #444;
+    font-weight: bold;
+  }
+
+  /* ==== FILTER FORM ==== */
+  .filter-modal h2 {
+    text-align: center;
+    margin-bottom: 15px;
+    color: var(--dark);
+  }
+
+  .filter-form label {
+    display: block;
+    margin-top: 12px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .filter-form input,
+  .filter-form select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-top: 6px;
+    font-size: 14px;
+  }
+
+  .price-range {
+    display: flex;
+    gap: 10px;
+  }
+
+  /* Verified toggle */
+  .verified-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    cursor: pointer;
+  }
+
+  .verified-filter input {
+    appearance: none;
+    width: 45px;
+    height: 22px;
+    background: #ccc;
+    border-radius: 20px;
+    position: relative;
+    outline: none;
+    transition: background 0.3s;
+  }
+
+  .verified-filter input::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s;
+  }
+
+  .verified-filter input:checked {
+    background: var(--green);
+  }
+
+  .verified-filter input:checked::before {
+    transform: translateX(22px);
+  }
+
+  /* Buttons */
+  .filter-btns {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+    gap: 10px;
+  }
+
+  .apply-btn, .reset-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .apply-btn {
+    background: var(--green);
+    color: #fff;
+  }
+
+  .reset-btn {
+    background: #f0f0f0;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .home-lodge-info h3 {
+      font-size: 15px;
+    }
+    .home-lodge-header h2 {
+      font-size: 20px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="home-lodge-header">
+  <h2>Top Lodge Listings Near You</h2>
+  <p>Explore top available lodges close to your campus.</p>
+</div>
+
+<!-- Filter Button -->
+<div class="filter-button-wrapper">
+  <button id="openFilterModal" class="open-filter-btn">🔍 Filter Lodges</button>
+</div>
+
+<!-- Lodge Grid -->
+<div class="home-lodge-grid" id="lodgeGrid"></div>
+
+<!-- Filter Modal -->
+<div id="filterModal" class="filter-modal">
+  <div class="filter-modal-content">
+    <span id="closeFilterModal" class="close-btn">&times;</span>
+    <h2>Filter Lodges</h2>
+
+    <form id="lodgeFilterForm" class="filter-form">
+      <label>Location</label>
+      <select id="filter-location">
+        <option value="all">All Locations</option>
+        <option value="Awka">Awka</option>
+        <option value="Enugu">Enugu</option>
+        <option value="Nsukka">Nsukka</option>
+      </select>
+
+      <label>Type</label>
+      <select id="filter-type">
+        <option value="all">All Types</option>
+        <option value="self-contain">Self Contain</option>
+        <option value="single-room">Single Room</option>
+      </select>
+
+      <label>Price Range (₦)</label>
+      <div class="price-range">
+        <input type="number" id="filter-minPrice" placeholder="Min" />
+        <input type="number" id="filter-maxPrice" placeholder="Max" />
+      </div>
+
+      <label>Status</label>
+      <select id="filter-status">
+        <option value="all">All</option>
+        <option value="available">Available</option>
+        <option value="occupied">Occupied</option>
+      </select>
+
+      <label class="verified-filter">
+          <span>Verified Only</span>
+        <input type="checkbox" id="filter-verified">
+      </label>
+
+      <div class="filter-btns">
+        <button type="button" id="applyFilters" class="apply-btn">Apply Filters</button>
+        <button type="button" id="resetFilters" class="reset-btn">Reset</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+    
+const lodgesData = [
+  { id: 1, title: "Luxury Self Contain", location: "Awka", type: "self-contain", price: 120000, verified: true, status: "available", img: "https://placehold.co/300x200?text=Awka+Lodge" },
+  { id: 2, title: "Student Single Room", location: "Nsukka", type: "single-room", price: 80000, verified: false, status: "available", img: "https://placehold.co/300x200?text=Nsukka+Lodge" },
+  { id: 3, title: "Affordable Apartment", location: "Enugu", type: "self-contain", price: 95000, verified: true, status: "occupied", img: "https://placehold.co/300x200?text=Enugu+Lodge" },
+  { id: 4, title: "Modern Self Contain", location: "Awka", type: "self-contain", price: 100000, verified: true, status: "available", img: "https://placehold.co/300x200?text=Awka+Modern" },
+];
+
+const lodgeGrid = document.getElementById("lodgeGrid");
+const modal = document.getElementById("filterModal");
+const openBtn = document.getElementById("openFilterModal");
+const closeBtn = document.getElementById("closeFilterModal");
+
+function renderLodges(data) {
+  lodgeGrid.innerHTML = data.map(l => `
+    <a href="#" class="home-lodge-card">
+      <div class="home-lodge-img">
+        <img src="${l.img}" alt="${l.title}">
+        <span class="lodge-status ${l.status}">${l.status}</span>
+      </div>
+      <div class="plx-agent-box">
+        <span>${l.verified ? '✅ Verified' : '❌ Not Verified'}</span>
+        <span>₦${l.price.toLocaleString()}</span>
+      </div>
+      <div class="home-lodge-info">
+        <h3>${l.title}</h3>
+        <p>📍 ${l.location} | ${l.type.replace('-', ' ')}</p>
+      </div>
+    </a>
+  `).join("");
+}
+
+renderLodges(lodgesData);
+
+// Modal control
+openBtn.onclick = () => modal.style.display = "flex";
+closeBtn.onclick = () => modal.style.display = "none";
+window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
+
+// Filter logic
+document.getElementById("applyFilters").onclick = () => {
+  const min = parseInt(document.getElementById("filter-minPrice").value) || 0;
+  const max = parseInt(document.getElementById("filter-maxPrice").value) || Infinity;
+  const loc = document.getElementById("filter-location").value;
+  const type = document.getElementById("filter-type").value;
+  const status = document.getElementById("filter-status").value;
+  const verified = document.getElementById("filter-verified").checked;
+
+  const filtered = lodgesData.filter(l =>
+    l.price >= min &&
+    l.price <= max &&
+    (loc === "all" || l.location === loc) &&
+    (type === "all" || l.type === type) &&
+    (status === "all" || l.status === status) &&
+    (!verified || l.verified)
+  );
+
+  renderLodges(filtered);
+  modal.style.display = "none";
+};
+
+document.getElementById("resetFilters").onclick = () => {
+  document.getElementById("lodgeFilterForm").reset();
+  renderLodges(lodgesData);
+};
+</script>
+
+</body>
+</html>

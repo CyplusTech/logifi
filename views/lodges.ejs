@@ -307,6 +307,168 @@
 }
 
 
+
+  /* ==== FILTER BUTTON ==== */
+  .filter-button-wrapper {
+    text-align: center;
+    margin: 10px 0 0;
+  }
+
+  .open-filter-btn {
+    background: #fbbf24 !important;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: background 0.3s;
+  }
+
+  .open-filter-btn:hover {
+    background: #f59e0b !important;
+  }
+
+  /* ==== MODAL ==== */
+  .filter-modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s;
+  }
+
+  @keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+
+  .filter-modal-content {
+    background: #fff;
+    width: 92%;
+    max-width: 450px;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    position: relative;
+    animation: slideUp 0.4s;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(60px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    font-size: 22px;
+    cursor: pointer;
+    color: #444;
+    font-weight: bold;
+  }
+
+  /* ==== FILTER FORM ==== */
+  .filter-modal h2 {
+    text-align: center;
+    margin-bottom: 15px;
+    color: var(--dark);
+  }
+
+  .filter-form label {
+    display: block;
+    margin-top: 12px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .filter-form input,
+  .filter-form select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-top: 6px;
+    font-size: 14px;
+  }
+
+  .price-range {
+    display: flex;
+    gap: 10px;
+  }
+
+  /* Verified toggle */
+  .verified-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    cursor: pointer;
+  }
+
+  .verified-filter input {
+    appearance: none;
+    width: 45px;
+    height: 22px;
+    background: #ccc;
+    border-radius: 20px;
+    position: relative;
+    outline: none;
+    transition: background 0.3s;
+  }
+
+  .verified-filter input::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s;
+  }
+
+  .verified-filter input:checked {
+    background: var(--primary);
+  }
+
+  .verified-filter input:checked::before {
+    transform: translateX(22px);
+  }
+
+  /* Buttons */
+  .filter-btns {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+    gap: 10px;
+  }
+
+  .apply-btn, .reset-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .apply-btn {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .reset-btn {
+    background: #c4c2c2ab;
+  }
+
 </style>
 
 </head>
@@ -689,6 +851,61 @@
 
 <!-- toast message///// -->
  <div id="toast"></div>
+
+
+ <!-- ///////filter model..... -->
+<!-- Lodge Grid -->
+<div class="home-lodge-grid" id="lodgeGrid"></div>
+
+  <!-- Filter Modal -->
+<div id="filterModal" class="filter-modal">
+  <div class="filter-modal-content">
+    <span id="closeFilterModal" class="close-btn">&times;</span>
+    <h2>Filter Lodges</h2>
+
+    <form id="lodgeFilterForm" class="filter-form">
+      <label>Location</label>
+      <select id="filter-location">
+        <option value="all">All Locations</option>
+        <option value="main-gate">Main gate</option>
+        <option value="total-juction">Total Junction</option>
+        <option value="eke-oko">Eke oko</option>
+        <option value="amaokpala-new">Amaokpala New Rd</option>
+        <option value="amaokpala-old">Amaokpala Old Rd</option>
+      </select>
+
+      <label>Type</label>
+      <select id="filter-type">
+        <option value="all">All Types</option>
+        <option value="self-contain">Self Contain</option>
+        <option value="single-room">Single Room</option>
+      </select>
+
+      <label>Price Range (₦)</label>
+      <div class="price-range">
+        <input type="number" id="filter-minPrice" placeholder="Min" />
+        <input type="number" id="filter-maxPrice" placeholder="Max" />
+      </div>
+
+      <label>Status</label>
+      <select id="filter-status">
+        <option value="all">All</option>
+        <option value="available">Available</option>
+        <option value="occupied">Occupied</option>
+      </select>
+
+      <label class="verified-filter">
+          <span>Verified Only</span>
+        <input type="checkbox" id="filter-verified">
+      </label>
+
+      <div class="filter-btns">
+        <button type="button" id="applyFilters" class="apply-btn">Apply Filters</button>
+        <button type="button" id="resetFilters" class="reset-btn">Reset</button>
+      </div>
+    </form>
+  </div>
+</div>
     
 <!-- ////// Footer ////// -->
     <%- include("partials/footer")%>
@@ -1526,6 +1743,104 @@ updateSentiment();
   btn.setAttribute("href", `https://wa.me/${formattedPhone}?text=${message}`);
   btn.setAttribute("target", "_blank");
 }
+
+
+
+///////filter script section////
+    
+// ===== Modal & Filter System ===== //
+const modal = document.getElementById("filterModal");
+const openBtn = document.getElementById("openFilterModal");
+const closeBtn = document.getElementById("closeFilterModal");
+
+openBtn.onclick = () => modal.style.display = "flex";
+closeBtn.onclick = () => modal.style.display = "none";
+window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
+
+// ===== FILTER LOGIC ===== //
+document.getElementById("applyFilters").onclick = () => {
+  const min = parseInt(document.getElementById("filter-minPrice").value) || 0;
+  const max = parseInt(document.getElementById("filter-maxPrice").value) || Infinity;
+  const loc = document.getElementById("filter-location").value.trim().toLowerCase();
+  const type = document.getElementById("filter-type").value.trim().toLowerCase();
+  const status = document.getElementById("filter-status").value.trim().toLowerCase();
+  const verifiedOnly = document.getElementById("filter-verified").checked;
+
+  const filtered = plxState.lodges.filter(l => {
+    const locationMatch =
+      loc === "all" ||
+      (l.location || "").toLowerCase().includes(loc);
+
+    const typeMatch =
+      type === "all" ||
+      (l.type || "").toLowerCase().includes(type);
+
+    const statusMatch =
+      status === "all" ||
+      (l.status || "").toLowerCase().includes(status);
+
+    const price = Number(l.price) || 0;
+    const priceMatch = price >= min && price <= max;
+
+    const verifiedMatch =
+      !verifiedOnly ||
+      (l.agent && (l.agent.kycCompleted === true || l.agent.kycCompleted === "true"));
+
+    return locationMatch && typeMatch && statusMatch && priceMatch && verifiedMatch;
+  });
+
+  renderFilteredLodges(filtered);
+  modal.style.display = "none";
+};
+
+// ===== RESET FILTERS ===== //
+document.getElementById("resetFilters").onclick = () => {
+  document.getElementById("lodgeFilterForm").reset();
+  if (typeof renderGrid === "function") renderGrid(); // restore all lodges
+};
+
+// ===== HELPER TO RENDER FILTERED LODGES ===== //
+function renderFilteredLodges(filtered) {
+  const availableGrid = document.querySelector("main .plx-grid");
+  const nonAvailableGrid = document.querySelector("#rented-section .plx-grid");
+  const rentedWrapper = document.getElementById("rented-section");
+
+  if (!availableGrid || !nonAvailableGrid) {
+    console.warn("⚠️ Lodge grids not found in DOM.");
+    return;
+  }
+
+  availableGrid.innerHTML = "";
+  nonAvailableGrid.innerHTML = "";
+
+  if (filtered.length === 0) {
+    availableGrid.innerHTML = `<p style="text-align:center;color:#888;">No lodges match your filters.</p>`;
+    if (rentedWrapper) rentedWrapper.style.display = "none";
+    return;
+  }
+
+  filtered.forEach(lodge => {
+    const card = renderCard(lodge);
+    if (lodge.status && lodge.status.toLowerCase() === "available") {
+      availableGrid.appendChild(card);
+    } else {
+      nonAvailableGrid.appendChild(card);
+    }
+  });
+
+  // Pagination (if function exists)
+  if (typeof paginateGrid === "function") {
+    paginateGrid("main .plx-grid", "#pagination-available", 6);
+    paginateGrid("#rented-section .plx-grid", "#pagination-rented", 6);
+  }
+
+  // Hide rented section if none
+  if (rentedWrapper) {
+    rentedWrapper.style.display =
+      nonAvailableGrid.children.length === 0 ? "none" : "block";
+  }
+}
+
 
    </script>
 
