@@ -3,6 +3,8 @@ const Agent = require('../models/Agents');
 const Review = require('../models/Review');
 const maskEmail = require("../utilities/maskEmail");
 
+const mongoose = require("mongoose");
+
 exports.homePage = async (req, res) => {
   try {
     // get only lodges with status = available
