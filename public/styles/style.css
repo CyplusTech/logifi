@@ -47,7 +47,7 @@
     }
 
     .logo-img {
-      height: 130px;
+      height: 150px;
       margin-top: 10px;
       object-fit: contain;
     }
@@ -658,7 +658,7 @@ header.menu-open .menu-toggle {
 
     .footer-brand .footer-logo-img{
       margin-top: -20px;
-      height: 110px;
+      height: 150px;
       object-fit: contain;
     }
 
@@ -739,7 +739,7 @@ header.menu-open .menu-toggle {
       }
 
       .logo-img {
-        height: 100px;
+        height: 150px;
         margin-left: -40px;
       }
 

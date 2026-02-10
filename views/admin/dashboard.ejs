@@ -1,0 +1,2919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OnePoint IMS - Smart Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           CSS VARIABLES & RESET
+           ============================================ */
+        :root {
+            --color-primary: #1E40AF;
+            --color-primary-dark: #1E3A8A;
+            --color-primary-light: #3B82F6;
+            --color-secondary: #0F172A;
+            --color-accent: #10B981;
+            --color-accent-blue: #06B6D4;
+            --color-success: #10B981;
+            --color-warning: #F59E0B;
+            --color-danger: #EF4444;
+            --color-info: #3B82F6;
+            --color-text: #1F2937;
+            --color-text-light: #6B7280;
+            --color-text-lighter: #9CA3AF;
+            --color-background: #F9FAFB;
+            --color-background-white: #FFFFFF;
+            --color-border: #E5E7EB;
+            --color-border-dark: #D1D5DB;
+            --color-hover: #F3F4F6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-radius: 12px;
+            --border-radius-sm: 8px;
+            --border-radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ============================================
+           NAVIGATION
+           ============================================ */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--color-background-white);
+            border-bottom: 1px solid var(--color-border);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .navbar-content {
+            max-width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--color-primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .logo:hover {
+            transform: scale(1.02);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--color-primary);
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            color: white;
+            font-size: 1.25rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Online Status Indicator in Nav */
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--color-background);
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .status-dot-nav {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot-nav.online {
+            background: var(--color-success);
+        }
+
+        .status-dot-nav.offline {
+            background: var(--color-danger);
+        }
+
+        .status-dot-nav.syncing {
+            background: var(--color-warning);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .search-bar {
+            position: relative;
+            display: none;
+        }
+
+        .search-bar.active {
+            display: block;
+        }
+
+        .search-input {
+            width: 350px;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            background: var(--color-background);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-sm);
+            color: var(--color-text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9375rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-text-light);
+            font-size: 1.125rem;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            color: var(--color-text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: var(--color-hover);
+            color: var(--color-primary);
+        }
+
+        .icon-btn.active {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: var(--color-danger);
+            border-radius: 50%;
+            border: 2px solid var(--color-background-white);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            background: var(--color-background);
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-menu:hover {
+            background: var(--color-hover);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--color-text);
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--color-text-light);
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* ============================================
+           SIDEBAR
+           ============================================ */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 73px;
+            width: 280px;
+            height: calc(100vh - 73px);
+            background: var(--color-background-white);
+            border-right: 1px solid var(--color-border);
+            padding: 1.5rem;
+            z-index: 100;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--color-border);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: var(--color-border-dark);
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-text-lighter);
+            margin-bottom: 0.75rem;
+            padding: 0 0.75rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            color: var(--color-text-light);
+            text-decoration: none;
+            border-radius: var(--border-radius-sm);
+            font-weight: 500;
+            font-size: 0.9375rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .sidebar-link:hover {
+            background: var(--color-hover);
+            color: var(--color-primary);
+        }
+
+        .sidebar-link.active {
+            background: var(--color-primary);
+            color: white;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+        }
+
+        .sidebar-icon {
+            font-size: 1.25rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* ============================================
+           MAIN CONTENT
+           ============================================ */
+        .main-content {
+            margin-left: 280px;
+            margin-top: 73px;
+            padding: 2rem;
+            min-height: calc(100vh - 73px);
+            transition: var(--transition);
+        }
+
+        .container {
+            max-width: 100%;
+        }
+
+        /* ============================================
+           PAGE SECTIONS
+           ============================================ */
+        .page-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-header-left h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--color-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .page-header-left p {
+            color: var(--color-text-light);
+            font-size: 0.9375rem;
+        }
+
+        .page-header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        /* ============================================
+           STATISTICS CARDS
+           ============================================ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--color-background-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius);
+            padding: 1.75rem;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-color, var(--color-primary));
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--gradient-color, var(--color-primary));
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card.blue { --gradient-color: var(--color-primary); }
+        .stat-card.green { --gradient-color: var(--color-success); }
+        .stat-card.yellow { --gradient-color: var(--color-warning); }
+        .stat-card.red { --gradient-color: var(--color-danger); }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--color-text-light);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: var(--icon-bg, rgba(30, 64, 175, 0.1));
+        }
+
+        .stat-card.blue .stat-icon { background: rgba(30, 64, 175, 0.1); }
+        .stat-card.green .stat-icon { background: rgba(16, 185, 129, 0.1); }
+        .stat-card.yellow .stat-icon { background: rgba(245, 158, 11, 0.1); }
+        .stat-card.red .stat-icon { background: rgba(239, 68, 68, 0.1); }
+
+        .stat-value {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--color-secondary);
+        }
+
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+        }
+
+        .stat-change.positive {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        .stat-change.negative {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-danger);
+        }
+
+        /* ============================================
+           BUTTONS
+           ============================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            font-size: 0.9375rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-dark);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+            background: rgba(30, 64, 175, 0.05);
+        }
+
+        .btn-success {
+            background: var(--color-success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--color-danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #DC2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+        }
+
+        .btn-whatsapp:hover {
+            background: #20BA5A;
+            transform: translateY(-2px);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ============================================
+           CARDS
+           ============================================ */
+        .card {
+            background: var(--color-background-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-secondary);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* ============================================
+           SMART ALERTS STYLES
+           ============================================ */
+        .alert-item {
+            background: var(--color-background);
+            border-left: 4px solid var(--color-primary);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border-radius: var(--border-radius-sm);
+            transition: var(--transition);
+        }
+
+        .alert-item:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateX(4px);
+        }
+
+        .alert-item.critical {
+            border-left-color: var(--color-danger);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .alert-item.warning {
+            border-left-color: var(--color-warning);
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .alert-item.info {
+            border-left-color: var(--color-success);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .alert-item h4 {
+            font-size: 1em;
+            margin-bottom: 0.5rem;
+            color: var(--color-text);
+            font-weight: 700;
+        }
+
+        .alert-item p {
+            font-size: 0.9em;
+            color: var(--color-text-light);
+            margin-bottom: 0.75rem;
+        }
+
+        .alert-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85em;
+            color: var(--color-text-lighter);
+            flex-wrap: wrap;
+        }
+
+        .alert-actions {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        /* ============================================
+           WHATSAPP PREVIEW
+           ============================================ */
+        .whatsapp-preview {
+            background: #E5DDD5;
+            border-radius: var(--border-radius-sm);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .whatsapp-message {
+            background: white;
+            border-radius: 8px;
+            padding: 0.875rem 1rem;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            position: relative;
+            max-width: 85%;
+        }
+
+        .whatsapp-message::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 12px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid white;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+        }
+
+        .whatsapp-message.sent {
+            background: #DCF8C6;
+            margin-left: auto;
+        }
+
+        .whatsapp-message.sent::after {
+            border-left-color: #DCF8C6;
+        }
+
+        .whatsapp-time {
+            font-size: 0.75em;
+            color: #667781;
+            text-align: right;
+            margin-top: 0.5rem;
+        }
+
+        /* ============================================
+           SYNC STATUS
+           ============================================ */
+        .sync-status-card {
+            background: linear-gradient(135deg, rgba(30, 64, 175, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-sm);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sync-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .sync-item:last-child {
+            border-bottom: none;
+        }
+
+        .progress-bar {
+            background: var(--color-border);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.75rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-success) 100%);
+            transition: width 0.3s;
+        }
+
+        /* ============================================
+           TABLE
+           ============================================ */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--color-background);
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem 1.25rem;
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: var(--color-text-light);
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--color-border);
+            transition: var(--transition);
+        }
+
+        tbody tr:hover {
+            background: var(--color-hover);
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        td {
+            padding: 1.25rem;
+            font-size: 0.9375rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.875rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-badge.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        .status-badge.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--color-warning);
+        }
+
+        .status-badge.danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-danger);
+        }
+
+        .status-badge.info {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--color-info);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--color-border);
+            background: white;
+            border-radius: 6px;
+            color: var(--color-text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.875rem;
+        }
+
+        .action-btn:hover {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            color: white;
+        }
+
+        .action-btn.danger:hover {
+            background: var(--color-danger);
+            border-color: var(--color-danger);
+        }
+
+        /* ============================================
+           FORMS
+           ============================================ */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--color-text);
+            font-size: 0.9375rem;
+        }
+
+        .form-label .required {
+            color: var(--color-danger);
+            margin-left: 2px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--color-background-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-sm);
+            color: var(--color-text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9375rem;
+            transition: var(--transition);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-help {
+            font-size: 0.8125rem;
+            color: var(--color-text-light);
+            margin-top: 0.5rem;
+        }
+
+        /* ============================================
+           MODAL
+           ============================================ */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+            animation: modalFadeIn 0.2s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background: var(--color-background-white);
+            border-radius: var(--border-radius);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideUp 0.3s ease-out;
+            box-shadow: var(--shadow-xl);
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-secondary);
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--color-text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--color-hover);
+            color: var(--color-danger);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        /* ============================================
+           CHARTS
+           ============================================ */
+        .chart-container {
+            background: var(--color-background-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-header {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-secondary);
+        }
+
+        .chart-subtitle {
+            color: var(--color-text-light);
+            font-size: 0.875rem;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 1rem;
+            height: 280px;
+            padding: 1rem 0 2rem;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: var(--transition);
+            cursor: pointer;
+            min-height: 20px;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+            transform: translateY(-4px);
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--color-text-light);
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: var(--color-text);
+            white-space: nowrap;
+        }
+
+        /* ============================================
+           ALERTS
+           ============================================ */
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            border-left: 4px solid;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--color-success);
+            color: #065F46;
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: var(--color-warning);
+            color: #92400E;
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--color-danger);
+            color: #991B1B;
+        }
+
+        .alert-info {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--color-info);
+            color: #1E40AF;
+        }
+
+        .alert-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        /* ============================================
+           PAGINATION
+           ============================================ */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .pagination-btn {
+            min-width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--color-border);
+            background: white;
+            border-radius: 6px;
+            color: var(--color-text);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0 0.75rem;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: var(--color-hover);
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .pagination-btn.active {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            color: white;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ============================================
+           TOAST NOTIFICATIONS
+           ============================================ */
+        .toast-container {
+            position: fixed;
+            top: 90px;
+            right: 2rem;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-width: 400px;
+        }
+
+        .toast {
+            background: white;
+            border-radius: var(--border-radius-sm);
+            padding: 1rem 1.25rem;
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-left: 4px solid;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success { border-color: var(--color-success); }
+        .toast.error { border-color: var(--color-danger); }
+        .toast.info { border-color: var(--color-info); }
+
+        .toast-icon {
+            font-size: 1.25rem;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            margin-bottom: 0.125rem;
+        }
+
+        .toast-message {
+            font-size: 0.875rem;
+            color: var(--color-text-light);
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--color-text-light);
+            cursor: pointer;
+            font-size: 1.25rem;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .toast-close:hover {
+            background: var(--color-hover);
+        }
+
+        /* ============================================
+           LOADING SPINNER
+           ============================================ */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--color-border);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        /* ============================================
+           EMPTY STATE
+           ============================================ */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: var(--color-text-lighter);
+            margin-bottom: 1rem;
+        }
+
+        .empty-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-text {
+            color: var(--color-text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        /* ============================================
+           RESPONSIVE DESIGN
+           ============================================ */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+                box-shadow: var(--shadow-xl);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .search-bar {
+                display: none !important;
+            }
+
+            .connection-status span {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .page-header-actions {
+                width: 100%;
+            }
+
+            .page-header-actions .btn {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            .card-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .card-actions {
+                width: 100%;
+            }
+
+            .table-wrapper {
+                overflow-x: scroll;
+            }
+
+            table {
+                min-width: 800px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toast-container {
+                right: 1rem;
+                left: 1rem;
+                max-width: none;
+            }
+
+            .modal-content {
+                margin: 1rem;
+            }
+
+            .whatsapp-preview {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo span {
+                display: none;
+            }
+
+            .nav-actions {
+                gap: 0.5rem;
+            }
+
+            .stat-value {
+                font-size: 1.875rem;
+            }
+
+            .modal-header,
+            .modal-body,
+            .modal-footer {
+                padding: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+                <a href="#" class="logo">
+                    <div class="logo-icon">1</div>
+                    <span>OnePoint IMS</span>
+                </a>
+            </div>
+
+            <div class="nav-right">
+                <!-- Connection Status -->
+                <div class="connection-status">
+                    <div class="status-dot-nav online" id="connectionDotNav"></div>
+                    <span id="connectionTextNav">Online</span>
+                </div>
+
+                <div class="search-bar" id="searchBar">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" placeholder="Search anything..." id="globalSearch">
+                </div>
+
+                <div class="nav-actions">
+                    <button class="icon-btn" id="searchToggle" onclick="toggleSearch()" title="Search">
+                        🔍
+                    </button>
+                    <button class="icon-btn" onclick="showNotifications()" title="Notifications">
+                        🔔
+                        <span class="notification-badge"></span>
+                    </button>
+                    <button class="icon-btn" onclick="manualSync()" title="Sync" id="syncBtn">
+                        ↻
+                    </button>
+                    <button class="icon-btn" onclick="showSettings()" title="Settings">
+                        ⚙️
+                    </button>
+                    <div class="user-menu" onclick="showUserMenu()">
+                        <div class="user-avatar">CP</div>
+                        <div class="user-info">
+                            <div class="user-name">cyplus</div>
+                            <div class="user-role">Administrator</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Main Menu</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item" data-role="owner,storekeeper,sales">
+                    <a class="sidebar-link active" onclick="showPage('dashboard')">
+                        <span class="sidebar-icon">📊</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" data-role="owner,storekeeper">
+                    <a class="sidebar-link" onclick="showPage('smart-alerts')">
+                        <span class="sidebar-icon">🔥</span>
+                        <span>Smart Alerts</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" data-role="owner,storekeeper">
+                    <a class="sidebar-link" onclick="showPage('products')">
+                        <span class="sidebar-icon">📦</span>
+                        <span>Products</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" data-role="owner,sales">
+                    <a class="sidebar-link" onclick="showPage('orders')">
+                        <span class="sidebar-icon">🛒</span>
+                        <span>Orders</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" data-role="owner,storekeeper,sales">
+                    <a class="sidebar-link" onclick="showPage('suppliers')">
+                        <span class="sidebar-icon">🏭</span>
+                        <span>Suppliers</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" data-role="owner">
+                    <a class="sidebar-link" onclick="showPage('reports')">
+                        <span class="sidebar-icon">📈</span>
+                        <span>Reports</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="sidebar-section" data-role="owner,storekeeper">
+            <div class="sidebar-title">Inventory</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a class="sidebar-link" onclick="showPage('categories')">
+                        <span class="sidebar-icon">🏷️</span>
+                        <span>Categories</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" onclick="showPage('stock')">
+                        <span class="sidebar-icon">📋</span>
+                        <span>Stock Levels</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" onclick="showPage('adjustments')">
+                        <span class="sidebar-icon">⚖️</span>
+                        <span>Adjustments</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">Smart Features</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item" data-role="owner,storekeeper">
+                    <a class="sidebar-link" onclick="showPage('whatsapp')">
+                        <span class="sidebar-icon">📱</span>
+                        <span>WhatsApp</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" data-role="owner,storekeeper,sales">
+                    <a class="sidebar-link" onclick="showPage('offline')">
+                        <span class="sidebar-icon">💾</span>
+                        <span>Offline Mode</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">Settings</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item" data-role="owner">
+                    <a class="sidebar-link" onclick="showPage('settings')">
+                        <span class="sidebar-icon">⚙️</span>
+                        <span>General Settings</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" data-role="owner">
+                    <a class="sidebar-link" onclick="showPage('users')">
+                        <span class="sidebar-icon">👥</span>
+                        <span>User Management</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            
+            <!-- DASHBOARD PAGE -->
+            <section id="dashboard" class="page-section active">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>Dashboard</h1>
+                        <p>Welcome back! Here's your inventory overview</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="btn btn-secondary btn-sm">
+                            📅 Last 30 Days
+                        </button>
+                        <button class="btn btn-primary btn-sm">
+                            📊 Export Report
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="stats-grid">
+                    <div class="stat-card blue">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Total Products</div>
+                            </div>
+                            <div class="stat-icon">📦</div>
+                        </div>
+                        <div class="stat-value">1,847</div>
+                        <span class="stat-change positive">↑ 12.5% from last month</span>
+                    </div>
+                    <div class="stat-card yellow">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Low Stock Items</div>
+                            </div>
+                            <div class="stat-icon">⚠️</div>
+                        </div>
+                        <div class="stat-value" id="lowStockCount">23</div>
+                        <span class="stat-change negative">↑ 3 items need attention</span>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Total Orders</div>
+                            </div>
+                            <div class="stat-icon">🛒</div>
+                        </div>
+                        <div class="stat-value">392</div>
+                        <span class="stat-change positive">↑ 8.3% from last month</span>
+                    </div>
+                    <div class="stat-card red">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Pending Sync</div>
+                            </div>
+                            <div class="stat-icon">↻</div>
+                        </div>
+                        <div class="stat-value" id="pendingSyncCount">0</div>
+                        <span class="stat-change positive">All synced</span>
+                    </div>
+                </div>
+
+                <!-- Chart -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div>
+                            <h3 class="chart-title">Sales Overview</h3>
+                            <p class="chart-subtitle">Last 7 days performance</p>
+                        </div>
+                        <button class="btn btn-secondary btn-sm">View Details</button>
+                    </div>
+                    <div class="bar-chart">
+                        <div class="bar" style="height: 65%;">
+                            <div class="bar-value">$6.5K</div>
+                            <div class="bar-label">Mon</div>
+                        </div>
+                        <div class="bar" style="height: 78%;">
+                            <div class="bar-value">$7.8K</div>
+                            <div class="bar-label">Tue</div>
+                        </div>
+                        <div class="bar" style="height: 52%;">
+                            <div class="bar-value">$5.2K</div>
+                            <div class="bar-label">Wed</div>
+                        </div>
+                        <div class="bar" style="height: 88%;">
+                            <div class="bar-value">$8.8K</div>
+                            <div class="bar-label">Thu</div>
+                        </div>
+                        <div class="bar" style="height: 95%;">
+                            <div class="bar-value">$9.5K</div>
+                            <div class="bar-label">Fri</div>
+                        </div>
+                        <div class="bar" style="height: 72%;">
+                            <div class="bar-value">$7.2K</div>
+                            <div class="bar-label">Sat</div>
+                        </div>
+                        <div class="bar" style="height: 45%;">
+                            <div class="bar-value">$4.5K</div>
+                            <div class="bar-label">Sun</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Smart Alerts Preview -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🔥 Smart Alerts Summary</h3>
+                        <div class="card-actions">
+                            <button class="btn btn-primary btn-sm" onclick="showPage('smart-alerts')">View All Alerts</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="dashboardAlertsSummary">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Orders</h3>
+                        <div class="card-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="showPage('orders')">View All</button>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Products</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrdersTable">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SMART ALERTS PAGE -->
+            <section id="smart-alerts" class="page-section" data-role="owner,storekeeper">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>🔥 Smart Inventory Alerts</h1>
+                        <p>Predictive analytics and intelligent stock management</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="btn btn-secondary" onclick="openModal('addProductModal')">
+                            + Add Item
+                        </button>
+                        <button class="btn btn-primary" onclick="exportAlerts()">
+                            📤 Export Alerts
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Alert Statistics -->
+                <div class="stats-grid">
+                    <div class="stat-card red">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Critical Alerts</div>
+                            </div>
+                            <div class="stat-icon">🚨</div>
+                        </div>
+                        <div class="stat-value" id="criticalAlertsCount">4</div>
+                        <span class="stat-change negative">Requires immediate attention</span>
+                    </div>
+                    <div class="stat-card yellow">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Low Stock Warnings</div>
+                            </div>
+                            <div class="stat-icon">⚠️</div>
+                        </div>
+                        <div class="stat-value" id="warningAlertsCount">8</div>
+                        <span class="stat-change">Needs restocking soon</span>
+                    </div>
+                    <div class="stat-card blue">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Overstocked Items</div>
+                            </div>
+                            <div class="stat-icon">💰</div>
+                        </div>
+                        <div class="stat-value" id="overstockedCount">3</div>
+                        <span class="stat-change">Capital locked</span>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Healthy Stock</div>
+                            </div>
+                            <div class="stat-icon">✓</div>
+                        </div>
+                        <div class="stat-value" id="healthyStockCount">12</div>
+                        <span class="stat-change positive">Optimal levels</span>
+                    </div>
+                </div>
+
+                <!-- Smart Alerts List -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">All Smart Alerts</h3>
+                        <div class="card-actions">
+                            <select class="form-select" style="width: auto;" onchange="filterAlerts(this.value)">
+                                <option value="all">All Alerts</option>
+                                <option value="critical">Critical Only</option>
+                                <option value="warning">Warnings Only</option>
+                                <option value="info">Healthy Only</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="smartAlertsList">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- WHATSAPP PAGE -->
+            <section id="whatsapp" class="page-section" data-role="owner,storekeeper">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>📱 WhatsApp Integration</h1>
+                        <p>Manage alerts and notifications via WhatsApp</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="btn btn-secondary" onclick="openModal('whatsappSettingsModal')">
+                            ⚙️ Settings
+                        </button>
+                        <button class="btn btn-whatsapp" onclick="sendTestWhatsApp()">
+                            Send Test Alert
+                        </button>
+                    </div>
+                </div>
+
+                <!-- WhatsApp Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card green">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Messages Sent Today</div>
+                            </div>
+                            <div class="stat-icon">📨</div>
+                        </div>
+                        <div class="stat-value" id="whatsappSentToday">28</div>
+                        <span class="stat-change positive">↑ 12 from yesterday</span>
+                    </div>
+                    <div class="stat-card blue">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Response Rate</div>
+                            </div>
+                            <div class="stat-icon">💬</div>
+                        </div>
+                        <div class="stat-value">94%</div>
+                        <span class="stat-change positive">↑ 5% from last week</span>
+                    </div>
+                    <div class="stat-card yellow">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Pending Confirmations</div>
+                            </div>
+                            <div class="stat-icon">⏳</div>
+                        </div>
+                        <div class="stat-value">3</div>
+                        <span class="stat-change">Awaiting manager response</span>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Connection Status</div>
+                            </div>
+                            <div class="stat-icon">✓</div>
+                        </div>
+                        <div class="stat-value" style="font-size: 1.5rem;">Connected</div>
+                        <span class="stat-change positive">Active since 8:00 AM</span>
+                    </div>
+                </div>
+
+                <!-- WhatsApp Configuration -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Manager Configuration</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Manager Phone Number</label>
+                                <input type="tel" class="form-input" id="managerPhone" value="+234 801 234 5678">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Daily Summary Time</label>
+                                <input type="time" class="form-input" id="summaryTime" value="08:00">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Alert Threshold (days)</label>
+                                <input type="number" class="form-input" id="alertThreshold" value="7" min="1" max="30">
+                                <div class="form-help">Send alert when stock will run out within this many days</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Enable Notifications</label>
+                                <select class="form-select" id="whatsappEnabled">
+                                    <option value="true" selected>Enabled</option>
+                                    <option value="false">Disabled</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn-success" onclick="saveWhatsAppSettings()">Save Settings</button>
+                    </div>
+                </div>
+
+                <!-- WhatsApp Preview -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Message Preview</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="whatsapp-preview">
+                            <div class="whatsapp-message">
+                                <strong>OnePoint IMS Alert 🚨</strong>
+                                <p style="margin: 8px 0;">You will run out of <strong>Rice (25kg)</strong> in 9 days at current sales rate.</p>
+                                <p style="margin: 8px 0;">Current stock: 180 bags<br>Daily usage: 20 bags</p>
+                                <p style="margin: 8px 0;">Reply <strong>YES</strong> to reorder<br>Reply <strong>INFO</strong> for details</p>
+                                <div class="whatsapp-time">10:34 AM ✓✓</div>
+                            </div>
+                            <div class="whatsapp-message sent">
+                                <p>YES</p>
+                                <div class="whatsapp-time">10:36 AM ✓✓</div>
+                            </div>
+                            <div class="whatsapp-message">
+                                <p>✅ Reorder confirmed!<br>Order created for 500 bags of Rice (25kg)<br>Supplier: ABC Supplies<br>Expected delivery: 3-5 days</p>
+                                <div class="whatsapp-time">10:36 AM ✓✓</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- OFFLINE MODE PAGE -->
+            <section id="offline" class="page-section" data-role="owner,storekeeper,sales">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>💾 Offline Mode</h1>
+                        <p>Work without internet - sync when you're back online</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="btn btn-secondary" onclick="toggleOfflineMode()">
+                            🔄 Test Offline Mode
+                        </button>
+                        <button class="btn btn-primary" onclick="manualSync()">
+                            ↻ Sync Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sync Status -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Sync Status</h3>
+                        <div class="card-actions">
+                            <span class="status-badge success">
+                                <span class="status-dot"></span>
+                                <span id="syncStatusText">All Synced</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="sync-status-card">
+                            <div class="sync-item">
+                                <span>📦 Inventory Data</span>
+                                <span class="status-badge success">Synced</span>
+                            </div>
+                            <div class="sync-item">
+                                <span>🚨 Alerts</span>
+                                <span class="status-badge success">Synced</span>
+                            </div>
+                            <div class="sync-item">
+                                <span>📱 WhatsApp Queue</span>
+                                <span class="status-badge success">Empty</span>
+                            </div>
+                            <div class="sync-item">
+                                <span>📊 Analytics</span>
+                                <span class="status-badge success">Synced</span>
+                            </div>
+                            <div class="sync-item">
+                                <span>🛒 Orders</span>
+                                <span class="status-badge success">Synced</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1.5rem;">
+                            <p style="font-size: 0.9em; color: var(--color-text-light); margin-bottom: 0.75rem;">
+                                Offline storage: <strong id="storageUsed">2.4 MB</strong> / 50 MB
+                            </p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="storageProgress" style="width: 5%;"></div>
+                            </div>
+                            <p style="font-size: 0.85em; color: var(--color-text-lighter); margin-top: 0.5rem;">
+                                Last sync: <strong id="lastSyncTime">Just now</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Sync Items -->
+                <div class="card" id="pendingSyncCard" style="display: none;">
+                    <div class="card-header">
+                        <h3 class="card-title">⏳ Pending Sync Items</h3>
+                        <div class="card-actions">
+                            <span class="status-badge warning" id="pendingItemsCount">0 items</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="pendingSyncList">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Offline Capabilities -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Offline Capabilities</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <span class="alert-icon">ℹ️</span>
+                            <div class="alert-content">
+                                <div class="alert-title">What works offline?</div>
+                                <div>
+                                    <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                                        <li>View all inventory data</li>
+                                        <li>Add new products and orders</li>
+                                        <li>Update stock levels</li>
+                                        <li>Create alerts and adjustments</li>
+                                        <li>View reports and analytics</li>
+                                        <li>Queue WhatsApp messages</li>
+                                    </ul>
+                                    <p style="margin-top: 0.75rem;">All changes are saved locally and will automatically sync when you reconnect.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- (Include all other original pages: products, orders, suppliers, reports, categories, stock, adjustments, settings, users) -->
+            <!-- For brevity, I'll include placeholders - you can copy these from your original file -->
+            
+            <section id="products" class="page-section" data-role="owner,storekeeper">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>Products</h1>
+                        <p>Manage your product inventory</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="btn btn-secondary" onclick="exportProducts()">📤 Export</button>
+                        <button class="btn btn-primary" onclick="openModal('addProductModal')">+ Add Product</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">All Products</h3>
+                        <div class="card-actions">
+                            <div class="search-bar active" style="display: block;">
+                                <span class="search-icon">🔍</span>
+                                <input type="text" class="search-input" placeholder="Search products..." id="productSearch" oninput="searchProducts()" style="width: 300px;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>SKU</th>
+                                    <th>Product Name</th>
+                                    <th>Category</th>
+                                    <th>Stock</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Add other original sections here (orders, suppliers, reports, etc.) -->
+       <!-- ORDERS PAGE -->
+            <section id="orders" class="page-section" data-role="owner,sales">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>Orders</h1>
+                        <p>Track and manage customer orders</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="btn btn-secondary" onclick="exportOrders()">
+                            📤 Export
+                        </button>
+                        <button class="btn btn-primary" onclick="openModal('addOrderModal')">
+                            + New Order
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">All Orders</h3>
+                        <div class="card-actions">
+                            <div class="search-bar active" style="display: block;">
+                                <span class="search-icon">🔍</span>
+                                <input type="text" class="search-input" placeholder="Search orders..." id="orderSearch" oninput="searchOrders()" style="width: 300px;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Products</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            
+            <!-- SUPPLIERS PAGE -->
+            <section id="suppliers" class="page-section"  data-role="owner,storekeeper,sales">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>Suppliers</h1>
+                        <p>Manage your supplier relationships</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="btn btn-primary" onclick="openModal('addSupplierModal')">
+                            + Add Supplier
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">All Suppliers</h3>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Supplier Name</th>
+                                    <th>Contact Person</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Products</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="suppliersTableBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+                 <!-- REPORTS PAGE -->
+            <section id="reports" class="page-section" data-role="owner">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>Reports & Analytics</h1>
+                        <p>Insights and data analysis</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="btn btn-primary">
+                            📊 Generate Report
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card blue">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Total Revenue</div>
+                            </div>
+                            <div class="stat-icon">💵</div>
+                        </div>
+                        <div class="stat-value">$142.8K</div>
+                        <span class="stat-change positive">↑ 18.2% from last quarter</span>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Avg Order Value</div>
+                            </div>
+                            <div class="stat-icon">📊</div>
+                        </div>
+                        <div class="stat-value">$364</div>
+                        <span class="stat-change positive">↑ 5.8% from last month</span>
+                    </div>
+                    <div class="stat-card blue">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Inventory Turnover</div>
+                            </div>
+                            <div class="stat-icon">🔄</div>
+                        </div>
+                        <div class="stat-value">4.2x</div>
+                        <span class="stat-change positive">↑ 0.3x from last quarter</span>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Stock Accuracy</div>
+                            </div>
+                            <div class="stat-icon">✓</div>
+                        </div>
+                        <div class="stat-value">98.5%</div>
+                        <span class="stat-change positive">↑ 1.2% from last month</span>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div>
+                            <h3 class="chart-title">Monthly Sales Trend</h3>
+                            <p class="chart-subtitle">Last 6 months performance</p>
+                        </div>
+                    </div>
+                    <div class="bar-chart">
+                        <div class="bar" style="height: 60%;">
+                            <div class="bar-value">$18.5K</div>
+                            <div class="bar-label">Sep</div>
+                        </div>
+                        <div class="bar" style="height: 70%;">
+                            <div class="bar-value">$22.1K</div>
+                            <div class="bar-label">Oct</div>
+                        </div>
+                        <div class="bar" style="height: 65%;">
+                            <div class="bar-value">$20.3K</div>
+                            <div class="bar-label">Nov</div>
+                        </div>
+                        <div class="bar" style="height: 85%;">
+                            <div class="bar-value">$28.7K</div>
+                            <div class="bar-label">Dec</div>
+                        </div>
+                        <div class="bar" style="height: 75%;">
+                            <div class="bar-value">$24.5K</div>
+                            <div class="bar-label">Jan</div>
+                        </div>
+                        <div class="bar" style="height: 95%;">
+                            <div class="bar-value">$32.4K</div>
+                            <div class="bar-label">Feb</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CATEGORIES PAGE -->
+            <section id="categories" class="page-section" data-role="owner,storekeeper">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>Categories</h1>
+                        <p>Organize your product categories</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="btn btn-primary" onclick="openModal('addCategoryModal')">
+                            + Add Category
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Product Categories</h3>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Category Name</th>
+                                    <th>Products</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categoriesTableBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+                        <!-- STOCK LEVELS PAGE -->
+            <section id="stock" class="page-section" data-role="owner,storekeeper">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>Stock Levels</h1>
+                        <p>Monitor inventory quantities</p>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning">
+                    <span class="alert-icon">⚠️</span>
+                    <div class="alert-content">
+                        <div class="alert-title">Low Stock Alert</div>
+                        <div>23 products are running low on stock and need reordering.</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Current Stock Status</h3>
+                        <div class="card-actions">
+                            <div class="search-bar active" style="display: block;">
+                                <span class="search-icon">🔍</span>
+                                <input type="text" class="search-input" placeholder="Search stock..." style="width: 300px;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>SKU</th>
+                                    <th>Current Stock</th>
+                                    <th>Min. Stock</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stockTableBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ADJUSTMENTS PAGE -->
+            <section id="adjustments" class="page-section" data-role="owner,storekeeper">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>Stock Adjustments</h1>
+                        <p>Track inventory adjustments and corrections</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="btn btn-primary" onclick="openModal('adjustmentModal')">
+                            + New Adjustment
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Adjustment History</h3>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Product</th>
+                                    <th>Type</th>
+                                    <th>Quantity</th>
+                                    <th>Reason</th>
+                                    <th>User</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adjustmentsTableBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SETTINGS PAGE -->
+            <section id="settings" class="page-section" data-role="owner">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>Settings</h1>
+                        <p>Configure your system preferences</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">General Settings</h3>
+                    </div>
+                    <div class="card-body">
+                        <form onsubmit="saveSettings(event)">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Company Name <span class="required">*</span></label>
+                                    <input type="text" class="form-input" value="OnePoint IMS" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Currency</label>
+                                    <select class="form-select">
+                                        <option selected>USD ($)</option>
+                                        <option>EUR (€)</option>
+                                        <option>GBP (£)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Low Stock Threshold</label>
+                                    <input type="number" class="form-input" value="25">
+                                    <div class="form-help">Alert when stock falls below this number</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Timezone</label>
+                                    <select class="form-select">
+                                        <option selected>UTC-5 (EST)</option>
+                                        <option>UTC-8 (PST)</option>
+                                        <option>UTC+0 (GMT)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Settings</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- USERS PAGE -->
+            <section id="users" class="page-section" data-role="owner">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>User Management</h1>
+                        <p>Manage user accounts and permissions</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="btn btn-primary" onclick="openModal('addUserModal')">
+                            + Add User
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">All Users</h3>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Last Login</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- MODALS (Copy from original + add new ones) -->
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Product</h3>
+                <button class="modal-close" onclick="closeModal('addProductModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="addProductForm" onsubmit="addProduct(event)">
+                    <div class="form-group">
+                        <label class="form-label">Product Name <span class="required">*</span></label>
+                        <input type="text" class="form-input" name="productName" required>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">SKU <span class="required">*</span></label>
+                            <input type="text" class="form-input" name="sku" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category <span class="required">*</span></label>
+                            <select class="form-select" name="category" required>
+                                <option value="">Select category</option>
+                                <option>Electronics</option>
+                                <option>Accessories</option>
+                                <option>Office Supplies</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Price <span class="required">*</span></label>
+                            <input type="number" step="0.01" class="form-input" name="price" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Initial Stock <span class="required">*</span></label>
+                            <input type="number" class="form-input" name="stock" required>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Daily Usage Rate</label>
+                            <input type="number" class="form-input" name="dailyUsage" value="10">
+                            <div class="form-help">For smart alerts prediction</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Reorder Point</label>
+                            <input type="number" class="form-input" name="reorderPoint" value="50">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Supplier</label>
+                        <input type="text" class="form-input" name="supplier" placeholder="e.g., ABC Supplies">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-textarea" name="description"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addProductModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="document.getElementById('addProductForm').dispatchEvent(new Event('submit'))">Add Product</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WhatsApp Settings Modal -->
+    <div id="whatsappSettingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">WhatsApp Settings</h3>
+                <button class="modal-close" onclick="closeModal('whatsappSettingsModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Additional Recipients</label>
+                    <textarea class="form-textarea" placeholder="Enter phone numbers, one per line"></textarea>
+                    <div class="form-help">Send alerts to multiple managers</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message Template</label>
+                    <select class="form-select">
+                        <option>Default Template</option>
+                        <option>Formal Template</option>
+                        <option>Casual Template</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Auto-Response</label>
+                    <select class="form-select">
+                        <option>Enabled</option>
+                        <option>Disabled</option>
+                    </select>
+                    <div class="form-help">Automatically create orders when manager replies "YES"</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('whatsappSettingsModal')">Cancel</button>
+                <button class="btn btn-success" onclick="saveWhatsAppSettings(); closeModal('whatsappSettingsModal')">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+       <!-- ADD PRODUCT MODAL -->
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Product</h3>
+                <button class="modal-close" onclick="closeModal('addProductModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="addProductForm" onsubmit="addProduct(event)">
+                    <div class="form-group">
+                        <label class="form-label">Product Name <span class="required">*</span></label>
+                        <input type="text" class="form-input" name="productName" required>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">SKU <span class="required">*</span></label>
+                            <input type="text" class="form-input" name="sku" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category <span class="required">*</span></label>
+                            <select class="form-select" name="category" required>
+                                <option value="">Select category</option>
+                                <option>Electronics</option>
+                                <option>Accessories</option>
+                                <option>Office Supplies</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Price <span class="required">*</span></label>
+                            <input type="number" step="0.01" class="form-input" name="price" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Initial Stock <span class="required">*</span></label>
+                            <input type="number" class="form-input" name="stock" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-textarea" name="description"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addProductModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="document.getElementById('addProductForm').dispatchEvent(new Event('submit'))">Add Product</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD ORDER MODAL -->
+    <div id="addOrderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create New Order</h3>
+                <button class="modal-close" onclick="closeModal('addOrderModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="addOrderForm" onsubmit="addOrder(event)">
+                    <div class="form-group">
+                        <label class="form-label">Customer Name <span class="required">*</span></label>
+                        <input type="text" class="form-input" name="customerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Select Products <span class="required">*</span></label>
+                        <select class="form-select" name="products" required>
+                            <option value="">Choose products</option>
+                            <option>Wireless Mouse - $29.99</option>
+                            <option>USB-C Cable - $12.99</option>
+                            <option>Laptop Stand - $45.99</option>
+                        </select>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" class="form-input" name="quantity" value="1" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" name="status">
+                                <option>Pending</option>
+                                <option>Completed</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addOrderModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="document.getElementById('addOrderForm').dispatchEvent(new Event('submit'))">Create Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD SUPPLIER MODAL -->
+    <div id="addSupplierModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Supplier</h3>
+                <button class="modal-close" onclick="closeModal('addSupplierModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="addSupplierForm" onsubmit="addSupplier(event)">
+                    <div class="form-group">
+                        <label class="form-label">Supplier Name <span class="required">*</span></label>
+                        <input type="text" class="form-input" name="supplierName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Contact Person <span class="required">*</span></label>
+                        <input type="text" class="form-input" name="contactPerson" required>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Email <span class="required">*</span></label>
+                            <input type="email" class="form-input" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone <span class="required">*</span></label>
+                            <input type="tel" class="form-input" name="phone" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Address</label>
+                        <textarea class="form-textarea" name="address"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addSupplierModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="document.getElementById('addSupplierForm').dispatchEvent(new Event('submit'))">Add Supplier</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD CATEGORY MODAL -->
+    <div id="addCategoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Category</h3>
+                <button class="modal-close" onclick="closeModal('addCategoryModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="addCategoryForm" onsubmit="addCategory(event)">
+                    <div class="form-group">
+                        <label class="form-label">Category Name <span class="required">*</span></label>
+                        <input type="text" class="form-input" name="categoryName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-textarea" name="description"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addCategoryModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="document.getElementById('addCategoryForm').dispatchEvent(new Event('submit'))">Add Category</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADJUSTMENT MODAL -->
+    <div id="adjustmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Stock Adjustment</h3>
+                <button class="modal-close" onclick="closeModal('adjustmentModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="adjustmentForm" onsubmit="addAdjustment(event)">
+                    <div class="form-group">
+                        <label class="form-label">Product <span class="required">*</span></label>
+                        <select class="form-select" name="product" required>
+                            <option value="">Select product</option>
+                            <option>Wireless Mouse</option>
+                            <option>USB-C Cable</option>
+                            <option>Laptop Stand</option>
+                        </select>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Type <span class="required">*</span></label>
+                            <select class="form-select" name="type" required>
+                                <option>Addition</option>
+                                <option>Removal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Quantity <span class="required">*</span></label>
+                            <input type="number" class="form-input" name="quantity" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Reason <span class="required">*</span></label>
+                        <textarea class="form-textarea" name="reason" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('adjustmentModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="document.getElementById('adjustmentForm').dispatchEvent(new Event('submit'))">Submit Adjustment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD USER MODAL -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New User</h3>
+                <button class="modal-close" onclick="closeModal('addUserModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="addUserForm" onsubmit="addUser(event)">
+                    <div class="form-group">
+                        <label class="form-label">Full Name <span class="required">*</span></label>
+                        <input type="text" class="form-input" name="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email <span class="required">*</span></label>
+                        <input type="email" class="form-input" name="email" required>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Role <span class="required">*</span></label>
+                            <select class="form-select" name="role" required>
+                                <option>Administrator</option>
+                                <option>Manager</option>
+                                <option>Staff</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status <span class="required">*</span></label>
+                            <select class="form-select" name="status" required>
+                                <option>Active</option>
+                                <option>Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password <span class="required">*</span></label>
+                        <input type="password" class="form-input" name="password" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addUserModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="document.getElementById('addUserForm').dispatchEvent(new Event('submit'))">Add User</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

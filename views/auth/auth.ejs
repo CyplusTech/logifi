@@ -2,513 +2,989 @@
 <html lang="en">
 <head>
     <%- include("../partials/head")%>
- <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-    }
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
 
- .post-hero {
-  background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c');
-  background-size: cover;
-  background-position: center;
-  height: 20vh;
-  position: relative;
-}
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --accent: #FBBF24;
+            --accent-dark: #F59E0B;
+            --success: #1E40AF;
+            --success-dark: #1E3A8A;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --text-dark: #0f172a;
+            --text-light: #ffffff;
+            --text-secondary: #64748b;
+            --bg-light: #f8fafc;
+            --bg-dark: #1e293b;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
 
-.post-hero-overlay {
-  background-color: rgba(17, 24, 39, 0.5);
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: flex-end;
-  padding: 20px 20px 20px 80px;
-}
+        body {
+            background: #f8fafc;
+            min-height: 100vh;
+            position: relative;
+        }
 
-.post-hero-text {
-  color: var(--text-light);
-}
+        /* Hero Section */
+        .post-hero {
+            background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 60px 20px;
+            position: relative;
+            z-index: 1;
+        }
 
-.post-hero-text h1 {
-  font-size: 36px;
-  margin: 0;
-  font-weight: 700;
-}
+        .post-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 0;
+        }
 
-.post-hero-text span {
-  color: #b1b5b6;
-}
+        .post-hero-overlay {
+            max-width: 1200px;
+            margin: 50px auto 0 auto;
+            position: relative;
+            z-index: 1;
+        }
 
-.post-hero-text p {
-  font-size: 14px;
-  margin-top: 5px;
-  color: var(--primary);
-}
+        .post-hero-text h1 {
+            color: var(--text-light);
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInDown 0.6s ease-out;
+        }
 
-@media screen and (max-width: 768px) {
-  .post-hero {
-    height: 180px;
-  }
+        .post-hero-text p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 18px;
+            font-weight: 500;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
 
-  .post-hero-text h1 {
-    font-size: 24px;
-  }
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-  .post-hero-text p {
-    font-size: 12px;
-  }
-}
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 280px;
+            background-color: var(--text-dark);
+            color: var(--text-light);
+            text-align: center;
+            border-radius: 12px;
+            padding: 16px 24px;
+            position: fixed;
+            z-index: 9999;
+            top: 30px;
+            right: 30px;
+            font-size: 15px;
+            font-weight: 500;
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #toast::before {
+            content: '✓';
+            width: 24px;
+            height: 24px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        #toast.show {
+            visibility: visible;
+            animation: slideInRight 0.4s ease-out, slideOutRight 0.4s ease-in 4.6s;
+        }
+
+        @keyframes slideInRight {
+            from {
+                right: -300px;
+                opacity: 0;
+            }
+            to {
+                right: 30px;
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            to {
+                right: -300px;
+                opacity: 0;
+            }
+        }
+
+        /* Main Container */
+        .lgfy-register-container {
+            padding: 60px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .lgfy-register-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--text-light);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 700px;
+            animation: scaleIn 0.6s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Left Panel - Image Section */
+        .lgfy-register-img {
+            background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c') center/cover;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: var(--text-light);
+            position: relative;
+        }
+
+        .lgfy-register-img::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 0;
+        }
+
+        .lgfy-img-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .lgfy-img-text h2 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .lgfy-img-text > p {
+            font-size: 18px;
+            margin-bottom: 40px;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        /* Warning Box in Left Panel */
+        .lodge-warning-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 30px;
+        }
+
+        .lodge-warning-box h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .lodge-warning-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .lodge-warning-box ul li {
+            padding: 10px 0;
+            padding-left: 28px;
+            position: relative;
+            font-size: 14px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .lodge-warning-box ul li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .lodge-warning-box ul li strong {
+            color: var(--text-light);
+        }
+
+        .lodge-warning-box p {
+            margin-top: 16px;
+            font-size: 14px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .lodge-warning-box a {
+            color: var(--text-light);
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        /* Right Panel - Form Section */
+        .lgfy-register-form {
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .lgfy-register-form h2 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .form-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            font-size: 15px;
+        }
+
+        /* Form Groups */
+        .lgfy-form-group {
+            margin-bottom: 24px;
+        }
+
+        .lgfy-form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        .lgfy-form-group input,
+        .lgfy-form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 15px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            outline: none;
+            transition: all 0.3s ease;
+            background: var(--text-light);
+            color: var(--text-dark);
+        }
+
+        .lgfy-form-group select {
+            appearance: none; /* removes default arrow */
+            background-image: none;
+        }
 
 
-    .lgfy-register-container {
-      background: #f4f6f8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
+        .lgfy-form-group input.with-icon,
+        .lgfy-form-group select.with-icon {
+            padding-left: 48px;
+        }
 
-    .lgfy-register-wrapper {
-      display: flex;
-      background: #fff;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-      border-radius: 14px;
-      overflow: hidden;
-      max-width: 1000px;
-      width: 100%;
-    }
 
-    .lgfy-register-img {
-      flex: 1;
-      background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c') no-repeat center center/cover;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 30px;
-      color: white;
-      text-align: center;
-    }
+        .lgfy-form-group input:focus,
+        .lgfy-form-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
 
-    .lgfy-register-img::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.4);
-    }
+        .lgfy-form-group input::placeholder {
+            color: var(--text-secondary);
+        }
 
-    .lgfy-img-text {
-      position: relative;
-      z-index: 1;
-    }
+        /* Error State */
+        .error-input {
+            border-color: var(--error) !important;
+            animation: shake 0.4s ease;
+        }
 
-    .lgfy-img-text h2 {
-      font-size: 2rem;
-      margin-bottom: 10px;
-    }
+        .error-input:focus {
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1) !important;
+        }
 
-    .lgfy-img-text p {
-      font-size: 1rem;
-      max-width: 300px;
-      margin: 0 auto;
-    }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
 
-    .lgfy-register-form {
-      flex: 1;
-      padding: 50px 40px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
+        /* Email OTP Layout */
+        .lgfy-email-otp {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+        }
 
-    .lgfy-register-form h2 {
-      font-size: 1.8rem;
-      margin-bottom: 25px;
-      color: #2c3e50;
-    }
+        .lgfy-email-otp input {
+            min-width: 0;
+        }
 
-    .lgfy-form-group {
-      margin-bottom: 18px;
-    }
+        .lgfy-email-otp button {
+            padding: 14px 24px;
+            background: var(--accent);
+            color: var(--text-dark);
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+        }
 
-    .lgfy-form-group label {
-      font-size: 0.95rem;
-      color: #333;
-      margin-bottom: 6px;
-      display: block;
-    }
+        .lgfy-email-otp button:hover:not(:disabled) {
+            background: var(--accent-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(251, 191, 36, 0.4);
+        }
 
-    .lgfy-form-group input,
-    .lgfy-form-group select {
-      width: 100%;
-      padding: 13px 15px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 1rem;
-      outline: none;
-      transition: border 0.3s ease;
-    }
+        .lgfy-email-otp button:disabled {
+            background: var(--border);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
 
-    .lgfy-form-group input:focus,
-    .lgfy-form-group select:focus {
-      border-color: #0077ff;
-      box-shadow: 0 0 0 2px rgba(0, 119, 255, 0.2);
-    }
+        /* Submit Button */
+        #lgfy-submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--success);
+            color: var(--text-light);
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 12px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
 
-    .lgfy-email-otp {
-      display: flex;
-      gap: 10px;
-    }
+        #lgfy-submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
 
-    .lgfy-email-otp input[type="email"] {
-      flex: 1;
-    }
+        #lgfy-submit-btn:hover:not(:disabled)::before {
+            left: 100%;
+        }
 
-    .lgfy-email-otp button {
-      padding: 13px 15px;
-      background-color: #FBBF24;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
+        #lgfy-submit-btn:hover:not(:disabled) {
+            background: var(--success-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
 
-    .lgfy-email-otp button:hover {
-      background-color: #da9e09;
-    }
+        #lgfy-submit-btn:disabled {
+            background: var(--border);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
 
-    #lgfy-submit-btn {
-      width: 100%;
-      padding: 14px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      margin-top: 10px;
-    }
+        /* Verified State */
+        #lgfy-submit-btn.verified {
+            background: var(--success);
+        }
 
-    #lgfy-submit-btn:disabled {
-      background-color: #6c757d;
-      cursor: not-allowed;
-    }
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .lgfy-register-wrapper {
+                grid-template-columns: 1fr;
+            }
 
-    @media (max-width: 768px) {
-      .lgfy-register-wrapper {
-        flex-direction: column;
-      }
+            .lgfy-register-img {
+                min-height: 400px;
+            }
+        }
 
-      .lgfy-register-img {
-        height: 200px;
-        padding: 20px;
-      }
+        @media (max-width: 768px) {
+            .post-hero {
+                padding: 40px 20px;
+            }
 
-      .lgfy-img-text h2 {
-        font-size: 1.5rem;
-      }
+            .post-hero-text h1 {
+                font-size: 32px;
+            }
 
-      .lgfy-register-form {
-        padding: 30px 20px;
-      }
+            .post-hero-text p {
+                font-size: 16px;
+            }
 
-      .lgfy-email-otp {
-        flex-direction: column;
-      }
-    }
-  .lodge-warning-box {
-  background: #fff3cd;
-  border: 1px solid #ffeeba;
-  padding: 15px;
-  margin: 50px 0;
-  border-radius: 8px;
-  color: #856404;
-  font-size: 14px;
-}
-.lodge-warning-box h3 {
-  margin-top: 0;
-  color: #d39e00;
-}
-.lodge-warning-box ul {
-  margin: 10px 0;
-  padding-left: 20px;
-}
-.lodge-warning-box ul li {
-  margin-bottom: 8px;
-}
-.lodge-warning-box a {
-  color: #d39e00;
-  font-weight: bold;
-}
+            .lgfy-register-container {
+                padding: 40px 20px;
+            }
 
-  </style>
+            .lgfy-register-wrapper {
+                border-radius: 16px;
+            }
+
+            .lgfy-register-img {
+                padding: 30px;
+                min-height: 350px;
+            }
+
+            .lgfy-img-text h2 {
+                font-size: 28px;
+            }
+
+            .lgfy-img-text > p {
+                font-size: 16px;
+            }
+
+            .lgfy-register-form {
+                padding: 30px 24px;
+            }
+
+            .lgfy-register-form h2 {
+                font-size: 26px;
+            }
+
+            .lgfy-email-otp {
+                grid-template-columns: 1fr;
+            }
+
+            #toast {
+                right: 20px;
+                left: 20px;
+                min-width: auto;
+            }
+
+            @keyframes slideInRight {
+                from {
+                    right: -100%;
+                    opacity: 0;
+                }
+                to {
+                    right: 20px;
+                    opacity: 1;
+                }
+            }
+        }
+
+        @media (max-width: 480px) {
+            .post-hero-text h1 {
+                font-size: 24px;
+            }
+
+            .lgfy-register-form {
+                padding: 24px 20px;
+            }
+
+            .lgfy-register-img {
+                padding: 24px;
+            }
+        }
+
+        /* Hidden Header */
+        .plx-header {
+            display: none;
+        }
+
+        /* Loading State */
+        .loading {
+            pointer-events: none;
+            position: relative;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Success Checkmark Animation */
+        @keyframes checkmark {
+            0% {
+                transform: scale(0) rotate(45deg);
+            }
+            50% {
+                transform: scale(1.2) rotate(45deg);
+            }
+            100% {
+                transform: scale(1) rotate(45deg);
+            }
+        }
+
+        .success-icon {
+            display: inline-block;
+            animation: checkmark 0.4s ease-out;
+        }
+    </style>
 </head>
 <body>
-  <!-- Navbar -->
-     <%- include("../partials/navBar")%>
+    <!-- Navbar -->
+    <%- include("../partials/navBar")%>
 
-<section class="post-hero">
-  <div class="post-hero-overlay">
-    <div class="post-hero-text">
-    </div>
-  </div>
-</section>
-
-<div id="toast"></div>
-
-
-<!-- ////verify//// -->
-<section class="lgfy-register-container">
-    <div class="lgfy-register-wrapper">
-    <div class="lgfy-register-img">
-        <div class="lgfy-img-text">
-        <h2>Logifi Verification</h2>
-        <p>Verify your identity before accessing the lodge posting form.</p>
-        <div class="lodge-warning-box">
-      <h3>⚠️ Posting Guidelines</h3>
-      <ul>
-        <li>Only upload <strong>real images/videos</strong> of your property.</li>
-        <li>Ensure your <strong>contact details are correct</strong>.</li>
-        <li>No duplicate listings — one property should only be posted once.</li>
-        <li>Fake or misleading content may lead to <strong>removal or suspension</strong>.</li>
-        <li>Upload high-quality images (max 5 files, JPG/PNG/MP4).</li>
-        <li>No illegal, offensive, or irrelevant content.</li>
-      </ul>
-      <p>✅ By posting, you agree to our <a href="#">Terms & Conditions</a>.</p>
-    </div>
-      </div>
-
-
-    </div>
-    <div class="lgfy-register-form">
-        <h2>Verify to Continue</h2>
-<form id="lgfy-verify-form" onsubmit="lgfyHandleSubmit(event)">
-        <div class="lgfy-form-group">
-            <label>Full Name</label>
-            <input type="text" id="lgfy-fullname" required placeholder="e.g. John Doe">
-        </div>
-
-        <div class="lgfy-form-group">
-            <label>Select Who You Are</label>
-            <select id="lgfy-role" required>
-            <option value="">-- Select Role --</option>
-            <option>Landlord</option>
-            <option>Agent</option>
-            </select>
-        </div>
-
-        <div class="lgfy-form-group">
-          <label>Phone Number</label>
-          <input type="tel" id="lgfy-phone" required placeholder="e.g. +2348012345678">
-        </div>
-
-        <div class="lgfy-form-group">
-            <label>Email Address</label>
-            <div class="lgfy-email-otp">
-            <input type="email" id="lgfy-email" required placeholder="you@example.com">
-              <button type="button" id="lgfy-send-btn" onclick="lgfySendOTP()">Send OTP</button>
+    <!-- Hero Section -->
+    <section class="post-hero">
+        <div class="post-hero-overlay">
+            <div class="post-hero-text">
+                <h1>Logifi Verification</h1>
+                <p>Secure your property listing with our quick verification process</p>
             </div>
         </div>
+    </section>
 
-        <div class="lgfy-form-group">
-            <label>Enter OTP</label>
-            <input type="number" id="lgfy-otp" placeholder="Enter the OTP sent to your email">
+    <!-- Toast Notification -->
+    <div id="toast"></div>
+
+    <!-- Verification Section -->
+    <section class="lgfy-register-container">
+        <div class="lgfy-register-wrapper">
+            <!-- Left Panel - Information -->
+            <div class="lgfy-register-img">
+                <div class="lgfy-img-text">
+                    <h2>Verify Your Identity</h2>
+                    <p>Complete verification to access the lodge posting form and showcase your property to thousands of potential tenants.</p>
+                    
+                    <div class="lodge-warning-box">
+                        <h3>📋 Posting Guidelines</h3>
+                        <ul>
+                            <li>Only upload <strong>real images/videos</strong> of your property</li>
+                            <li>Ensure your <strong>contact details are correct</strong></li>
+                            <li>No duplicate listings — one property per post</li>
+                            <li>Fake content may lead to <strong>removal or suspension</strong></li>
+                            <li>Upload high-quality images (max 5 files, JPG/PNG/MP4)</li>
+                            <li>No illegal, offensive, or irrelevant content</li>
+                        </ul>
+                        <p>✅ By posting, you agree to our <a href="#">Terms & Conditions</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Form -->
+            <div class="lgfy-register-form">
+                <h2>Verify to Continue</h2>
+                <p class="form-subtitle">Fill in your details to get started</p>
+                
+                <form id="lgfy-verify-form" onsubmit="lgfyHandleSubmit(event)">
+                    <div class="lgfy-form-group">
+                        <label for="lgfy-fullname">Full Name</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            <input type="text" id="lgfy-fullname" class="with-icon" required placeholder="e.g. John Doe" autocomplete="name">
+                        </div>
+                    </div>
+
+                    <div class="lgfy-form-group">
+                        <label for="lgfy-role">Who Are You?</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            <select id="lgfy-role" class="with-icon" required>
+                                <option value="">-- Select Role --</option>
+                                <option value="Landlord">Landlord</option>
+                                <option value="Agent">Agent</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="lgfy-form-group">
+                        <label for="lgfy-phone">Phone Number</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                            </svg>
+                            <input type="tel" id="lgfy-phone" class="with-icon" required placeholder="e.g. 08012345678" autocomplete="tel">
+                        </div>
+                    </div>
+
+                    <div class="lgfy-form-group">
+                        <label for="lgfy-email">Email Address</label>
+                        <div class="lgfy-email-otp">
+                            <div class="input-wrapper">
+                                <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
+                                </svg>
+                                <input type="email" id="lgfy-email" class="with-icon" required placeholder="you@example.com" autocomplete="email">
+                            </div>
+                            <button type="button" id="lgfy-send-btn" onclick="lgfySendOTP()">Send OTP</button>
+                        </div>
+                    </div>
+
+                    <div class="lgfy-form-group">
+                        <label for="lgfy-otp">Enter OTP</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                            <input type="text" id="lgfy-otp" class="with-icon" placeholder="Enter the OTP sent to your email" autocomplete="one-time-code">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="lgfy-submit-btn">Proceed to Post</button>
+                </form>
+            </div>
         </div>
+    </section>
 
-        <button type="submit" id="lgfy-submit-btn">Proceed to Post</button>
-        </form>
-    </div>
-    </div>
-</section>
+    <!-- Hidden Header -->
+    <section class="plx-header" style="display: none;" aria-label="Top bar">
+        <div class="plx-header__row">
+            <div class="plx-brand">🏠Lodge Management</div>
+            <div class="plx-search" role="search">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <input id="plx-search-input" type="search" placeholder="Search your lodges by title or location…" aria-label="Search lodges" />
+            </div>
+            <button id="plx-open-post" class="plx-btn plx-btn--accent">+ Post New Lodge</button>
+        </div>
+    </section>
 
-
-<!-- Header -->
-<section class="plx-header" style="display: none;" aria-label="Top bar">
-  <div class="plx-header__row">
-    <div class="plx-brand">🏠Lodge Management</div>
-    <div class="plx-search" role="search">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
-      <input id="plx-search-input" type="search" placeholder="Search your lodges by title or location…" aria-label="Search lodges" />
-    </div>
-    <button id="plx-open-post" class="plx-btn plx-btn--accent">+ Post New Lodge</button>
-  </div>
-</section>
-<!-- ////// Footer ////// -->
+    <!-- Footer -->
     <%- include("../partials/footer")%>
 
-<script>
+    <script>
+        // Send OTP Function
+        async function lgfySendOTP() {
+            const name = document.getElementById("lgfy-fullname").value.trim();
+            const role = document.getElementById("lgfy-role").value.trim();
+            const email = document.getElementById("lgfy-email").value.trim();
+            const phone = document.getElementById("lgfy-phone").value.trim();
 
-async function lgfySendOTP() {
-  const name = document.getElementById("lgfy-fullname").value.trim();
-  const role = document.getElementById("lgfy-role").value.trim();
-  const email = document.getElementById("lgfy-email").value.trim();
-  const phone = document.getElementById("lgfy-phone").value.trim();
+            if (!validateForm()) return;
 
- if (!validateForm()) return;
+            const btn = document.getElementById("lgfy-send-btn");
+            const originalText = btn.textContent;
+            
+            try {
+                // Show loading state
+                btn.disabled = true;
+                btn.classList.add('loading');
+                btn.textContent = '';
 
-    try {
-      const res = await fetch("/auth/otp/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, role, email, phone }),
-        credentials: "same-origin" // ✅ send session cookie
-      });
+                const res = await fetch("/auth/otp/send", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, role, email, phone }),
+                    credentials: "same-origin"
+                });
 
-      const data = await res.json(); // now always JSON
-      if (!res.ok) throw new Error(data.message || "Failed to send OTP");
-      
-      // ✅ then notify
-      showToast("OTP sent to your email!");
+                const data = await res.json();
+                
+                // Reset loading state
+                btn.classList.remove('loading');
+                
+                if (!res.ok) throw new Error(data.message || "Failed to send OTP");
+                
+                showToast("✓ OTP sent to your email!");
+                startCountdown();
 
-      // ✅ start countdown first
-      startCountdown();
+            } catch (err) {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                btn.textContent = originalText;
+                showToast("✗ " + err.message);
+            }
+        }
 
-    } catch (err) {
-      showToast(err.message);
-    }
+        // Countdown Timer
+        function startCountdown() {
+            const btn = document.getElementById("lgfy-send-btn");
+            let seconds = 60;
+            
+            btn.disabled = true;
+            btn.textContent = `Resend in ${seconds}s`;
+            btn.style.background = "var(--border)";
+            btn.style.color = "var(--text-secondary)";
 
-}
+            const timer = setInterval(() => {
+                seconds--;
+                btn.textContent = `Resend in ${seconds}s`;
+                
+                if (seconds <= 0) {
+                    clearInterval(timer);
+                    btn.disabled = false;
+                    btn.textContent = "Resend OTP";
+                    btn.style.background = "";
+                    btn.style.color = "";
+                }
+            }, 1000);
+        }
 
+        // Form Submit - Verify OTP
+        async function lgfyHandleSubmit(event) {
+            event.preventDefault();
 
-  function startCountdown() {
-    const btn = document.getElementById("lgfy-send-btn");
-    let seconds = 60;
-    btn.disabled = true;
-    btn.textContent = `Resend OTP ${seconds}s`;
-    btn.style.backgroundColor = "#ccc";
+            const email = document.getElementById("lgfy-email").value.trim();
+            const otp = document.getElementById("lgfy-otp").value.trim();
+            const submitBtn = document.getElementById("lgfy-submit-btn");
+            const originalText = submitBtn.textContent;
 
-    const timer = setInterval(() => {
-      seconds--;
-      btn.textContent = `Resend OTP ${seconds}s`;
-      if (seconds <= 0) {
-        clearInterval(timer);
-        btn.disabled = false;
-        btn.textContent = "Resend OTP";
-        btn.style.backgroundColor = "";
-      }
-    }, 1000);
-  }
+            if (!otp) {
+                showToast("⚠️ Please enter the OTP");
+                highlightError("lgfy-otp", "Please enter the OTP");
+                return;
+            }
 
+            try {
+                // Show loading state
+                submitBtn.disabled = true;
+                submitBtn.classList.add('loading');
+                submitBtn.textContent = '';
 
-async function lgfyHandleSubmit(event) {
-  event.preventDefault();
+                const res = await fetch("/auth/otp/verify", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, otp }),
+                    credentials: "same-origin"
+                });
 
-  const email = document.getElementById("lgfy-email").value.trim();
-  const otp = document.getElementById("lgfy-otp").value.trim();
-  const submitBtn = document.getElementById("lgfy-submit-btn");
+                const data = await res.json();
+                
+                // Reset loading state
+                submitBtn.classList.remove('loading');
 
-  if (!otp) {
-    showToast("Please enter the OTP");
-    return;
-  }
+                if (!res.ok) throw new Error(data.message || "OTP verification failed");
 
-  try {
-    const res = await fetch("/auth/otp/verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, otp }),
-      credentials: "same-origin" // ✅ keep session for OTP check
-    });
+                // Success
+                showToast("✓ OTP verified successfully!");
+                
+                // Make fields readonly
+                document.getElementById("lgfy-fullname").readOnly = true;
+                document.getElementById("lgfy-role").disabled = true;
+                document.getElementById("lgfy-phone").readOnly = true;
+                document.getElementById("lgfy-email").readOnly = true;
+                document.getElementById("lgfy-otp").readOnly = true;
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "OTP verification failed");
+                // Update button
+                submitBtn.removeAttribute("disabled");
+                submitBtn.classList.add('verified');
+                submitBtn.innerHTML = '<span class="success-icon">✓</span> Proceed to Post';
 
-    alert("OTP verified successfully!");
-    if (data.success) {
-      window.location.href = data.redirectUrl;
-    } else {
-      alert(data.message);
-    }
-    document.getElementById("lgfy-fullname").readOnly = true;
-    document.getElementById("lgfy-role").disabled = true;
-    document.getElementById("lgfy-email").readOnly = true;
-    document.getElementById("lgfy-otp").disabled = true;
+                // Redirect if success
+                if (data.success && data.redirectUrl) {
+                    setTimeout(() => {
+                        window.location.href = data.redirectUrl;
+                    }, 1000);
+                }
 
-    submitBtn.removeAttribute("disabled");
-    submitBtn.textContent = "Proceed to Post ✅";
+            } catch (err) {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+                showToast("✗ " + err.message);
+            }
+        }
 
-  } catch (err) {
-    alert(err.message);
-  }
-}
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.className = "show";
+            
+            setTimeout(() => {
+                toast.className = toast.className.replace("show", "");
+            }, 5000);
+        }
 
-//////toast massage////
-    function showToast(message) {
-      const toast = document.getElementById("toast");
-      toast.textContent = message;
-      toast.className = "show";
-      setTimeout(() => {
-        toast.className = toast.className.replace("show", "");
-      }, 5000); // hide after 3s
-    }
+        // Highlight Error
+        function highlightError(inputId, message) {
+            const field = document.getElementById(inputId);
 
-    function highlightError(inputId, message) {
-      const field = document.getElementById(inputId);
+            showToast("⚠️ " + message);
+            field.focus();
+            field.classList.add("error-input");
 
-      // show toast
-      showToast(message);
+            setTimeout(() => {
+                field.classList.remove("error-input");
+            }, 1000);
+        }
 
-      // focus on the field
-      field.focus();
+        // Form Validation
+        function validateForm() {
+            const name = document.getElementById("lgfy-fullname").value.trim();
+            const role = document.getElementById("lgfy-role").value.trim();
+            const email = document.getElementById("lgfy-email").value.trim();
+            const phone = document.getElementById("lgfy-phone").value.trim();
 
-      // highlight with red + shake
-      field.classList.add("error-input");
+            // Name validation
+            if (!name) {
+                highlightError("lgfy-fullname", "Please enter your Full Name");
+                return false;
+            }
 
-      // remove highlight after 1s
-      setTimeout(() => {
-        field.classList.remove("error-input");
-      }, 1000);
-    }
+            if (name.length < 3) {
+                highlightError("lgfy-fullname", "Name must be at least 3 characters");
+                return false;
+            }
 
-    function validateForm() {
-       const name = document.getElementById("lgfy-fullname").value.trim();
-      const role = document.getElementById("lgfy-role").value.trim();
-      const email = document.getElementById("lgfy-email").value.trim();
-      const phone = document.getElementById("lgfy-phone").value.trim();
+            // Role validation
+            if (!role) {
+                highlightError("lgfy-role", "Please select your Role");
+                return false;
+            }
 
-      // Name check
-      if (!name) {
-        highlightError("name", "⚠️ Please enter your Full Name.");
-        return false;
-      }
+            // Phone validation
+            if (!phone) {
+                highlightError("lgfy-phone", "Please enter your Phone number");
+                return false;
+            }
 
-      // Role check
-      if (!role) {
-        highlightError("role", "⚠️ Please select your Role.");
-        return false;
-      }
+            const phonePattern = /^[0-9]{11}$/;
+            if (!phonePattern.test(phone)) {
+                highlightError("lgfy-phone", "Phone must be 11 digits (e.g., 08012345678)");
+                return false;
+            }
 
-       // Phone check
-      if (!phone) {
-        highlightError("phone", "⚠️ Please enter your Phone number.");
-        return false;
-      }
-      const phonePattern = /^[0-9]{11}$/; // 11 digits (Nigeria)
-      if (!phonePattern.test(phone)) {
-        highlightError("phone", "⚠️ Phone must be 11 digits (e.g., 08012345678).");
-        return false;
-      }
+            // Email validation
+            if (!email) {
+                highlightError("lgfy-email", "Please enter your Email");
+                return false;
+            }
 
-      // Email check
-      if (!email) {
-        highlightError("email", "⚠️ Please enter your Email.");
-        return false;
-      }
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailPattern.test(email)) {
-        highlightError("email", "⚠️ Please enter a valid Email address.");
-        return false;
-      }
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                highlightError("lgfy-email", "Please enter a valid Email address");
+                return false;
+            }
 
-      return true;
-    }
+            return true;
+        }
 
-</script>
+        // Real-time validation feedback
+        document.getElementById("lgfy-fullname").addEventListener("input", function() {
+            this.classList.remove("error-input");
+        });
+
+        document.getElementById("lgfy-role").addEventListener("change", function() {
+            this.classList.remove("error-input");
+        });
+
+        document.getElementById("lgfy-phone").addEventListener("input", function() {
+            this.classList.remove("error-input");
+        });
+
+        document.getElementById("lgfy-email").addEventListener("input", function() {
+            this.classList.remove("error-input");
+        });
+
+        document.getElementById("lgfy-otp").addEventListener("input", function() {
+            this.classList.remove("error-input");
+        });
+    </script>
 </body>
 </html>

@@ -14,6 +14,9 @@ const contactRouter = require("./route/contactRouter");
 const authRouter = require("./route/authRouter");
 const reviewRoutes = require("./route/reviewRoutes");
 
+const adminRouter = require("./route/admin/adminRouter");
+const Admin = require('./models/admin/Admin');
+
 const visitorTracker = require("./middlewares/visitorTracker");
 
 const app = express();
@@ -56,6 +59,19 @@ app.use((req, res, next) => {
 
 
 
+// async function createAdmin() {
+//   await Admin.create({
+//     email: 'admin@logifi.com',
+//     password: 'Admin@123$$$',
+//     role: 'admin'
+//   });
+
+//   console.log('Admin created');
+//   process.exit();
+// }
+
+// createAdmin();
+
 // tracking visitors and clicks/////
 app.use(visitorTracker);
 
@@ -65,6 +81,9 @@ app.use("/track", trackClicksRouter);
 app.use("/", authRouter);
 app.use("/", contactRouter);
 app.use('/', reviewRoutes);
+
+// Admin (isolated & protected)
+app.use('/admin', adminRouter);
 
 // Start server
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
