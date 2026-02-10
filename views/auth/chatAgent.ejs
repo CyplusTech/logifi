@@ -118,16 +118,25 @@
 
     .lgfy-register-form {
       flex: 1;
-      padding: 50px 40px;
+      height: 550px;
+      padding: 50px 40px 30px 40px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      /* justify-content: center; */
+      border: 1px solid red;
     }
 
     .lgfy-register-form h2 {
       font-size: 1.8rem;
       margin-bottom: 25px;
       color: #2c3e50;
+    }
+
+    .form-container {
+      height: 450px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     .lgfy-form-group {
@@ -200,6 +209,46 @@
       cursor: not-allowed;
     }
 
+    .progress {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 10px;
+
+    }
+    .form-level {
+        text-align:center;
+        font-family:'Inter',sans-serif;
+        font-size:14px;
+        color:#333;
+        font-weight:600;
+        letter-spacing:0.4px;
+        user-select:none;
+    }
+
+    .back-form-btn {
+        display: flex;
+        /* width: 100px; */
+        align-items: center;
+        gap: 8px;
+        padding: 5px 9px;
+        border: none;
+        /* background: linear-gradient(135deg, #111, #333); */
+        color: black;
+        font-size: 12px;
+        border-radius: 12px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
+
+    .back-form-btn-item{
+      display: inline-block;
+      transform: translateY(1px);
+      font-size: 20px;
+    }
+
     @media (max-width: 768px) {
       .lgfy-register-wrapper {
         flex-direction: column;
@@ -247,6 +296,10 @@
   font-weight: bold;
 }
 
+#detailsField {
+  display: none;
+}
+
   </style>
 </head>
 <body>
@@ -267,32 +320,47 @@
     <div class="lgfy-register-img">
         <div class="lgfy-img-text">
         <h2>Logifi Verification</h2>
-        <p>Verify your identity before accessing the lodge posting form.</p>
-        <div class="lodge-warning-box">
-      <h3>⚠️ Posting Guidelines</h3>
-      <ul>
-        <li>Only upload <strong>real images/videos</strong> of your property.</li>
-        <li>Ensure your <strong>contact details are correct</strong>.</li>
-        <li>No duplicate listings — one property should only be posted once.</li>
-        <li>Fake or misleading content may lead to <strong>removal or suspension</strong>.</li>
-        <li>Upload high-quality images (max 5 files, JPG/PNG/MP4).</li>
-        <li>No illegal, offensive, or irrelevant content.</li>
-      </ul>
-      <p>✅ By posting, you agree to our <a href="#">Terms & Conditions</a>.</p>
-    </div>
+        <p>Verify your identity before contacting the agent on whatsapp.</p>
       </div>
 
 
     </div>
     <div class="lgfy-register-form">
         <h2>Verify to Continue</h2>
-<form id="lgfy-verify-form" onsubmit="lgfyHandleSubmit(event)">
-        <div class="lgfy-form-group">
-            <label>Full Name</label>
-            <input type="text" id="lgfy-fullname" required placeholder="e.g. John Doe">
+
+    <div class="progress">
+          <div class="form-level">
+          <span style="color:#111;">Step</span>
+          <span style="color:#000;">1</span>
+          <span style="color:#999;font-weight:500;">of</span>
+          <span style="color:#000;">3</span>
         </div>
 
+         <button onclick="history.back()" class="back-form-btn">
+            <span class="back-form-btn-item">&larr;</span>
+          <span>Back</span>
+        </button>
+    </div>
+    
+<form id="lgfy-verify-form" onsubmit="lgfyHandleSubmit(event)" class="form-container">
+
+    <div class="lgfy-form-group-wrapper">
+
+      <div id="nameField">
         <div class="lgfy-form-group">
+            <label>First Name</label>
+            <!-- <input type="text" id="lgfy-fullname" required placeholder="Enter your first name"> -->
+            <input type="text" id="lgfy-firstname" required placeholder="Enter your first name">
+        </div>
+          <div class="lgfy-form-group">
+            <label>Last Name</label>
+            <input type="text" id="lgfy-lastname" required placeholder="Enter your last name">
+        </div>
+      </div>
+
+
+      <div id="detailsField">
+        <div class="lgfy-form-group" >
           <label>Phone Number</label>
           <input type="tel" id="lgfy-phone" required placeholder="e.g. +2348012345678">
         </div>
@@ -301,16 +369,25 @@
             <label>Email Address</label>
             <div class="lgfy-email-otp">
             <input type="email" id="lgfy-email" required placeholder="you@example.com">
-              <button type="button" id="lgfy-send-btn" onclick="lgfySendOTP()">Send OTP</button>
-            </div>
+          </div>
         </div>
+      </div>
+      <!-- <button type="button" id="lgfy-send-btn" onclick="lgfySendOTP()">Send OTP</button> -->
 
+
+<!-- 
         <div class="lgfy-form-group">
             <label>Enter OTP</label>
             <input type="number" id="lgfy-otp" placeholder="Enter the OTP sent to your email">
-        </div>
+        </div> -->
+    </div>
 
-        <button type="submit" id="lgfy-submit-btn">Proceed to Post</button>
+
+
+
+
+        <!-- <button type="submit" id="lgfy-submit-btn" class="submit-form-btn">Continue</button> -->
+        <button type="submit" id="lgfy-submit-btn" class="submit-form-btn">Continue</button>
         </form>
     </div>
     </div>
@@ -335,11 +412,37 @@
     <%- include("../partials/footer")%>
 
 <script>
+  const continueBtn = document.getElementById("lgfy-submit-btn");
+  
+  continueBtn.addEventListener("click", ()=> {
+    const firstName = document.getElementById("lgfy-firstname").value.trim();
+    const LastName = document.getElementById("lgfy-lastname").value.trim();
+    
+    const nameField = document.getElementById("nameField");
+    const detailsField = document.getElementById("detailsField");
 
-async function lgfySendOTP() {
-  const name = document.getElementById("lgfy-fullname").value.trim();
+    //////validation///
+      if (!firstName) {
+        highlightError("name", "⚠️ Please enter your First Name.");
+        return false;
+      }
+
+       if (!LastName) {
+        highlightError("name", "⚠️ Please enter your Last Name.");
+        return false;
+      }
+
+        nameField.style.display = "none";
+
+        detailsField.style.display = "block";
+ 
+  })
+
+  
+  async function lgfySendOTP() {
   const email = document.getElementById("lgfy-email").value.trim();
   const phone = document.getElementById("lgfy-phone").value.trim();
+
 
    if (!validateForm()) return;
 
@@ -388,7 +491,7 @@ async function lgfyHandleSubmit(event) {
 
   const email = document.getElementById("lgfy-email").value.trim();
   const otp = document.getElementById("lgfy-otp").value.trim();
-  const submitBtn = document.getElementById("lgfy-submit-btn");
+  // const submitBtn = document.getElementById("lgfy-submit-btn");
 
   if (!otp) return showToast("Please enter OTP");
 
@@ -454,13 +557,19 @@ async function lgfyHandleSubmit(event) {
     }
 
     function validateForm() {
-       const name = document.getElementById("lgfy-fullname").value.trim();
+      const firstName = document.getElementById("lgfy-firstname").value.trim();
+      const LastName = document.getElementById("lgfy-lastname").value.trim();
       const email = document.getElementById("lgfy-email").value.trim();
       const phone = document.getElementById("lgfy-phone").value.trim();
 
       // Name check
-      if (!name) {
-        highlightError("name", "⚠️ Please enter your Full Name.");
+      if (!firstName) {
+        highlightError("name", "⚠️ Please enter your First Name.");
+        return false;
+      }
+
+       if (!LastName) {
+        highlightError("name", "⚠️ Please enter your Last Name.");
         return false;
       }
       

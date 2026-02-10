@@ -12,11 +12,12 @@
 <!-- views/home.ejs -->
 <section class="hero">
   <div class="hero-content">
-    <h2>Find Comfort. Live Better.</h2>
-    <p>
-      Find secure, affordable housing near Oko Polytechnic —
-      fully verified listings for stress-free living.
-    </p>
+    <h1>Find Verified Student Lodges Around Oko Polytechnic</h1>
+ <p>
+  Find secure, affordable student housing near Oko Polytechnic —
+  fully verified lodge listings for stress-free living in Oko.
+</p>
+
 
     <form action="/lodges" method="get" class="hero-search-bar">
       <input 
@@ -64,7 +65,8 @@
   <!-- ///// Unique Lodge Listing Section ///// -->
   <section class="home-lodge-showcase">
     <div class="home-lodge-header">
-      <h2>Top Lodge Listings Near You</h2>
+      <h2>Verified Lodges Near Oko Polytechnic</h2>
+
       <p>Explore top available lodges close to your campus.</p>
     </div>
 
@@ -82,7 +84,11 @@
                 Your browser does not support the video tag.
               </video>
             <% } else { %>
-              <img src="<%= lodge.media[0].url %>" alt="<%= lodge.title %>" />
+              <img 
+                  src="<%= lodge.media[0].url %>" 
+                  alt="<%= lodge.title %> student lodge near Oko Polytechnic" 
+                />
+
             <% } %>
           <% } else { %>
             <img src="/images/about_image.webp" alt="<%= lodge.title %>" />

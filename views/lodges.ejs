@@ -491,8 +491,12 @@
 
   <!-- Available Lodges -->
   <div class="header-section">
-    <h1>Available Lodges</h1>
-    <p>Explore lodges that are currently available for booking.</p>
+    <h1>Verified Student Lodges Around Oko Polytechnic</h1>
+    <p>
+      Browse verified and affordable student lodges around Oko Polytechnic.
+      All listings are inspected to help students avoid scams and find safe accommodation.
+      </p>
+
   </div>
 
 <div id="plx-empty" style="display:none;text-align:center; padding:16px;color:var(--plx-muted)">
@@ -507,7 +511,7 @@
 <!-- Rented / Not Available Lodges -->
 <div id="rented-section">
   <div class="header-section">
-    <h1>Rented Lodges</h1>
+    <h2>Rented Student Lodges Near Oko Polytechnic</h2>
     <p>These lodges are currently occupied. Check available listings to plan your next stay.</p>
   </div>
   <section class="plx-grid" aria-label="Rented Lodge cards">
@@ -1229,7 +1233,11 @@ function makeMediaNode(media, big=false, thumb=false){
     if(thumb){ v.setAttribute('aria-label','Video thumbnail'); }
     return v;
   } else {
-    return create('img',{src:url, alt:'Lodge media'});
+    return create('img',{
+      src: url,
+      alt: `${lodge.title} student lodge near Oko Polytechnic`
+    });
+
   }
 }
 
