@@ -85,5 +85,12 @@ app.use('/', reviewRoutes);
 // Admin (isolated & protected)
 app.use('/admin', adminRouter);
 
+// app.get('/kill-session', (req, res) => {
+//     req.session.destroy(() => {
+//         res.clearCookie('connect.sid');
+//         res.send('Session destroyed');
+//     });
+// });
+
 // Start server
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

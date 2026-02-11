@@ -12,22 +12,21 @@ const { generatePostLodgeOtpEmail, generateContactAgentOtpEmail, generatePotLodg
 
 
 
-
-////chat agent///
+//// CHAT AGENT FLOW (Production-ready) ////
 
 // ✅ Show OTP input page for chat verification
 exports.chatAgentForm = (req, res) => {
   try {
-    // If a redirect query param exists, save it for after OTP verification
-    if (req.query.redirect) {
-      req.session.redirectAfterAuth = req.query.redirect;
+    // Save lodgeId from query if present
+    if (req.query.lodgeId) {
+      req.session.pendingLodgeId = req.query.lodgeId;
     }
 
-    // Render your OTP form view (adjust filename if needed)
+    // Render OTP form
     res.render("auth/chatAgent", {
       email: req.session.otpData?.email || "",
-      name: req.session.otpData?.name || "",
       phone: req.session.otpData?.phone || "",
+      name: req.session.otpData?.name || "",
     });
   } catch (err) {
     console.error("chatAgentForm error:", err);
@@ -38,124 +37,95 @@ exports.chatAgentForm = (req, res) => {
 // ✅ Send OTP
 exports.chatAgentSendOtp = async (req, res) => {
   try {
-    const { name, email, phone, lodgeId } = req.body; // lodgeId passed from frontend
-    if (!name || !email || !phone) {
-      return res.status(400).json({ success: false, message: "All fields required" });
+    const { name, email, phone } = req.body;
+    const lodgeId = req.session.pendingLodgeId;
+
+    // Validate name
+    if (!name) {
+      return res.status(400).json({ success: false, message: "Name is required" });
+    }
+
+    // Validate either email or phone
+    if (!email && !phone) {
+      return res.status(400).json({ success: false, message: "Email or phone is required" });
     }
 
     // Generate 6-digit OTP
     const otp = String(Math.floor(100000 + Math.random() * 900000));
     console.log("Generated OTP:", otp);
 
-    // Save OTP + redirect in session
+    // Save OTP in session
     req.session.otpData = {
       name,
-      email,
-      phone,
+      email: email || null,
+      phone: phone || null,
       otp,
-      otpExpires: Date.now() + 10 * 60 * 1000 // 10 min
+      otpExpires: Date.now() + 5 * 60 * 1000, // 5 mins
     };
 
-    // 👇 Save where user wanted to go after auth
+    // Save redirect for after OTP verification
     if (lodgeId) {
       req.session.redirectAfterAuth = `/lodges/start-chat/${lodgeId}`;
     }
 
-    // Send OTP via email
+    // Send via email if available
+    if (email) {
+      await sendMail({
+        to: email,
+        subject: "📬 Verify Your Contact Request",
+        text: `Hi ${name}, Your OTP is ${otp}. It expires in 5 minutes.`,
+        html: generateContactAgentOtpEmail(name, otp),
+      });
+    }
 
+    // Send via SMS if phone is available
+    if (phone) {
+      await sendSms({
+        to: phone,
+        message: `Your Logifi OTP is ${otp}. It expires in 5 minutes.`
+      });
+    }
 
-        await sendMail({
-      to: email,
-      subject: "📬 Verify Your Contact Request",
-      text: `Hi ${name},\n\nYou requested to contact an agent on Logifi.\nYour OTP is: ${otp}\nIt expires in 5 minutes.\n\n– Logifi Team`,
-      html: generateContactAgentOtpEmail(name, otp),
-    });
-
-
-    // await sendMail({
-    //     from: `"Logifi Support" <${process.env.EMAIL_USER}>`,
-    //   to: email,
-    //   subject: "📬 Verify Your Contact Request",
-    //   text: `Hi ${name},\n\nYou requested to contact an agent on Logifi.\nYour OTP is: ${otp}\nIt expires in 5 minutes.\n\n– Logifi Team`,
-    //   html: generateContactAgentOtpEmail(name, otp),
-    // });
-
-    res.json({ success: true, message: "OTP sent to your email" });
+    return res.json({ success: true, message: "OTP sent successfully" });
   } catch (err) {
     console.error("Send OTP error:", err);
-    res.status(500).json({ success: false, message: "Server error" });
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
 // ✅ Verify OTP
-// ✅ OTP Verification
-// exports.chatAgentVerifyOtp = async (req, res) => {
-//   try {
-//     const { email, otp } = req.body;
-//     const sessionOtp = req.session.otpData;
-
-//     if (!sessionOtp || sessionOtp.otp !== otp) {
-//       return res.status(400).json({ success: false, message: "Invalid OTP" });
-//     }
-
-//     let user = await User.findOne({ email });
-//     if (!user) {
-//       user = new User({
-//         name: sessionOtp.name,
-//         email,
-//         phone: sessionOtp.phone,
-//         verified: true,
-//         verifiedAt: new Date(),
-//       });
-//     } else {
-//       user.verified = true;
-//       user.verifiedAt = new Date();
-//     }
-//     await user.save();
-
-//     // Send success email
-//     await sendMail({
-//       from: `"Logifi Support" <${process.env.EMAIL_USER}>`,
-//       to: user.email,
-//       subject: "✅ Contact Verification Successful",
-//       text: `Hi ${user.name}, your contact verification is complete.`,
-//       html: generateContactVerificationSuccessEmail(user.name),
-//     });
-
-//     // Save session & cookies
-//     req.session.verifiedEmail = email;
-//     req.session.otpData = null;
-//     res.cookie("wa_verified_user", "true", { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
-//     res.cookie("wa_verified_email", email, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
-
-//     const redirectUrl = req.session.redirectAfterAuth || null;
-//     req.session.redirectAfterAuth = null;
-
-//     return res.json({ success: true, message: "OTP verified successfully", redirectUrl });
-
-//   } catch (err) {
-//     console.error("chatAgentVerifyOtp error:", err.stack || err);
-//     return res.status(500).json({ success: false, message: "Server error during OTP verification" });
-//   }
-// };
-
-
-// --- chatAgentVerifyOtp (verify OTP and optionally return waLink to open immediately) ---
 exports.chatAgentVerifyOtp = async (req, res) => {
   try {
-    const { email, otp } = req.body;
+    const { otp } = req.body;
     const sessionOtp = req.session.otpData;
 
-    if (!sessionOtp || sessionOtp.otp !== otp) {
+    if (!sessionOtp) {
+      return res.status(400).json({ success: false, message: "No OTP session found" });
+    }
+
+    // Check expiration
+    if (Date.now() > sessionOtp.otpExpires) {
+      req.session.otpData = null;
+      return res.status(400).json({ success: false, message: "OTP expired" });
+    }
+
+    // Check OTP match
+    if (otp !== sessionOtp.otp) {
       return res.status(400).json({ success: false, message: "Invalid OTP" });
     }
 
-    // Upsert user and mark verified
-    let user = await User.findOne({ email });
+    // ✅ Upsert user
+    let user;
+    if (sessionOtp.email) {
+      user = await User.findOne({ email: sessionOtp.email });
+    } else {
+      user = await User.findOne({ phone: sessionOtp.phone });
+    }
+
     if (!user) {
       user = new User({
         name: sessionOtp.name,
-        email,
+        email: sessionOtp.email,
         phone: sessionOtp.phone,
         verified: true,
         verifiedAt: new Date(),
@@ -166,35 +136,30 @@ exports.chatAgentVerifyOtp = async (req, res) => {
     }
     await user.save();
 
-    // Send success email (existing helper)
-    await sendMail({
-      to: user.email,
-      subject: "✅ Contact Verification Successful",
-      text: `Hi ${user.name}, your contact verification is complete.`,
-      html: generateContactVerificationSuccessEmail(user.name),
-    });
+    // Send success email if email exists
+    if (user.email) {
+      await sendMail({
+        to: user.email,
+        subject: "✅ Contact Verification Successful",
+        text: `Hi ${user.name}, your contact verification is complete.`,
+        html: generateContactVerificationSuccessEmail(user.name),
+      });
+    }
 
-
-    // await sendMail({
-    //   from: `"Logifi Support" <${process.env.EMAIL_USER}>`,
-    //   to: user.email,
-    //   subject: "✅ Contact Verification Successful",
-    //   text: `Hi ${user.name}, your contact verification is complete.`,
-    //   html: generateContactVerificationSuccessEmail(user.name),
-    // });
-
-    // Save session & cookies
-    req.session.verifiedEmail = email;
+    // ✅ Mark session verified
+    req.session.chatVerified = true;
+    req.session.verifiedContact = user.email || user.phone;
     req.session.otpData = null;
-    res.cookie("wa_verified_user", "true", { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
-    res.cookie("wa_verified_email", email, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
 
-    // If user was trying to open a specific lodge chat, build waLink now so client can open immediately
+    // Set cookies
+    res.cookie("wa_verified_user", "true", { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
+    res.cookie("wa_verified_email", user.email || "", { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
+
+    // ✅ Build WhatsApp link if lodgeId exists
     const redirectUrl = req.session.redirectAfterAuth || null;
     req.session.redirectAfterAuth = null;
 
     if (redirectUrl && redirectUrl.startsWith("/lodges/start-chat/")) {
-      // Extract lodgeId (robustly)
       const match = redirectUrl.match(/\/lodges\/start-chat\/([^\/\?]+)/);
       const lodgeId = match ? match[1] : null;
 
@@ -204,40 +169,41 @@ exports.chatAgentVerifyOtp = async (req, res) => {
           const agentEmail = lodge.postedBy || null;
           const whatsappNumber = lodge.whatsappNumber || lodge.phone || "";
           const formattedPhone = whatsappNumber.replace(/\D/g, "").replace(/^0/, "234");
-          const message = encodeURIComponent(`Hello, I found your lodge listing on Logifi.\n\nTitle: ${lodge.title}\nID: ${lodgeId}\n\nI would like to inquire about its current availability.`);
+          const message = encodeURIComponent(
+            `Hello, I found your lodge listing on Logifi.\n\nTitle: ${lodge.title}\nID: ${lodgeId}\n\nI would like to inquire about its current availability.`
+          );
           const waLink = `https://wa.me/${formattedPhone}?text=${message}`;
 
-          // Cache session (so subsequent requests are fast and DB-free)
+          // Cache session for subsequent requests
           req.session.lastWaLink = waLink;
           req.session.lastLodgeId = lodgeId;
           req.session.lastAgentEmail = agentEmail;
 
-          // Create DB ChatSession only once per lodge per session
+          // Create ChatSession only once
           req.session.createdChatFor = req.session.createdChatFor || {};
           if (!req.session.createdChatFor[lodgeId]) {
             await ChatSession.findOneAndUpdate(
-              { userEmail: email, agentEmail, lodgeId },
+              { userEmail: user.email, agentEmail, lodgeId },
               { $setOnInsert: { lastStartedAt: new Date() } },
               { upsert: true, new: true }
             );
             req.session.createdChatFor[lodgeId] = true;
           }
 
-          // Return waLink so client can open it in a new tab and then redirect main tab to /lodges
+          // Return waLink
           return res.json({
             success: true,
             message: "OTP verified successfully",
             waLink,
             lodge,
-            redirectTo: "/lodges" // main tab destination after opening WA
+            redirectTo: "/lodges",
           });
         }
       }
     }
 
-    // Default fallback: no immediate waLink; return the original redirect target (if any)
-    return res.json({ success: true, message: "OTP verified successfully", redirectUrl: null });
-
+    // Default fallback
+    return res.json({ success: true, message: "OTP verified successfully", redirectTo: null });
   } catch (err) {
     console.error("chatAgentVerifyOtp error:", err.stack || err);
     return res.status(500).json({ success: false, message: "Server error during OTP verification" });
