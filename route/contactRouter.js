@@ -1,5 +1,5 @@
 const controller = require("../controller/contactController");
-const { chatVerify } = require("../middlewares/chatVerify");
+// const { chatVerify } = require("../middlewares/chatVerify");
 
 const express = require("express");
 const router = express.Router();
@@ -8,9 +8,9 @@ const router = express.Router();
 router.post("/contact/send", controller.sendContactMessage);
 
 // Start chat with an agent (requires verification)
-router.get("/lodges/start-chat/:id", chatVerify, controller.chatPage);
+// router.get("/lodges/start-chat/:id", chatVerify, controller.chatPage);
 
-router.get("/lodges/get-wa-link", chatVerify, controller.getWaLink);
+router.get("/lodges/get-wa-link", controller.getWaLink);
 
 
 module.exports = router;

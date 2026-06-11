@@ -100,62 +100,103 @@
         }
 
         /* Toast Notification */
-        #toast {
-            visibility: hidden;
-            min-width: 280px;
-            background-color: var(--text-dark);
-            color: var(--text-light);
-            text-align: center;
-            border-radius: 12px;
-            padding: 16px 24px;
-            position: fixed;
-            z-index: 9999;
-            top: 30px;
-            right: 30px;
-            font-size: 15px;
-            font-weight: 500;
-            box-shadow: var(--shadow-xl);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
+     /* Toast Notification */
+            #toast {
+                visibility: hidden;
+                position: fixed;
+                z-index: 9999;
 
-        #toast::before {
-            content: '✓';
-            width: 24px;
-            height: 24px;
-            background: var(--success);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
+                top: 20px;
+                right: 20px;
 
-        #toast.show {
-            visibility: visible;
-            animation: slideInRight 0.4s ease-out, slideOutRight 0.4s ease-in 4.6s;
-        }
+                width: auto;
+                max-width: 420px;
+                min-width: 280px;
 
-        @keyframes slideInRight {
-            from {
-                right: -300px;
-                opacity: 0;
+                padding: 16px 20px;
+                border-radius: 12px;
+
+                background: var(--text-dark);
+                color: var(--text-light);
+
+                display: flex;
+                align-items: center;
+                gap: 12px;
+
+                font-size: 15px;
+                font-weight: 500;
+                line-height: 1.4;
+
+                box-shadow: var(--shadow-xl);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255,255,255,.1);
+
+                word-break: break-word;
             }
-            to {
-                right: 30px;
-                opacity: 1;
-            }
-        }
 
-        @keyframes slideOutRight {
-            to {
-                right: -300px;
-                opacity: 0;
+            #toast::before {
+                content: '✓';
+                width: 24px;
+                height: 24px;
+                background: var(--success);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
             }
-        }
+
+            #toast.show {
+                visibility: visible;
+                animation:
+                    slideInRight .4s ease-out,
+                    slideOutRight .4s ease-in 4.6s;
+            }
+
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(120%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideOutRight {
+                to {
+                    transform: translateX(120%);
+                    opacity: 0;
+                }
+            }
+
+            /* Tablet */
+            @media (max-width: 768px) {
+                #toast {
+                    top: 15px;
+                    right: 15px;
+                    left: 15px;
+
+                    min-width: auto;
+                    max-width: none;
+                    width: auto;
+
+                    font-size: 14px;
+                }
+            }
+
+            /* Mobile */
+            @media (max-width: 480px) {
+                #toast {
+                    top: 10px;
+                    left: 10px;
+                    right: 10px;
+
+                    padding: 14px 16px;
+                    font-size: 13px;
+                }
+            }
 
         /* Main Container */
         .lgfy-register-container {
@@ -377,6 +418,32 @@
             border-color: #fbbf24;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
+        /* Tablet */
+@media (max-width: 768px) {
+    .otp-input {
+        width: 42px;
+        height: 50px;
+        font-size: 18px;
+    }
+
+    .otp-inputs {
+        gap: 8px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .otp-input {
+        width: 38px;
+        height: 45px;
+        font-size: 16px;
+        border-radius: 8px;
+    }
+
+    .otp-inputs {
+        gap: 6px;
+    }
+}
 
         .countdown {
             text-align: center;
@@ -837,18 +904,19 @@
                 showToast('✓ Verification successful!');
                 goToStep(4);
 
-                // Get WhatsApp link if available
-                try {
-                    const waResponse = await fetch('/lodges/get-wa-link');
-                    const waData = await waResponse.json();
+                 console.log("browsr1", data.waLink);
+                 // Get WhatsApp link 
+                 // ✅ DIRECTLY USE WA LINK FROM OTP RESPONSE
+            //   const newTab = window.open("", "_blank");
+                if (data.waLink) {
+                    console.log(data.waLink);
                     
-                    if (waData.success && waData.waLink) {
-                        setTimeout(() => {
-                            window.open(waData.waLink, '_blank');
-                        }, 1000);
-                    }
-                } catch (err) {
-                    console.error('Failed to get WhatsApp link:', err);
+                    sessionStorage.setItem("waLink", data.waLink);
+                    setTimeout(() => {
+                        window.open(data.waLink, "_blank");  // or window.open(...)
+                    }, 1000);
+                } else if (data.redirectTo) {
+                    window.location.href = data.redirectTo;
                 }
 
             } catch (error) {
@@ -872,9 +940,16 @@
         }
 
         // Start chatting
+        // function startChatting() {
+        //     window.location.href = '/lodges';
+        // }
+
         function startChatting() {
-            window.location.href = '/lodges';
-        }
+    // fallback only
+    let waLink = sessionStorage.getItem("waLink");
+    if (waLink) window.location.href = waLink;
+    
+}
 
         // Utility Functions
         function goToStep(step) {

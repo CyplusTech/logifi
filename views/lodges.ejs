@@ -1699,7 +1699,7 @@ updateSentiment();
 
         // ✅ Always trust backend session instead of window.verifiedEmail
         try {
-          const res = await fetch(`/lodges/get-wa-link`, { credentials: "include" });
+          const res = await fetch(`/lodges/get-wa-link?lodgeId=${lodgeId}`, { credentials: "include" });
           const data = await res.json();
 
           if (data.success && data.waLink) {
@@ -1736,22 +1736,6 @@ updateSentiment();
         waModal.style.display = "none";
       }, 350);
     }
-
-    // Set WhatsApp link (first-time fetch if needed)
-    function setWhatsAppLink(btn, lodgeId, lodgeTitle, phone) {
-  let formattedPhone = phone.trim();
-  if (formattedPhone.startsWith("0")) {
-    formattedPhone = "234" + formattedPhone.slice(1);
-  }
-
-  const message = encodeURIComponent(
-    `Hello, I found your lodge listing on Logifi.\n\nTitle: ${lodgeTitle}\nID: ${lodgeId}\n\nI would like to inquire about its current availability.`
-  );
-
-  btn.setAttribute("href", `https://wa.me/${formattedPhone}?text=${message}`);
-  btn.setAttribute("target", "_blank");
-}
-
 
 
 ///////filter script section////

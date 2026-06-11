@@ -17,20 +17,19 @@ const { generatePostLodgeOtpEmail, generateContactAgentOtpEmail, generatePotLodg
 // ✅ Show OTP input page for chat verification
 exports.chatAgentForm = (req, res) => {
   try {
-    // Save lodgeId from query if present
-    if (req.query.lodgeId) {
-      req.session.pendingLodgeId = req.query.lodgeId;
+
+    if (req.query.redirect) {
+      req.session.redirectAfterAuth = req.query.redirect;
     }
 
-    // Render OTP form
     res.render("auth/chatAgent", {
       email: req.session.otpData?.email || "",
       phone: req.session.otpData?.phone || "",
       name: req.session.otpData?.name || "",
     });
+
   } catch (err) {
-    console.error("chatAgentForm error:", err);
-    res.status(500).send("Server error while loading chat auth page");
+    console.error(err);
   }
 };
 
@@ -38,7 +37,6 @@ exports.chatAgentForm = (req, res) => {
 exports.chatAgentSendOtp = async (req, res) => {
   try {
     const { name, email, phone } = req.body;
-    const lodgeId = req.session.pendingLodgeId;
 
     // Validate name
     if (!name) {
@@ -62,11 +60,6 @@ exports.chatAgentSendOtp = async (req, res) => {
       otp,
       otpExpires: Date.now() + 5 * 60 * 1000, // 5 mins
     };
-
-    // Save redirect for after OTP verification
-    if (lodgeId) {
-      req.session.redirectAfterAuth = `/lodges/start-chat/${lodgeId}`;
-    }
 
     // Send via email if available
     if (email) {
@@ -159,7 +152,7 @@ exports.chatAgentVerifyOtp = async (req, res) => {
     const redirectUrl = req.session.redirectAfterAuth || null;
     req.session.redirectAfterAuth = null;
 
-    if (redirectUrl && redirectUrl.startsWith("/lodges/start-chat/")) {
+    if (redirectUrl) {
       const match = redirectUrl.match(/\/lodges\/start-chat\/([^\/\?]+)/);
       const lodgeId = match ? match[1] : null;
 
@@ -180,16 +173,53 @@ exports.chatAgentVerifyOtp = async (req, res) => {
           req.session.lastAgentEmail = agentEmail;
 
           // Create ChatSession only once
-          req.session.createdChatFor = req.session.createdChatFor || {};
-          if (!req.session.createdChatFor[lodgeId]) {
-            await ChatSession.findOneAndUpdate(
-              { userEmail: user.email, agentEmail, lodgeId },
-              { $setOnInsert: { lastStartedAt: new Date() } },
-              { upsert: true, new: true }
-            );
-            req.session.createdChatFor[lodgeId] = true;
-          }
+            // Create ChatSession only once
+            req.session.createdChatFor = req.session.createdChatFor || {};
 
+            if (!req.session.createdChatFor[lodgeId]) {
+
+              const chatQuery = { lodgeId };
+
+              // include agent if available
+              if (agentEmail) {
+                chatQuery.agentEmail = agentEmail;
+              }
+
+              // only include userEmail if email exists
+              if (user.email) {
+                chatQuery.userEmail = user.email;
+
+                await ChatSession.findOneAndUpdate(
+                  chatQuery,
+                  {
+                    $setOnInsert: {
+                      lodgeId,
+                      agentEmail,
+                      userEmail: user.email,
+                      lastStartedAt: new Date(),
+                    },
+                  },
+                  { upsert: true, new: true }
+                );
+
+              } else {
+                // NO EMAIL CASE → ONLY lodgeId based session
+                await ChatSession.findOneAndUpdate(
+                  { lodgeId },
+                  {
+                    $setOnInsert: {
+                      lodgeId,
+                      agentEmail,
+                      lastStartedAt: new Date(),
+                    },
+                  },
+                  { upsert: true, new: true }
+                );
+              }
+
+              req.session.createdChatFor[lodgeId] = true;
+            }
+            
           // Return waLink
           return res.json({
             success: true,

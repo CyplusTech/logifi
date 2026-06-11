@@ -328,6 +328,17 @@
     width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px;font-size:14px;
     outline:none
   }
+  .no-focus {
+  background: #fff;
+  cursor: default;
+  pointer-events: none; /* blocks click + focus */
+}
+
+/* extra safety */
+.no-focus:focus {
+  outline: none;
+  box-shadow: none;
+}
   .plx-textarea{min-height:100px;resize:vertical}
   .plx-form__actions{display:flex;gap:10px;justify-content:flex-end;margin-top:10px}
 
@@ -682,7 +693,7 @@
         </div>
         <div>
           <label for="plx-phone">Phone Number</label>
-            <input id="plx-phone" name="phone" type="tel" placeholder="e.g. 08012345678"required class="plx-input"style="background:#fff;" />
+            <input id="plx-phone" name="phone" value="08027769825" readonly type="tel" placeholder="08027769825"required class="plx-input no-focus"style="background:#fff; pointer-events: none;" />
         </div>
           <div>
           <label for="plx-price">Price (₦)</label>
