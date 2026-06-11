@@ -100,103 +100,104 @@
         }
 
         /* Toast Notification */
-     /* Toast Notification */
+        #toast {
+            visibility: hidden;
+            position: fixed;
+            z-index: 9999;
+
+            top: 20px;
+            right: 20px;
+
+            width: fit-content;
+            max-width: min(420px, calc(100vw - 40px));
+            min-width: 240px;
+
+            padding: 14px 16px;
+            border-radius: 12px;
+
+            background: var(--text-dark);
+            color: var(--text-light);
+
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.4;
+
+            box-shadow: var(--shadow-xl);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,.1);
+
+            word-break: break-word;
+
+            box-sizing: border-box;
+        }
+
+        /* icon */
+        #toast::before {
+            content: '✓';
+            width: 22px;
+            height: 22px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        #toast.show {
+            visibility: visible;
+            animation: slideIn .35s ease-out, slideOut .35s ease-in 4.6s;
+        }
+
+        /* smoother + safer animation */
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px) translateX(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            to {
+                transform: translateY(-20px) translateX(30px);
+                opacity: 0;
+            }
+        }
+
+        /* Tablet */
+        @media (max-width: 768px) {
             #toast {
-                visibility: hidden;
-                position: fixed;
-                z-index: 9999;
+                top: 15px !important;
+                left: 250px !important;
+                right: 0 !important;
 
-                top: 20px;
-                right: 20px;
+                max-width: none;
+                min-width: unset;
+                width: 50%;
 
-                width: auto;
-                max-width: 420px;
-                min-width: 280px;
-
-                padding: 16px 20px;
-                border-radius: 12px;
-
-                background: var(--text-dark);
-                color: var(--text-light);
-
-                display: flex;
-                align-items: center;
-                gap: 12px;
-
-                font-size: 15px;
-                font-weight: 500;
-                line-height: 1.4;
-
-                box-shadow: var(--shadow-xl);
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255,255,255,.1);
-
-                word-break: break-word;
+                font-size: 13px;
             }
+        }
 
-            #toast::before {
-                content: '✓';
-                width: 24px;
-                height: 24px;
-                background: var(--success);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-shrink: 0;
+        /* Mobile */
+        @media (max-width: 480px) {
+            #toast {
+                top: 10px;
+                left: 200px !important;
+                right: 0 !important;
+
+                font-size: 12.5px;
+                padding: 12px 14px;
             }
-
-            #toast.show {
-                visibility: visible;
-                animation:
-                    slideInRight .4s ease-out,
-                    slideOutRight .4s ease-in 4.6s;
-            }
-
-            @keyframes slideInRight {
-                from {
-                    transform: translateX(120%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
-
-            @keyframes slideOutRight {
-                to {
-                    transform: translateX(120%);
-                    opacity: 0;
-                }
-            }
-
-            /* Tablet */
-            @media (max-width: 768px) {
-                #toast {
-                    top: 15px;
-                    right: 15px;
-                    left: 15px;
-
-                    min-width: auto;
-                    max-width: none;
-                    width: auto;
-
-                    font-size: 14px;
-                }
-            }
-
-            /* Mobile */
-            @media (max-width: 480px) {
-                #toast {
-                    top: 10px;
-                    left: 10px;
-                    right: 10px;
-
-                    padding: 14px 16px;
-                    font-size: 13px;
-                }
-            }
+        }
 
         /* Main Container */
         .lgfy-register-container {
@@ -600,7 +601,7 @@
             #toast {
                 right: 20px;
                 left: 20px;
-                min-width: auto;
+                max-width: 70%;
             }
         }
 
