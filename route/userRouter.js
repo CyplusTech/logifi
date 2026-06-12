@@ -18,7 +18,7 @@ router.get("/lodges", controller.lodgePage);
 router.get('/lodges/single/:id', controller.singlePage);
 
 ////post lodge////
-router.get("/post-lodge", isVerified, controller.postLodgePage);
+router.get("/agent/post-lodge", isVerified, controller.postLodgePage);
 
 router.post("/api/lodges", isVerified, upload.array("media", 5), controller.postLodge);
 
@@ -27,7 +27,7 @@ router.put("/api/lodges/:id", isVerified, upload.array("media", 5), controller.u
 
 router.put("/api/lodges/status/:id", isVerified, controller.updateStatus);
 
-router.delete('/post-lodge/:id', isVerified, controller.deleteLodge);
+router.delete('/agent/post-lodge/:id', isVerified, controller.deleteLodge);
 
 router.get("/roommate", controller.roommatePage);
 

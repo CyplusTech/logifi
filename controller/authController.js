@@ -389,12 +389,65 @@ exports.verifyOtp = async (req, res) => {
     req.session.agentPhone = agentDoc.phone;
 
     // 👉 Use stored redirect OR default to /post-lodge
-    const redirectUrl = req.session.redirectAfterAuth || "/post-lodge";
+    const redirectUrl = req.session.redirectAfterAuth || "/agent/post-lodge";
     delete req.session.redirectAfterAuth;
 
     return res.json({ success: true, redirectUrl, agent: agentDoc });
   } catch (err) {
     console.error("verifyOtp error", err);
     return res.status(500).json({ success: false, message: "Verification failed" });
+  }
+};
+
+exports.agentLogin = (req, res) => {
+  res.render("auth/agentLogin");
+};
+
+exports.postAgentLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const agent = await Agent.findOne({ email });
+
+    if (!agent) {
+      return res.json({
+        success: false,
+        message: "Invalid email or password"
+      });
+    }
+
+    if (!password || !agent.password) {
+      return res.json({
+        success: false,
+        message: "Missing credentials"
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, agent.password);
+
+    if (!isMatch) {
+      return res.json({
+        success: false,
+        message: "Invalid email or password"
+      });
+    }
+
+    // ✅ IMPORTANT: align with OTP system middleware
+    req.session.verifiedEmail = agent.email;
+
+    // (optional but useful)
+    req.session.agentId = agent._id;
+
+    return res.json({
+      success: true,
+      redirect: "/agent/post-lodge/"
+    });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
   }
 };

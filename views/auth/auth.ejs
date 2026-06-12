@@ -11,13 +11,15 @@
         }
 
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --primary-light: #3b82f6;
+           --primary: #1f1f1f;        /* replaces #2563eb */
+            --primary-dark: #000000;   /* replaces #1d4ed8 */
+            --primary-light: #3a3a3a;  /* replaces #3b82f6 */
+
             --accent: #FBBF24;
             --accent-dark: #F59E0B;
-            --success: #1E40AF;
-            --success-dark: #1E3A8A;
+
+            --success: #2b2b2b;        /* replaces #1E40AF */
+            --success-dark: #111111;   /* replaces #1E3A8A */
             --warning: #f59e0b;
             --error: #ef4444;
             --text-dark: #0f172a;
@@ -453,7 +455,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin-top: 12px;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
             position: relative;
             overflow: hidden;
         }
@@ -476,7 +478,7 @@
         #lgfy-submit-btn:hover:not(:disabled) {
             background: var(--success-dark);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
         }
 
         #lgfy-submit-btn:disabled {
@@ -734,7 +736,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" id="lgfy-submit-btn">Proceed to Post</button>
+                    <button type="submit" id="lgfy-submit-btn" style="display: none;">Proceed to Post</button>
                 </form>
             </div>
         </div>
@@ -764,6 +766,8 @@
             const role = document.getElementById("lgfy-role").value.trim();
             const email = document.getElementById("lgfy-email").value.trim();
             const phone = document.getElementById("lgfy-phone").value.trim();
+            const submitBtn = document.getElementById("lgfy-submit-btn");
+
 
             if (!validateForm()) return;
 
@@ -791,12 +795,14 @@
                 if (!res.ok) throw new Error(data.message || "Failed to send OTP");
                 
                 showToast("✓ OTP sent to your email!");
+                submitBtn.style.display = "block";
                 startCountdown();
 
             } catch (err) {
                 btn.classList.remove('loading');
                 btn.disabled = false;
                 btn.textContent = originalText;
+                submitBtn.style.display = "none";
                 showToast("✗ " + err.message);
             }
         }

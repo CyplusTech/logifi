@@ -4,7 +4,7 @@ const Agent = require("../models/Agents");
 async function isVerified(req, res, next) {
   try {
     if (!req.session || !req.session.verifiedEmail) {
-      return res.redirect("/post-lodge/auth");
+      return res.redirect("/agent/login/auth");
     }
 
     const agent = await Agent.findOne({ email: req.session.verifiedEmail }); // ✅ lowercase
@@ -13,7 +13,7 @@ async function isVerified(req, res, next) {
       return next();
     }
 
-    return res.redirect("/post-lodge/auth");
+    return res.redirect("/agent/login/auth");
   } catch (err) {
     console.error("isVerified middleware error:", err);
     return res.status(500).send("Server error");
@@ -28,7 +28,7 @@ async function notVerified(req, res, next) {
 
     const agent = await Agent.findOne({ email: req.session.verifiedEmail }); // ✅ lowercase
     if (agent && agent.isVerified) {
-      return res.redirect("/post-lodge");
+      return res.redirect("/agent/post-lodge");
     }
 
     return next();

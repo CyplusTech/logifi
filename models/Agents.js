@@ -6,6 +6,7 @@ const agentSchema = new mongoose.Schema({
   role: { type: String, enum: ["Landlord", "Agent"], required: true },
 
   phone: { type: String, required: true }, 
+  password: { type: String, required: false }, 
 
   // OTP
   otp: { type: String },          

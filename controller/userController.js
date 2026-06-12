@@ -192,7 +192,7 @@ exports.lodgePage = async (req, res) => {
 exports.postLodgePage = async (req, res) => {
   try {
     if (!req.Agent) {
-      return res.redirect("/post-lodge/auth");
+      return res.redirect("/agent/login/auth");
     }
 
     // Fetch lodges posted by this Agent

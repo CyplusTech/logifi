@@ -14,7 +14,9 @@ router.post("/chat/otp/verify", controller.chatAgentVerifyOtp);
 
 ///// Become an agent verification /////
 // Show OTP form for posting lodges
-router.get("/post-lodge/auth", notVerified, controller.authForm);
+router.get("/agent/post-lodge/auth", notVerified, controller.authForm);
+router.get("/agent/login/auth", notVerified, controller.agentLogin);
+router.post('/agent/login/auth', controller.postAgentLogin);
 
 // Send/Verify OTP for agent registration
 router.post("/auth/otp/send", controller.sendOtp);
