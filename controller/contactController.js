@@ -29,8 +29,17 @@ exports.getWaLink = async (req, res) => {
     const whatsappNumber = lodge.whatsappNumber || lodge.phone || "";
     const formattedPhone = whatsappNumber.replace(/\D/g, "").replace(/^0/, "234");
 
+    const lodgeUrl = `${req.protocol}://${req.get("host")}/lodges/${lodge.slug || lodgeId}`;
+
     const message = encodeURIComponent(
-      `Hello, I found your lodge listing on Logifi.\n\nTitle: ${lodge.title}\nID: ${lodgeId}\n\nI would like to inquire about its current availability.`
+      `Hello, I found your lodge listing on Logifi.
+
+    Title: ${lodge.title}
+
+    Lodge Link:
+    ${lodgeUrl}
+
+    I would like to inquire about its current availability.`
     );
 
     const waLink = `https://wa.me/${formattedPhone}?text=${message}`;
