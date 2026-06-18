@@ -29,7 +29,7 @@ exports.getWaLink = async (req, res) => {
     const whatsappNumber = lodge.whatsappNumber || lodge.phone || "";
     const formattedPhone = whatsappNumber.replace(/\D/g, "").replace(/^0/, "234");
 
-    const lodgeUrl = `${req.protocol}://${req.get("host")}/lodges/${lodge.slug || lodgeId}`;
+    const lodgeUrl = `${req.protocol}://${req.get("host")}/lodges/single/${lodge.slug || lodgeId}`;
 
     const message = encodeURIComponent(
       `Hello, I found your lodge listing on Logifi.
