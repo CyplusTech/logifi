@@ -43,9 +43,14 @@ exports.chatAgentSendOtp = async (req, res) => {
       return res.status(400).json({ success: false, message: "Name is required" });
     }
 
-    // Validate either email or phone
-    if (!email && !phone) {
-      return res.status(400).json({ success: false, message: "Email or phone is required" });
+        // Validate phone
+    if (!phone) {
+      return res.status(400).json({ success: false, message: "Phone is required" });
+    }
+
+    // Validate email
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email is required" });
     }
 
     // Generate 6-digit OTP
@@ -72,12 +77,12 @@ exports.chatAgentSendOtp = async (req, res) => {
     }
 
     // Send via SMS if phone is available
-    if (phone) {
-      await sendSms({
-        to: phone,
-        message: `Your Logifi OTP is ${otp}. It expires in 5 minutes.`
-      });
-    }
+    // if (phone) {
+    //   await sendSms({
+    //     to: phone,
+    //     message: `Your Logifi OTP is ${otp}. It expires in 5 minutes.`
+    //   });
+    // }
 
     return res.json({ success: true, message: "OTP sent successfully" });
   } catch (err) {

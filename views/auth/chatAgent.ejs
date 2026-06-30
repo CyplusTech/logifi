@@ -674,6 +674,11 @@
                         <input type="text" id="lastName" placeholder="Enter your last name" required>
                         <div class="error-message" id="lastNameError">Please enter your last name</div>
                     </div>
+                    <div class="input-group">
+                        <label for="userPhone">Phone Number</label>
+                        <input type="tel" id="userPhone" placeholder="+234 800 000 0000" required>
+                        <div class="error-message" id="phoneError">Please enter a valid phone number</div>
+                    </div>
                     <button class="btn btn-primary" onclick="nextStep()">Continue</button>
                 </div>
 
@@ -771,6 +776,7 @@
         function nextStep() {
             const firstName = document.getElementById('firstName').value.trim();
             const lastName = document.getElementById('lastName').value.trim();
+            const userPhone = document.getElementById('userPhone').value.trim();
             
             let isValid = true;
 
@@ -781,6 +787,11 @@
 
             if (!lastName) {
                 showError('lastName');
+                isValid = false;
+            }
+
+            if (!userPhone) {
+                showError('phone');
                 isValid = false;
             }
 
@@ -798,6 +809,8 @@
 
             const firstName = document.getElementById('firstName').value.trim();
             const lastName = document.getElementById('lastName').value.trim();
+            const userPhone = document.getElementById('userPhone').value.trim();
+
             const contact = currentTab === 'email' 
                 ? document.getElementById('userEmail').value.trim()
                 : document.getElementById('userPhone').value.trim();
@@ -825,6 +838,15 @@
                 }
             }
 
+             if (!userPhone) {
+                const phoneRegex = /^[\d\s+()-]+$/;
+                  if (!phoneRegex.test(userPhone) || contact.replace(/\D/g, '').length < 10) {
+                    showError('phone');
+                    return;
+                }
+            }
+             
+
             const btn = document.getElementById('sendOTP');
             btn.disabled = true;
             btn.innerHTML = '<span class="loading"></span> Sending...';
@@ -837,9 +859,10 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        name: `${firstName} ${lastName}`,
+                        name: `${firstName} ${lastName} ${userPhone}`,
                         email: currentTab === 'email' ? contact : null,
-                        phone: currentTab === 'phone' ? contact : null
+                        // phone: currentTab === 'phone' ? contact : null
+                        phone: userPhone
                     }),
                     credentials: 'same-origin'
                 });
@@ -953,7 +976,9 @@
         function startChatting() {
     // fallback only
     let waLink = sessionStorage.getItem("waLink");
-    if (waLink) window.location.href = waLink;
+      if (waLink) {
+        window.open(waLink, "_blank", "noopener,noreferrer");
+    }
     
 }
 

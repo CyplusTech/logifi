@@ -273,7 +273,7 @@ exports.postLodge = async (req, res) => {
   }
 };
 
-// UPDATE lodge
+// UPDATE / EDIT lodge
 exports.updateLodge = async (req, res) => {
   try {
     const { id } = req.params;

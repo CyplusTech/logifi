@@ -253,7 +253,6 @@
 }
 
 .plx-card__actions {
-  /* border: 1px solid red; */
   display: flex;
   gap: 8px;
   padding: 12px;
@@ -960,7 +959,7 @@ badges.appendChild(statusWrapper);
   if (confirm('Delete this lodge?')) {
     
     try {
-      const res = await fetch(`/post-lodge/${lodge._id}`, {
+      const res = await fetch(`/agent/post-lodge/${lodge._id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -1168,7 +1167,10 @@ function validateForm() {
   const status = el('#plx-status')?.value || '';
   const desc = el('#plx-desc').value.trim();
   const priceRaw = el('#plx-price').value.trim();
-  const phone = el('#plx-phone').value.trim();
+  // const phone = el('#plx-phone').value.trim();
+  const phone = "08027769825".trim();
+  console.log("phone2", phone);
+  
 
   let errors = [];
 
