@@ -1460,12 +1460,12 @@ function openSelectedLodgeModal(lodge) {
         window.history.pushState({}, "", "/lodges");
 
       } else {
+        // Modal opened from /lodges/:id
+        document.getElementById("selected-lodgeModal").style.display = "none";
+        
         // Load the full lodges page
         window.location.href = "/lodges";
         
-        // Modal opened from /lodges/:id
-        document.getElementById("selected-lodgeModal").style.display = "none";
-
       }
     }
 
