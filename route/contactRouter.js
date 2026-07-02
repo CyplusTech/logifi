@@ -7,10 +7,11 @@ const router = express.Router();
 // Contact form (site general)
 router.post("/contact/send", controller.sendContactMessage);
 
+// Start chat with an agent (no verification)
+router.get("/lodges/start-chat/:id", controller.startChat);
+
+
+
 // Start chat with an agent (requires verification)
-// router.get("/lodges/start-chat/:id", chatVerify, controller.chatPage);
-
-router.get("/lodges/get-wa-link", controller.getWaLink);
-
-
+// router.get("/lodges/get-wa-link", controller.getWaLink);
 module.exports = router;

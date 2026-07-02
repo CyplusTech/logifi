@@ -472,6 +472,7 @@
     background: #c4c2c2ab;
   }
 
+
 </style>
 
 </head>
@@ -510,6 +511,14 @@
     <!-- Cards for available lodges will be injected here -->
   </section>
   <div class="pagination" id="pagination-available"></div>
+
+<!-- ///warning alert///// -->
+<div style="background-color: #f8d7da; color: #856404; border: 1px solid #ffeeba; padding: 16px !important; border-radius: 8px; margin: 40px auto !important; font-size: 15px; max-width: 95% !important; box-sizing: border-box; text-align: left;">
+  ⚠️ <strong>Important:</strong> Please do <strong>not make any payment</strong> until you have physically inspected the lodge and you're fully satisfied with the location, condition, and agreement.
+  <br><br>
+  Logifi will never ask you to pay on behalf of a lodge owner. Be vigilant and avoid scammers.
+</div>
+
 
 <!-- Rented / Not Available Lodges -->
 <div id="rented-section">
@@ -1200,6 +1209,12 @@ function renderCard(lodge){
   const viewBtn = create('button',{className:'view-btn',innerText:'View Lodge'},[]);
   viewBtn.addEventListener('click',()=> openLodgeModal(lodge));
 
+  window.addEventListener("popstate", () => {
+  document.querySelectorAll(".lodge-modal-overlay").forEach(modal => {
+    modal.style.display = "none";
+  });
+});
+
   const contactBtn = create('button',{className:'contact-btn',innerText:'Show Contact'},[]);
   contactBtn.addEventListener('click',()=>{
     openUniqueWAModal(lodge._id, lodge.phone, lodge.phone);
@@ -1384,7 +1399,7 @@ function setSrc(id, value) {
 
 
 function openLodgeModal(lodge) {
-  console.log(lodge);
+  // console.log(lodge);
   
   const modalId = `lodgeModal-${lodge._id}`;
   const price = lodge.price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -1400,9 +1415,21 @@ function openLodgeModal(lodge) {
     lodge.media?.[0]?.url || lodge.media?.[0]?.src || lodge.media?.[0]?.path || '/images/about_image.webp'
   );
 
-  const modal = document.getElementById(modalId);
-  if (modal) modal.style.display = 'flex';
-  else console.warn(`Modal with id ${modalId} not found in DOM`);
+      const modal = document.getElementById(modalId);
+
+      if (modal) {
+        modal.style.display = "flex";
+
+        // ✅ Change URL without reloading
+        window.history.pushState(
+          { lodgeId: lodge._id },
+          "",
+          `/lodges/single/${lodge._id}`
+        );
+
+      } else {
+        console.warn(`Modal with id ${modalId} not found in DOM`);
+      }
 }
 
 
@@ -1423,15 +1450,24 @@ function openSelectedLodgeModal(lodge) {
   document.getElementById('selected-lodgeModal').style.display = 'flex'; 
 }
 
-function closeLodgeModal(id) {
-  // if id provided -> close that specific lodge modal
-  if (id) {
-    document.getElementById(`lodgeModal-${id}`).style.display = 'none';
-  } else {
-    // otherwise close the single lodge modal
-    document.getElementById('selected-lodgeModal').style.display = 'none';
-  }
-}
+    function closeLodgeModal(id) {
+
+      if (id) {
+        // Modal opened from the lodges list
+        document.getElementById(`lodgeModal-${id}`).style.display = "none";
+
+        // Just update the URL
+        window.history.pushState({}, "", "/lodges");
+
+      } else {
+        // Load the full lodges page
+        window.location.href = "/lodges";
+        
+        // Modal opened from /lodges/:id
+        document.getElementById("selected-lodgeModal").style.display = "none";
+
+      }
+    }
 
 function updateMainImg(lodgeId, thumb) {
   const mainContainer = document.getElementById(`mainLodgeImg-${lodgeId}`)?.parentNode 
@@ -1683,54 +1719,84 @@ updateSentiment();
     }
   
 // Chat Modal Script
+// Start chat with an agent (no verification)
 
-    const waModal = document.getElementById("uniqueWAModal");
-    const agreeCheckbox = document.getElementById("agreeCheckbox");
-    const waChatBtn = document.getElementById("waChatBtn");
+      const waModal = document.getElementById("uniqueWAModal");
+      const agreeCheckbox = document.getElementById("agreeCheckbox");
+      const waChatBtn = document.getElementById("waChatBtn");
 
-    async function openUniqueWAModal(lodgeId) {
-      // Show modal
-      waModal.style.display = "flex";
-      waModal.classList.add("active");
+      function openUniqueWAModal(lodgeId) {
+        waModal.style.display = "flex";
+        waModal.classList.add("active");
 
-      // Reset old href
-      waChatBtn.setAttribute("href", "#");
-
-      waChatBtn.onclick = async (e) => {
-        e.preventDefault();
-        if (!agreeCheckbox.checked) return;
-
-        // ✅ Always trust backend session instead of window.verifiedEmail
-        try {
-          const res = await fetch(`/lodges/get-wa-link?lodgeId=${lodgeId}`, { credentials: "include" });
-          const data = await res.json();
-
-          if (data.success && data.waLink) {
-            closeUniqueWAModal();
-            window.open(data.waLink, "_blank");
-            return;
-          } else {
-            const redirectUrl = `/lodges/start-chat/${lodgeId}`;
-            window.location.href = `/lodges/chat-auth?redirect=${encodeURIComponent(redirectUrl)}`;
-            return;
-          }
-        } catch (err) {
-          console.error("Error fetching cached waLink:", err);
-          const redirectUrl = `/lodges/start-chat/${lodgeId}`;
-          window.location.href = `/lodges/chat-auth?redirect=${encodeURIComponent(redirectUrl)}`;
-          return;
-        }
-      };
-    }
-
-    // Enable button only when checkbox ticked
-    agreeCheckbox.addEventListener("change", () => {
-      if (agreeCheckbox.checked) {
-        waChatBtn.classList.add("enabled");
-      } else {
+        agreeCheckbox.checked = false;
         waChatBtn.classList.remove("enabled");
+
+        waChatBtn.onclick = (e) => {
+          e.preventDefault();
+
+          if (!agreeCheckbox.checked) return;
+
+          window.open(`/lodges/start-chat/${lodgeId}`, "_blank");
+
+          closeUniqueWAModal();
+        };
       }
-    });
+
+      agreeCheckbox.addEventListener("change", () => {
+        waChatBtn.classList.toggle("enabled", agreeCheckbox.checked);
+      });
+
+
+      // Start chat with an agent (requires verification)
+
+    // const waModal = document.getElementById("uniqueWAModal");
+    // const agreeCheckbox = document.getElementById("agreeCheckbox");
+    // const waChatBtn = document.getElementById("waChatBtn");
+
+    // async function openUniqueWAModal(lodgeId) {
+    //   // Show modal
+    //   waModal.style.display = "flex";
+    //   waModal.classList.add("active");
+
+    //   // Reset old href
+    //   waChatBtn.setAttribute("href", "#");
+
+    //   waChatBtn.onclick = async (e) => {
+    //     e.preventDefault();
+    //     if (!agreeCheckbox.checked) return;
+
+    //     // ✅ Always trust backend session instead of window.verifiedEmail
+    //     try {
+    //       const res = await fetch(`/lodges/get-wa-link?lodgeId=${lodgeId}`, { credentials: "include" });
+    //       const data = await res.json();
+
+    //       if (data.success && data.waLink) {
+    //         closeUniqueWAModal();
+    //         window.open(data.waLink, "_blank");
+    //         return;
+    //       } else {
+    //         const redirectUrl = `/lodges/start-chat/${lodgeId}`;
+    //         window.location.href = `/lodges/chat-auth?redirect=${encodeURIComponent(redirectUrl)}`;
+    //         return;
+    //       }
+    //     } catch (err) {
+    //       console.error("Error fetching cached waLink:", err);
+    //       const redirectUrl = `/lodges/start-chat/${lodgeId}`;
+    //       window.location.href = `/lodges/chat-auth?redirect=${encodeURIComponent(redirectUrl)}`;
+    //       return;
+    //     }
+    //   };
+    // }
+
+    // // Enable button only when checkbox ticked
+    // agreeCheckbox.addEventListener("change", () => {
+    //   if (agreeCheckbox.checked) {
+    //     waChatBtn.classList.add("enabled");
+    //   } else {
+    //     waChatBtn.classList.remove("enabled");
+    //   }
+    // });
 
     // Close modal
     function closeUniqueWAModal() {

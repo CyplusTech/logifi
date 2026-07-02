@@ -7,55 +7,98 @@ const ChatSession = require("../models/Chatsession");
 const { sendMail, transporter } = require("../utilities/mailer");
 const { contactEmail } = require("../utilities/emailTemplates");
 
-// GET /lodges/get-wa-link
-exports.getWaLink = async (req, res) => {
+
+////// Start chat with an agent (no verification)////
+exports.startChat = async (req, res) => {
   try {
-    if (!req.session.chatVerified) {
-      return res.json({ success: false });
-    }
-
-    const lodgeId = req.query.lodgeId;
-
-    if (!lodgeId) {
-      return res.json({ success: false });
-    }
+    const lodgeId = req.params.id;
 
     const lodge = await Lodge.findById(lodgeId);
 
     if (!lodge) {
-      return res.json({ success: false });
+      return res.redirect("/");
     }
 
     const whatsappNumber = lodge.whatsappNumber || lodge.phone || "";
-    const formattedPhone = whatsappNumber.replace(/\D/g, "").replace(/^0/, "234");
 
-    const lodgeUrl = `${req.protocol}://${req.get("host")}/lodges/single/${lodge.slug || lodgeId}`;
+    const formattedPhone = whatsappNumber
+      .replace(/\D/g, "")
+      .replace(/^0/, "234");
+
+    const lodgeUrl = `${req.protocol}://${req.get("host")}/lodges/single/${lodge.slug || lodge._id}`;
 
     const message = encodeURIComponent(
-      `Hello, I found your lodge listing on Logifi.
+`Hello 👋
 
-    Title: ${lodge.title}
+I'm interested in this lodge I found on Logifi.
 
-    Lodge Link:
-    ${lodgeUrl}
+🏠 Lodge: ${lodge.title}
 
-    I would like to inquire about its current availability.`
+🔗 Lodge Link:
+${lodgeUrl}
+
+Is it still available?`
     );
 
     const waLink = `https://wa.me/${formattedPhone}?text=${message}`;
 
-    return res.json({
-      success: true,
-      waLink
-    });
+    return res.redirect(waLink);
 
   } catch (err) {
     console.error(err);
-    res.json({ success: false });
+    return res.redirect("/");
   }
 };
 
 
+
+// Start chat with an agent (requires verification)
+// exports.getWaLink = async (req, res) => {
+//   try {
+//     if (!req.session.chatVerified) {
+//       return res.json({ success: false });
+//     }
+
+//     const lodgeId = req.query.lodgeId;
+
+//     if (!lodgeId) {
+//       return res.json({ success: false });
+//     }
+
+//     const lodge = await Lodge.findById(lodgeId);
+
+//     if (!lodge) {
+//       return res.json({ success: false });
+//     }
+
+//     const whatsappNumber = lodge.whatsappNumber || lodge.phone || "";
+//     const formattedPhone = whatsappNumber.replace(/\D/g, "").replace(/^0/, "234");
+
+//     const lodgeUrl = `${req.protocol}://${req.get("host")}/lodges/single/${lodge.slug || lodgeId}`;
+
+//     const message = encodeURIComponent(
+//       `Hello, I found your lodge listing on Logifi.
+
+//     Title: ${lodge.title}
+
+//     Lodge Link:
+//     ${lodgeUrl}
+
+//     I would like to inquire about its current availability.`
+//     );
+
+//     const waLink = `https://wa.me/${formattedPhone}?text=${message}`;
+
+//     return res.json({
+//       success: true,
+//       waLink
+//     });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.json({ success: false });
+//   }
+// };
 exports.sendContactMessage = async (req, res) => {
   const { name, email, message } = req.body;
 

@@ -32,7 +32,24 @@ exports.trackClick = async (req, res) => {
       ip = process.env.FORCE_TEST_IP;
     }
 
-    const userAgent = req.headers["user-agent"];
+    const userAgent = req.headers["user-agent"] || "";
+    const ua = userAgent.toLowerCase();
+
+    const ignoredBots = [
+      "uptimerobot",
+      "googlebot",
+      "bingbot",
+      "facebookexternalhit",
+      "whatsapp",
+      "discordbot",
+      "twitterbot",
+      "slackbot",
+    ];
+
+    if (ignoredBots.some(bot => ua.includes(bot))) {
+      return res.json({ success: true, ignored: true });
+    }
+
     const day = new Date().toISOString().slice(0, 10);
 
     let visitor = await Visitor.findOne({ ip, day });

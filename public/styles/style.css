@@ -1282,13 +1282,13 @@ header.menu-open .menu-toggle {
   font-size: 26px;
   font-weight: bold;
   color: #333;
+  /* color: #fff; */
   cursor: pointer;
 }
 
 .lodge-modal-content {
   display: flex;
   flex-wrap: wrap;
-  padding: 1.5rem;
   gap: 1.5rem;
   overflow-y: auto;
 }
@@ -1300,13 +1300,14 @@ header.menu-open .menu-toggle {
   align-items: center;
   width: 100%;
   flex: 1 1 300px;
+
 }
 
 /* Main Image & Video */
 .lodge-main-img,
 .lodge-main-video {
   display: flex;
-  width: 100%;
+  width: 100% !important;
   height: 100%;
   max-height: 350px;
   object-fit: contain;   /* ✅ prevents stretching/distortion */
@@ -1347,6 +1348,7 @@ header.menu-open .menu-toggle {
 .lodge-details-section {
   flex: 1 1 300px;
   max-height: 100%;
+  padding: 1.5rem;
 }
 
 .lodge-title {
@@ -1680,7 +1682,7 @@ header.menu-open .menu-toggle {
   .lodge-modal-container {
     max-width: 95%;
     max-height: 90vh;
-   padding: 0;              /* remove inner spacing */
+    padding: 0;              /* remove inner spacing */
     border-radius: 0; 
   }
 
@@ -1704,13 +1706,16 @@ header.menu-open .menu-toggle {
     gap: 8px;
     margin: 20px;
   }
+
+  .lodge-close-btn {
+    color: #fff;
+  }
 }
 
 @media (max-width: 395px) {
   .lodge-modal-container {
     max-width: 95%;
     max-height: 95vh;     /* fit almost entire viewport */
-    padding: 0.5rem;
   }
 
   .lodge-modal-content {

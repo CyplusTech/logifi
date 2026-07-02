@@ -12,7 +12,28 @@ module.exports = async function (req, res, next) {
       ip = process.env.FORCE_TEST_IP;
     }
 
-    const userAgent = req.headers["user-agent"];
+    
+    const userAgent = req.headers["user-agent"] || "";
+
+    // ✅ Ignore monitoring services & bots
+    const ua = userAgent.toLowerCase();
+
+    const ignoredBots = [
+      "uptimerobot",
+      "googlebot",
+      "bingbot",
+      "facebookexternalhit",
+      "whatsapp",
+      "discordbot",
+      "twitterbot",
+      "slackbot",
+    ];
+
+    if (ignoredBots.some(bot => ua.includes(bot))) {
+      return next();
+    }
+
+
     const page = req.originalUrl; // "/"
     const day = new Date().toISOString().slice(0, 10);
 
